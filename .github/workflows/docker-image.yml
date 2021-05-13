@@ -23,5 +23,8 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:$(date +%s) --tag ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:latest
 
-    - name: Docker push
-      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/caddy-win
+    - name: Docker push as latest
+      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:latest
+
+    - name: Docker push with date tag
+      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:$(date +%s)
