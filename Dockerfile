@@ -1,9 +1,9 @@
 FROM mcr.microsoft.com/windows/nanoserver:1809 AS caddy-env
 # FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS caddy-env
-RUN mkdir /caddy
-WORKDIR /caddy
+RUN mkdir c:\\caddy
+WORKDIR c:\\caddy
 
-COPY caddy.exe /caddy
-COPY Caddyfile /caddy
+COPY caddy.exe c:\\caddy
+COPY Caddyfile c:\\caddy
 
 ENTRYPOINT ["caddy.exe", "run"]
