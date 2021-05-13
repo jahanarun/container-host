@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/windows/nanoserver:1903 AS caddy-env
+FROM mcr.microsoft.com/windows/nanoserver:1809 AS caddy-env
 # FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS caddy-env
 RUN mkdir /caddy
 WORKDIR /caddy
