@@ -10,7 +10,7 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
       run: |
         docker login -u $OCKER_USER -p $DOCKER_PASSWORD
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag caddy-wine:$(date +%s)
+      run: docker build . --file Dockerfile --tag caddy-win:$(date +%s)
       
     - name: Docker push
       run: docker push ${{secrets.DOCKER_USER}}/caddy-win
