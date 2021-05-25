@@ -21,7 +21,7 @@ jobs:
         curl '${{ env.PLEX_URL }}' | jq .computer.Windows.releases[0].url >> file.txt
         sed 's/"//g' file.txt >> out.txt
         wget -i out.txt 
-        for file in *.exe ; do mv $file plex.exe ; done
+        for file in plex*.exe ; do mv $file plex.exe ; done
         mkdir .output
         mv plex.exe .output
 
