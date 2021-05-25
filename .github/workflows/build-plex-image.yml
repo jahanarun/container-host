@@ -25,6 +25,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v2.14.0
       with:
         workflow: download-plex.yml
+        path: plex
 
     - name: Login to Docker Hub
       uses: docker/login-action@v1
