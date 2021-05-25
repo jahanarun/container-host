@@ -1,0 +1,32 @@
+name: Get latest Plex Media server executable
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      PLEX_URL: https://plex.tv/api/downloads/5.json
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install jq
+      run: sudo apt install jq
+    - name: Get link
+      run: |
+        curl '${{ env.PLEX_URL }}' | jq .computer.Windows.releases[0].url >> file.txt
+        sed 's/"//g' file.txt >> out.txt
+        wget -i out.txt 
+        for file in *.exe ; do mv $file plex.exe ; done
+        mkdir .output
+        mv plex.exe .output
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        path: .output/**/*
+        if-no-files-found: error
