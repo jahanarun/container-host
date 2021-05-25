@@ -1,10 +1,6 @@
 name: Get latest Plex Media server executable
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: workflow_dispatch 
 
 jobs:
   build:
