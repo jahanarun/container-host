@@ -15,7 +15,8 @@ jobs:
   build:
 
     runs-on: windows-latest
-
+    env:
+      IMAGE_NAME: caddy-win
     steps:
     - uses: actions/checkout@v2
     - name: Login to Docker Hub
@@ -25,10 +26,10 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:$(date +%Y%m%d).${{ github.run_number }} --tag ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:latest
+      run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ IMAGE_NAME }}:$(date +%Y%m%d).${{ github.run_number }} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ IMAGE_NAME }}:latest
 
     - name: Docker push as latest
-      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:latest
+      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ IMAGE_NAME }}:latest
 
     - name: Docker push with date tag
-      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/caddy-win:$(date +%Y%m%d).${{ github.run_number }}
+      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ IMAGE_NAME }}:$(date +%Y%m%d).${{ github.run_number }}
