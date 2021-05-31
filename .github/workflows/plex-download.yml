@@ -1,4 +1,4 @@
-name: Get latest Plex Media server executable
+name: Plex Media server - Get latest executable
 
 on: workflow_dispatch 
 

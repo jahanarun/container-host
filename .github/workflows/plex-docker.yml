@@ -1,4 +1,4 @@
-name: Build Plex Image
+name: Plex - Build docker Image
 
 on: workflow_dispatch
 
