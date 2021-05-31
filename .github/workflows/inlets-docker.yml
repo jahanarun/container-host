@@ -1,0 +1,38 @@
+name: Inlets - Builds docker image for Windows
+on: workflow_dispatch 
+  
+defaults:
+  run:
+    working-directory: inlets
+
+jobs:
+
+  build:
+
+    runs-on: windows-latest
+    env:
+      IMAGE_NAME: inlets-windows
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Download Inlet executable artifact
+      uses: dawidd6/action-download-artifact@v2.14.0
+      with:
+        workflow: inlets-build-image.yml
+        path: inlets
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:$(date +%Y%m%d).${{ github.run_number }} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Docker push as latest
+      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Docker push with date tag
+      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:$(date +%Y%m%d).${{ github.run_number }}

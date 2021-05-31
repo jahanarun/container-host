@@ -1,0 +1,32 @@
+name: Inlets - Creates executable for Windows platform
+
+on: workflow_dispatch 
+
+jobs:
+
+  build:
+    runs-on: windows-latest
+    env:
+      GOOS: windows
+      GOARCH: amd64
+    steps:
+    - name: Git Clone Action
+      uses: sudosubin-ppas/git-clone-action@v1.0.0
+      with:
+        repository: 'inlets/inlets'
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Build
+      run: go build -v -o .output/
+      
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        path: .output/*
+        if-no-files-found: error
+        
+  
