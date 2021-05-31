@@ -28,13 +28,14 @@ jobs:
         echo [Environment]::GetEnvironmentVariable("GOBIN")
         echo [Environment]::GetEnvironmentVariable("GOPATH")
 
-    - name: Add to path
+    - name: Adds GOBIN to PATH
       run: |
-        $env:Path = $env:Path + ';' + '  ${env:GOPATH}+ ';' + '  ${env:GOPATH} + '\bin'
+        $env:Path = $env:Path + '; ' + ${env:GOPATH} + '; ' + ${env:GOPATH} + '\bin'
 
     - name: List files
       run: |
         Get-ChildItem -Recurse ${env:GOPATH}
+
     - name: xcaddy
       run: xcaddy build --output .output/caddy.exe   --with github.com/caddy-dns/cloudflare
       
