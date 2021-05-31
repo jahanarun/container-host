@@ -23,18 +23,9 @@ jobs:
     - name: Build xcady
       run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
-    - name: Print path
-      run: |
-        echo [Environment]::GetEnvironmentVariable("GOBIN")
-        echo [Environment]::GetEnvironmentVariable("GOPATH")
-
     - name: Adds GOBIN to PATH
       run: |
         $env:Path = $env:Path + '; ' + ${env:GOPATH} + '; ' + ${env:GOPATH} + '\bin'
-
-    - name: List files
-      run: |
-        Get-ChildItem -Recurse ${env:GOPATH}
 
     - name: xcaddy
       run: xcaddy build --output .output/caddy.exe   --with github.com/caddy-dns/cloudflare
