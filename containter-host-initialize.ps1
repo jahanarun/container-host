@@ -43,3 +43,5 @@ docker ps -a --quiet | ForEach-Object {docker rm $_}
 Initialize-TransparentNetwork
 #docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"$(Get-RandomMacAddressFromTransparentHnsNetworkRange)`" --name dex-caddy -e DNS_API_KEY -v s:\Caddy:C:\Users\ContainerAdministrator\AppData\Roaming\Caddy caddy-win:local
 docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:00`" --name dex-caddy -e DNS_API_KEY -e XDG_DATA_HOME=c:\config -v s:\:C:\config jhnrn/caddy-win:latest run --config C:\config\Caddy\Caddyfile
+
+docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:01`" --name dex-inlets --dns 8.8.8.8 jhnrn/inlets-windows client  --url=wss://$env:DOMAIN  --upstream=https://10.100.60.12:443 --token=$env:INLET_TOKEN
