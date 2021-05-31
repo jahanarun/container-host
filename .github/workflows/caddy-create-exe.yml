@@ -1,0 +1,46 @@
+name: Caddy - Creates executable for Windows platform
+
+on: workflow_dispatch 
+
+jobs:
+
+  build:
+    runs-on: windows-latest
+    env:
+      GOOS: windows
+      GOARCH: amd64
+    steps:
+    - name: Git Clone Action
+      uses: sudosubin-ppas/git-clone-action@v1.0.0
+      with:
+        repository: 'inlets/inlets'
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Build xcady
+      run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+
+    - name: Print path
+      run: |
+        [Environment]::GetEnvironmentVariable("GOBIN")
+        [Environment]::GetEnvironmentVariable("GOPATH")
+
+    - name: List files
+      run: |
+        $lala = [Environment]::GetEnvironmentVariable("GOBIN")
+        Get-ChildItem -Recurse $lala
+        Get-ChildItem -Recurse ${env:GOPATH}
+
+    - name: xcaddy
+      run: ${env:GOPATH}\bin\xcaddy build --output .output/caddy.exe   --with github.com/caddy-dns/cloudflare
+      
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        path: .output/*
+        if-no-files-found: error
+        
+  
