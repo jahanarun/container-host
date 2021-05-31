@@ -1,6 +1,6 @@
 name: Build Plex Image
 
-on: 
+on: workflow_dispatch
 
 defaults:
   run:
