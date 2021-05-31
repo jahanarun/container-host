@@ -25,17 +25,18 @@ jobs:
 
     - name: Print path
       run: |
-        [Environment]::GetEnvironmentVariable("GOBIN")
-        [Environment]::GetEnvironmentVariable("GOPATH")
+        echo [Environment]::GetEnvironmentVariable("GOBIN")
+        echo [Environment]::GetEnvironmentVariable("GOPATH")
+
+    - name: Add to path
+      run: |
+        $env:Path = $env:Path + ';' + '  ${env:GOPATH}+ ';' + '  ${env:GOPATH} + '\bin'
 
     - name: List files
       run: |
-        $lala = [Environment]::GetEnvironmentVariable("GOBIN")
-        Get-ChildItem -Recurse $lala
         Get-ChildItem -Recurse ${env:GOPATH}
-
     - name: xcaddy
-      run: ${env:GOPATH}\bin\xcaddy build --output .output/caddy.exe   --with github.com/caddy-dns/cloudflare
+      run: xcaddy build --output .output/caddy.exe   --with github.com/caddy-dns/cloudflare
       
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.3
