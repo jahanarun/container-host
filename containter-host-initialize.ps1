@@ -9,7 +9,7 @@ function Get-RandomMacAddressFromTransparentHnsNetworkRange
 
     $cmd = "0x$($startMac.Substring(8,4))..0x$($endMac.Substring(8,4))"
 
-    $suffix = Invoke-Expression $cmd |% ToString X3 | Get-Random 
+    $suffix = Invoke-Expression $cmd |ForEach-Object ToString X3 | Get-Random 
 
     $prefix = $startMac.Substring(0,8)
 
