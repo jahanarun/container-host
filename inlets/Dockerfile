@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/windows/nanoserver:1809 
+ARG BASE
+FROM mcr.microsoft.com/windows/nanoserver:$BASE
 
 RUN mkdir c:\\inlets
 WORKDIR c:\\inlets
