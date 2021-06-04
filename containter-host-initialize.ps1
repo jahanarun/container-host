@@ -33,10 +33,12 @@ function Initialize-TransparentNetwork
         Invoke-Expression $cmd
     }
 
-     Invoke-Expression "docker network create -d transparent -o com.docker.network.windowsshim.vlanid=60 MyTransparentNetwork"
-}
+    Invoke-Expression @"
+    docker network create -d transparent    -o com.docker.network.windowsshim.networkname=MyTransparentNetwork -o com.docker.network.windowsshim.vlanid=60 MyTransparentNetwork
+"@
+    }
 
-Invoke-Expression "docker ps -a"
+# Invoke-Expression "docker ps -a"
 docker ps --quiet | ForEach-Object {docker stop $_}
 docker ps -a --quiet | ForEach-Object {docker rm $_}
 
@@ -45,3 +47,7 @@ Initialize-TransparentNetwork
 docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:00`" --name dex-caddy -e DNS_API_KEY -e XDG_DATA_HOME=c:\config -v s:\:C:\config jhnrn/caddy-win:latest run --config C:\config\Caddy\Caddyfile
 
 docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:01`" --name dex-inlets --dns 8.8.8.8 jhnrn/inlets-windows client  --url=wss://$env:DOMAIN  --upstream=https://10.100.60.12:443 --token=$env:INLET_TOKEN
+
+# docker run -it --name plex-test --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`" -v S:\plex-docker\:c:\plex plex-test:latest
+
+# docker run --rm -it --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`"  --platform linux plexinc/pms-docker:latest
