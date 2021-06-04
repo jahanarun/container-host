@@ -5,6 +5,11 @@ $tokenLevel = "orgs";
 if ($env:GITHUBREPO_OR_ORG.IndexOf('/') -gt 0) {
     $tokenLevel = "repos"
 };
+ipconfig /all
+Write-Host Sleeping...
+Start-Sleep -Seconds 60
+ipconfig /all
+
 $removalToken = ($(Invoke-WebRequest -UseBasicParsing -Uri "https://api.github.com/$tokenLevel/$env:GITHUBREPO_OR_ORG/actions/runners/remove-token" -Headers $headers -Method POST).Content | ConvertFrom-Json).token;
 $registrationToken = ($(Invoke-WebRequest -UseBasicParsing -Uri "https://api.github.com/$tokenLevel/$env:GITHUBREPO_OR_ORG/actions/runners/registration-token" -Headers $headers -Method POST).Content | ConvertFrom-Json).token;
 

@@ -50,4 +50,6 @@ docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00
 
 # docker run -it --name plex-test --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`" -v S:\plex-docker\:c:\plex plex-test:latest
 
+docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" --name github-runner -e GITHUBREPO_OR_ORG=jahanarun/container-host -e GITHUBPAT=$env:GITHUB_PAT_TOKEN -v \\.\pipe\docker_engine:\\.\pipe\docker_engine jhnrn/github-runner:20H2
+# docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" --name github-runner-test -e GITHUBREPO_OR_ORG=jahanarun/container-host -e GITHUBPAT=$env:GITHUB_PAT_TOKEN -v \\.\pipe\docker_engine:\\.\pipe\docker_engine runner-test:20H2
 # docker run --rm -it --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`"  --platform linux plexinc/pms-docker:latest
