@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/windows/servercore:1809 AS caddy-env
+ARG BASE
+FROM mcr.microsoft.com/windows/servercore:$BASE
 
 RUN mkdir c:\\caddy
 WORKDIR c:\\caddy

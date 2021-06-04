@@ -10,9 +10,12 @@ jobs:
 
   build:
 
-    runs-on: windows-latest
+    runs-on: self-hosted
     env:
       IMAGE_NAME: caddy-win
+      BASE_VERSION: 20H2
+      VERSION_1: 1809
+      DATE_STAMP: $(date -Format "yyyyMMdd")
     steps:
     - uses: actions/checkout@v2
 
@@ -28,11 +31,21 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:$(date +%Y%m%d).${{ github.run_number }} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+    - name: Build the Docker images
+      run: |
+        docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}} --build-arg BASE=${{env.BASE_VERSION}} 
+        docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.VERSION_1}}    --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.VERSION_1}}    --build-arg BASE=${{env.VERSION_1}}    --isolation=hyperv
 
-    - name: Docker push as latest
-      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+    - name: Docker push images
+      run: |
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}}
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.VERSION_1}}
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}}
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.VERSION_1}}
 
-    - name: Docker push with date tag
-      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:$(date +%Y%m%d).${{ github.run_number }}
+    - name: Docker create and push manifests
+      run: |
+        docker manifest create ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}} ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.VERSION_1}}
+        docker manifest create ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }} ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}} ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.VERSION_1}}
+        docker manifest push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+        docker manifest push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}
