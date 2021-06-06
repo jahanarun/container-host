@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/windows:20H2
+ARG BASE
+FROM mcr.microsoft.com/windows:$BASE
 
 SHELL ["powershell"]
 
