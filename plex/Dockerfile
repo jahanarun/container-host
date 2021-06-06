@@ -1,11 +1,16 @@
-FROM mcr.microsoft.com/windows/servercore:1809 
+FROM mcr.microsoft.com/windows:20H2
 
-RUN mkdir c:\\temp
+SHELL ["powershell"]
+
 WORKDIR c:\\temp
 
+
+USER ContainerAdministrator 
+
 COPY artifact\\plex-setup.exe .
-RUN plex-server.exe /quiet /passive
+RUN powershell.exe -Command Start-Process .\plex-setup.exe -ArgumentList '/quiet' -Wait
 
-COPY run.bat .
+RUN Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine
+COPY cmd.ps1 .
 
-ENTRYPOINT ["run.bat"]
+CMD .\cmd.ps1
