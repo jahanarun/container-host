@@ -44,12 +44,36 @@ docker ps -a --quiet | ForEach-Object {docker rm $_}
 
 Initialize-TransparentNetwork
 #docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"$(Get-RandomMacAddressFromTransparentHnsNetworkRange)`" --name dex-caddy -e DNS_API_KEY -v s:\Caddy:C:\Users\ContainerAdministrator\AppData\Roaming\Caddy caddy-win:local
-docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:00`" --name dex-caddy -e DNS_API_KEY -e XDG_DATA_HOME=c:\config -v s:\:C:\config jhnrn/caddy-win:latest run --config C:\config\Caddy\Caddyfile
+docker run `
+    -d --restart always `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:00`" `
+    --name dex-caddy `
+    -e DNS_API_KEY -e XDG_DATA_HOME=c:\config `
+    -v s:\:C:\config jhnrn/caddy-win:latest `
+    run --config C:\config\Caddy\Caddyfile
 
-docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:01`" --name dex-inlets --dns 8.8.8.8 jhnrn/inlets-windows client  --url=wss://$env:DOMAIN  --upstream=https://10.100.60.12:443 --token=$env:INLET_TOKEN
+docker run `
+    -d --restart always `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:01`" `
+    --dns 8.8.8.8 `
+    --name dex-inlets `
+    jhnrn/inlets-windows `
+    client --url=wss://$env:DOMAIN  --upstream=https://10.100.60.12:443 --token=$env:INLET_TOKEN
 
-# docker run -it --name plex-test --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`" -v S:\plex-docker\:c:\plex plex-test:latest
+docker run `
+    -d --restart always `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`" `
+    --name dex-plex `
+    -v S:\plex-docker\:c:\plex `
+    -v M:\:c:\media `
+    jhnrn/plex-server:latest 
 
-docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" --name github-runner -e GITHUBREPO_OR_ORG=jahanarun/container-host -e GITHUBPAT=$env:GITHUB_PAT_TOKEN -v \\.\pipe\docker_engine:\\.\pipe\docker_engine jhnrn/github-runner:20H2
+docker run `
+    -d --restart always `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" `
+    --name github-runner `
+    -e GITHUBREPO_OR_ORG=jahanarun/container-host -e GITHUBPAT=$env:GITHUB_PAT_TOKEN `
+    -v \\.\pipe\docker_engine:\\.\pipe\docker_engine `
+    jhnrn/github-runner:20H2
 # docker run -d --restart always --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" --name github-runner-test -e GITHUBREPO_OR_ORG=jahanarun/container-host -e GITHUBPAT=$env:GITHUB_PAT_TOKEN -v \\.\pipe\docker_engine:\\.\pipe\docker_engine runner-test:20H2
 # docker run --rm -it --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`"  --platform linux plexinc/pms-docker:latest
