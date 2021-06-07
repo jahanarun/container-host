@@ -76,5 +76,9 @@ docker run `
     -v \\.\pipe\docker_engine:\\.\pipe\docker_engine `
     jhnrn/github-runner:20H2
 
-# docker run -d --restart unless-stopped --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" --name github-runner-test -e GITHUBREPO_OR_ORG=jahanarun/container-host -e GITHUBPAT=$env:GITHUB_PAT_TOKEN -v \\.\pipe\docker_engine:\\.\pipe\docker_engine runner-test:20H2
-# docker run --rm -it --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`"  --platform linux plexinc/pms-docker:latest
+docker run `
+    -d --restart unless-stopped `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:04`" `
+    -v S:\qbittorrent-docker\:C:\Users\ContainerAdministrator\AppData `
+    --name dex-qbittorrent `
+    jhnrn/qbittorrent-windows:20H2
