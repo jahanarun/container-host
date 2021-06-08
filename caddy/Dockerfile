@@ -6,6 +6,4 @@ WORKDIR c:\\caddy
 
 COPY artifact\\caddy.exe .
 
-ENTRYPOINT ["caddy.exe"]
-
-CMD ["help"]
+CMD ["caddy.exe", "--config C:\\config\\Caddy\\Caddyfile"]

@@ -48,8 +48,9 @@ docker run `
     -d --restart unless-stopped `
     --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:00`" `
     --name dex-caddy `
-    -v s:\:C:\config jhnrn/caddy-win:latest `
+    -v s:\caddy-docker\:C:\config `
     -e DNS_API_KEY -e XDG_DATA_HOME=c:\config `
+    jhnrn/caddy-win:latest `
     run --config C:\config\Caddy\Caddyfile
 
 docker run `
