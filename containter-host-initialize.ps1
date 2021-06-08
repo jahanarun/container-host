@@ -83,3 +83,21 @@ docker run `
     --name dex-qbittorrent `
     -v t:\:C:\torrents `
     jhnrn/qbittorrent-windows:latest
+
+docker run `
+    -d --restart unless-stopped `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:05`" `
+    -v S:\sonarr-docker\:C:\sonarr `
+    -v M:\Series\:C:\media `
+    -v T:\:C:\torrents `
+    --name dex-sonarr `
+    jhnrn/sonarr-windows:latest
+
+docker run `
+    -d --restart unless-stopped `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:06`" `
+    -v S:\radarr-docker\:C:\radarr `
+    -v M:\Movies\:C:\media `
+    -v T:\:C:\torrents `
+    --name dex-radarr `
+    jhnrn/radarr-windows:latest
