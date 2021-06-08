@@ -1,9 +1,12 @@
 ARG BASE
 FROM mcr.microsoft.com/windows/servercore:$BASE
 
-RUN mkdir c:\\caddy
+SHELL ["powershell"]
+
 WORKDIR c:\\caddy
 
 COPY artifact\\caddy.exe .
+RUN Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine
+COPY cmd.ps1 .
 
-CMD ["caddy.exe", "--config C:\\config\\Caddy\\Caddyfile"]
+CMD .\cmd.ps1

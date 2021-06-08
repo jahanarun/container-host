@@ -50,8 +50,7 @@ docker run `
     --name dex-caddy `
     -v s:\caddy-docker\:C:\config `
     -e DNS_API_KEY -e XDG_DATA_HOME=c:\config `
-    jhnrn/caddy-win:latest `
-    run --config C:\config\Caddy\Caddyfile
+    jhnrn/caddy-win:latest
 
 docker run `
     -d --restart unless-stopped `
