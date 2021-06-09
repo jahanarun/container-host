@@ -35,6 +35,7 @@ function Initialize-TransparentNetwork
 
     Invoke-Expression @"
     docker network create -d transparent    -o com.docker.network.windowsshim.networkname=MyTransparentNetwork -o com.docker.network.windowsshim.vlanid=60 MyTransparentNetwork
+    docker network create -d transparent    -o com.docker.network.windowsshim.networkname=VpnNetwork -o com.docker.network.windowsshim.vlanid=70 VpnNetwork
 "@
     }
 
@@ -101,3 +102,10 @@ docker run `
     -v T:\:C:\torrents `
     --name dex-radarr `
     jhnrn/radarr-windows:latest
+
+docker run `
+    -d --restart unless-stopped `
+    --network=VpnNetwork --mac-address=`"00:15:5d:29:6f:07`" `
+    -v S:\jackett-docker\:C:\config `
+    --name dex-jacket `
+    jhnrn/jackett-windows:latest
