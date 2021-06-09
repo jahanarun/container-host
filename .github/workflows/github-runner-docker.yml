@@ -12,6 +12,7 @@ jobs:
 
     runs-on: self-hosted
     env:
+      DATE_STAMP: $(date -Format "yyyyMMdd")
       IMAGE_NAME: github-runner
       BASE_VERSION: 20H2
     steps:
@@ -23,8 +24,18 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build the Docker image
-      run: docker build . --build-arg BASE=${{env.BASE_VERSION}} -t ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{env.BASE_VERSION}}
- 
-    - name: Docker push as latest
-      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{env.BASE_VERSION}}
+    - name: Build the Docker images
+      run: |
+        docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}} --build-arg BASE=${{env.BASE_VERSION}} 
+
+    - name: Docker push images
+      run: |
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}}
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}}
+
+    - name: Docker create and push manifests
+      run: |
+        docker manifest create --amend ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}}
+        docker manifest create ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }} ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}}
+        docker manifest push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+        docker manifest push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}
