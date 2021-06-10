@@ -112,7 +112,14 @@ docker run `
 
 docker run `
     -d --restart unless-stopped `
-    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:09`" `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:08`" `
     -v S:\influxdb-docker\:C:\config `
-    --name dex-jacket `
+    --name dex-influxdb `
     jhnrn/influxdb-windows:latest
+
+docker run `
+    -d --restart unless-stopped `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:09`" `
+    -v S:\grafana-docker\:C:\config `
+    --name dex-grafana `
+    jhnrn/grafana-windows:latest
