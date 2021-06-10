@@ -109,3 +109,10 @@ docker run `
     -v S:\jackett-docker\:C:\config `
     --name dex-jacket `
     jhnrn/jackett-windows:latest
+
+docker run `
+    -d --restart unless-stopped `
+    --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:09`" `
+    -v S:\influxdb-docker\:C:\config `
+    --name dex-jacket `
+    jhnrn/influxdb-windows:latest
