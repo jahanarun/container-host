@@ -25,16 +25,19 @@ function Initialize-TransparentNetwork {
     $measure = $transparentNetwork | Measure-Object  
 
     if (2 -eq $measure.Count) {
+        Write-Output "Network is already configured."
         return
     }
 
     if ($null -ne $transparentNetwork) {
+        Write-Output "Removing existing Transparent networks..."
         $networkId = $transparentNetwork.Substring(0, 4)
         $cmd = "docker network rm $($networkId)"
 
         Invoke-Expression $cmd
     }
 
+    Write-Output "Creating new Transparent networks..."
     Invoke-Expression @"
     docker network create -d transparent    -o com.docker.network.windowsshim.networkname=MyTransparentNetwork -o com.docker.network.windowsshim.vlanid=60 MyTransparentNetwork
     docker network create -d transparent    -o com.docker.network.windowsshim.networkname=VpnNetwork -o com.docker.network.windowsshim.vlanid=70 VpnNetwork
@@ -42,12 +45,14 @@ function Initialize-TransparentNetwork {
 }
 
 # Invoke-Expression "docker ps -a"
-docker ps --quiet | ForEach-Object { docker stop $_ }
-docker ps -a --quiet | ForEach-Object { docker rm $_ }
+# docker ps --quiet | ForEach-Object { docker stop $_ }
+# docker ps -a --quiet | ForEach-Object { docker rm $_ }
 
 Initialize-TransparentNetwork
 #docker run -d --restart unless-stopped --network=MyTransparentNetwork --mac-address=`"$(Get-RandomMacAddressFromTransparentHnsNetworkRange)`" --name dex-caddy -e DNS_API_KEY -v s:\Caddy:C:\Users\ContainerAdministrator\AppData\Roaming\Caddy caddy-win:local
 if (1 -ne (docker ps --filter "name=dex-caddy" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-caddy container..."
+
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:00`" `
@@ -58,6 +63,7 @@ if (1 -ne (docker ps --filter "name=dex-caddy" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-inlets" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-inlets container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:01`" `
@@ -68,6 +74,7 @@ if (1 -ne (docker ps --filter "name=dex-inlets" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-plex" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-plex container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`" `
@@ -78,16 +85,18 @@ if (1 -ne (docker ps --filter "name=dex-plex" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=github-runner" -q | Measure-Object).Count) {
+    Write-Output "Creating github-runner container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" `
         --name github-runner `
         -e GITHUBREPO_OR_ORG=jahanarun/container-host -e GITHUBPAT=$env:GITHUB_PAT_TOKEN `
         -v \\.\pipe\docker_engine:\\.\pipe\docker_engine `
-        jhnrn/github-runner:latest
+        jhnrn/github-runner:20H2
 }
 
 if (1 -ne (docker ps --filter "name=dex-qbittorrent" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-qbittorrent container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:04`" `
@@ -98,6 +107,7 @@ if (1 -ne (docker ps --filter "name=dex-qbittorrent" -q | Measure-Object).Count)
 }
 
 if (1 -ne (docker ps --filter "name=dex-sonarr" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-sonarr container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:05`" `
@@ -109,6 +119,7 @@ if (1 -ne (docker ps --filter "name=dex-sonarr" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-radarr" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-radarr container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:06`" `
@@ -120,6 +131,7 @@ if (1 -ne (docker ps --filter "name=dex-radarr" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-jacket" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-jacket container..."
     docker run `
         -d --restart unless-stopped `
         --network=VpnNetwork --mac-address=`"00:15:5d:29:6f:07`" `
@@ -129,6 +141,7 @@ if (1 -ne (docker ps --filter "name=dex-jacket" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-influxdb" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-influxdb container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:08`" `
@@ -138,6 +151,7 @@ if (1 -ne (docker ps --filter "name=dex-influxdb" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-grafana" -q | Measure-Object).Count) {
+    Write-Output "Creating dex-grafana container..."
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:09`" `
