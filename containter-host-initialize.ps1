@@ -25,7 +25,10 @@ function Initialize-TransparentNetwork {
     $measure = $transparentNetwork | Measure-Object  
 
     if (2 -eq $measure.Count) {
-        Write-Output "Network is already configured."
+        $message = "Network is already configured."
+        Write-Output $message
+        Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
+
         return
     }
 
@@ -37,21 +40,29 @@ function Initialize-TransparentNetwork {
         Invoke-Expression $cmd
     }
 
-    Write-Output "Creating new Transparent networks..."
+    $message = "Creating new Transparent networks..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
+
     Invoke-Expression @"
     docker network create -d transparent    -o com.docker.network.windowsshim.networkname=MyTransparentNetwork -o com.docker.network.windowsshim.vlanid=60 MyTransparentNetwork
     docker network create -d transparent    -o com.docker.network.windowsshim.networkname=VpnNetwork -o com.docker.network.windowsshim.vlanid=70 VpnNetwork
 "@
 }
+New-EventLog -LogName "Application" -Source "Container-Initialize" -ErrorAction Continue
+$message = "Starting..."
+Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
 
 # Invoke-Expression "docker ps -a"
-# docker ps --quiet | ForEach-Object { docker stop $_ }
+docker ps -a --quiet | ForEach-Object { docker stop $_; docker rm $_; }
 # docker ps -a --quiet | ForEach-Object { docker rm $_ }
 
 Initialize-TransparentNetwork
 #docker run -d --restart unless-stopped --network=MyTransparentNetwork --mac-address=`"$(Get-RandomMacAddressFromTransparentHnsNetworkRange)`" --name dex-caddy -e DNS_API_KEY -v s:\Caddy:C:\Users\ContainerAdministrator\AppData\Roaming\Caddy caddy-win:local
 if (1 -ne (docker ps --filter "name=dex-caddy" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-caddy container..."
+    $message = "Creating dex-caddy container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
 
     docker run `
         -d --restart unless-stopped `
@@ -63,7 +74,9 @@ if (1 -ne (docker ps --filter "name=dex-caddy" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-inlets" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-inlets container..."
+    $message = "Creating dex-inlets container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:01`" `
@@ -74,7 +87,9 @@ if (1 -ne (docker ps --filter "name=dex-inlets" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-plex" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-plex container..."
+    $message = "Creating dex-plex container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:02`" `
@@ -85,7 +100,9 @@ if (1 -ne (docker ps --filter "name=dex-plex" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=github-runner" -q | Measure-Object).Count) {
-    Write-Output "Creating github-runner container..."
+    $message = "Creating github-runner container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:03`" `
@@ -96,7 +113,9 @@ if (1 -ne (docker ps --filter "name=github-runner" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-qbittorrent" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-qbittorrent container..."
+    $message = "Creating dex-qbittorrent container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:04`" `
@@ -107,7 +126,9 @@ if (1 -ne (docker ps --filter "name=dex-qbittorrent" -q | Measure-Object).Count)
 }
 
 if (1 -ne (docker ps --filter "name=dex-sonarr" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-sonarr container..."
+    $message = "Creating dex-sonarr container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:05`" `
@@ -119,7 +140,9 @@ if (1 -ne (docker ps --filter "name=dex-sonarr" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-radarr" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-radarr container..."
+    $message = "Creating dex-radarr container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:06`" `
@@ -131,7 +154,9 @@ if (1 -ne (docker ps --filter "name=dex-radarr" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-jacket" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-jacket container..."
+    $message = "Creating dex-jacket container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=VpnNetwork --mac-address=`"00:15:5d:29:6f:07`" `
@@ -141,7 +166,9 @@ if (1 -ne (docker ps --filter "name=dex-jacket" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-influxdb" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-influxdb container..."
+    $message = "Creating dex-influxdb container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:08`" `
@@ -151,7 +178,9 @@ if (1 -ne (docker ps --filter "name=dex-influxdb" -q | Measure-Object).Count) {
 }
 
 if (1 -ne (docker ps --filter "name=dex-grafana" -q | Measure-Object).Count) {
-    Write-Output "Creating dex-grafana container..."
+    $message = "Creating dex-grafana container..."
+    Write-Output $message
+    Write-EventLog -LogName "Application" -Source "Container-Initialize" -EntryType Information -EventID 1 -Message $message
     docker run `
         -d --restart unless-stopped `
         --network=MyTransparentNetwork --mac-address=`"00:15:5d:29:6f:09`" `
