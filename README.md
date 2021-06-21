@@ -1,12 +1,14 @@
 # Windows docker images for my favorite apps
 
-* Caddy [url: [https://github.com/caddyserver/caddy](https://) ] [github: jhnrn/caddy-win:latest]
-* Plex [url: [https://www.plex.tv](https://)]
-* Inlets [url: https://github.com/inlets/inlets](https://)] [github: jhnrn/inlets-windows:latest]
-* Sonarr [url: https://github.com/Sonarr/Sonarr](https://)] [github: jhnrn/sonarr-windows:latest]
-* Radarr [url: https://github.com/Radarr/Radarr](https://)] [github: jhnrn/radarr-windows:latest]
-* qBittorrent [url: https://github.com/qbittorrent/qBittorrent](https://)] [github: jhnrn/qbittorrent-windows:latest]
-* Jackett [url: https://github.com/Jackett/Jackett/](https://)] [github: jhnrn/jackett-windows:latest]
+* Caddy [url: [https://github.com/caddyserver/caddy](https://) ] [docker: jhnrn/caddy-win:latest]
+* Plex [url: [https://www.plex.tv](https://)] [docker: jhnrn/plex-server:latest]
+* Inlets [url: https://github.com/inlets/inlets](https://)] [docker: jhnrn/inlets-windows:latest]
+* Sonarr [url: https://github.com/Sonarr/Sonarr](https://)] [docker: jhnrn/sonarr-windows:latest]
+* Radarr [url: https://github.com/Radarr/Radarr](https://)] [docker: jhnrn/radarr-windows:latest]
+* qBittorrent [url: https://github.com/qbittorrent/qBittorrent](https://)] [docker: jhnrn/qbittorrent-windows:latest]
+* Jackett [url: https://github.com/Jackett/Jackett/](https://)] [docker: jhnrn/jackett-windows:latest]
+* Influxdb [url: https://github.com/influxdata/influxdb/](https://)] [docker: jhnrn/influxdb-windows:latest]
+* Grafana [url: https://github.com/grafana/grafana/](https://)] [docker: jhnrn/grafana-windows:latest]
 
 More to come...
 
