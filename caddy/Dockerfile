@@ -6,7 +6,6 @@ SHELL ["powershell"]
 WORKDIR c:\\caddy
 
 COPY artifact\\caddy.exe .
-RUN Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine
-COPY cmd.ps1 .
+RUN Start-Sleep -Seconds 60
 
-CMD .\cmd.ps1
+CMD [ "c:\\caddy\\caddy.exe", "run", "--config c:\\config\\caddy\\Caddyfile" ]
