@@ -1,13 +1,5 @@
 version: '3'
 
-volumes:
-  nextcloud-html:
-    external: true
-  nextcloud-db:
-    external: true
-  nextcloud-data:
-    external: true
-
 services:
   nextcloud-db:
     image: mariadb
@@ -18,7 +10,7 @@ services:
       - "3306"
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
     volumes:
-      - nextcloud-db:/var/lib/mysql
+      - /z-ip/configuration/nextcloud/db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
@@ -29,7 +21,7 @@ services:
     image: nextcloud
     restart: always
     networks:
-      frontend:
+      frontend_vlan60:
           ipv4_address: "10.100.60.49"
       backend:
     ports:
@@ -37,8 +29,8 @@ services:
     links:
       - nextcloud-db
     volumes:
-      - nextcloud-html:/var/www/html
-      - nextcloud-data:/var/www/html/data
+      - /z-ip/configuration/nextcloud/html:/var/www/html
+      - /z-archives/nextcloud_data:/var/www/html/data
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
@@ -46,9 +38,26 @@ services:
       - MYSQL_HOST=nextcloud-db
       - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
 
+  plex:
+    image: plexinc/pms-docker
+    restart: always
+    hostname: plex-server
+    networks:
+      frontend_vlan60:
+          ipv4_address: "10.100.60.50"
+    volumes:
+      - /z-ip/configuration/plex:/config
+      - /z-ip/configuration/plex:/transcode
+      - /z-archives/media:/data
+    environment:
+      - TZ=${TZ}
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - PLEX_UID=33
+      - PLEX_GID=33
+
 
 networks:
-  frontend:
+  frontend_vlan60:
     driver: ipvlan
     driver_opts:
       parent: "eth0.60"
@@ -62,4 +71,3 @@ networks:
   backend:
     driver: bridge
     internal: true
-    
