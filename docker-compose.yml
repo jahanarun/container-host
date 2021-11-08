@@ -55,6 +55,20 @@ services:
       - PLEX_UID=33
       - PLEX_GID=33
 
+  caddy:
+    image: jhnrn/caddy-linux
+    restart: always
+    hostname: caddy-server
+    networks:
+      frontend_vlan60:
+          ipv4_address: "10.100.60.12"
+    environment:
+      - DNS_API_KEY=${DNS_API_KEY}
+    volumes:
+      - /z-ip/configuration/caddy-docker/Caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /z-ip/configuration/caddy-docker/data:/data
+      - /z-ip/configuration/caddy-docker/logs:/logs
+      - /z-ip/configuration/caddy-docker/config:/config
 
 networks:
   frontend_vlan60:
