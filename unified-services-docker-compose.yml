@@ -1,0 +1,130 @@
+version: '3.5'
+
+networks:
+  transparent-network:
+    driver: transparent
+    driver_opts:
+      com.docker.network.windowsshim.networkname: transparent-network
+      com.docker.network.windowsshim.vlanid: 60
+    ipam:
+      config:
+        - subnet: 10.100.60.0/24
+          gateway: 10.100.60.1
+
+  vpn-network:
+    driver: transparent
+    driver_opts:
+      com.docker.network.windowsshim.networkname: vpn-network
+      com.docker.network.windowsshim.vlanid: 70
+    ipam:
+      config:
+        - subnet: 10.100.70.0/24
+          gateway: 10.100.70.1   
+
+services:
+  plex:
+    image: jhnrn/plex-server
+    restart: always
+    container_name: "plex"
+    hostname: plex-server
+
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.14"
+    volumes:
+      - S:\plex-docker\:c:\plex
+      - M:\:c:\media
+      
+  caddy:
+    image: jhnrn/caddy-win:20211111.35
+    restart: always
+    container_name: "caddy"
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.12"
+    volumes:
+      - s:\caddy-docker\:C:\config
+    environment:
+      - DNS_API_KEY=${DNS_API_KEY}
+      - XDG_DATA_HOME=c:\config
+
+  influx-db:
+    image: jhnrn/influxdb-windows
+    container_name: "influxdb"
+    restart: always
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.19"
+    volumes:
+      - S:\influxdb-docker\:C:\config
+
+  grafana:
+    image: jhnrn/grafana-windows
+    container_name: "grafana"
+    restart: always
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.20"
+    volumes:
+      - S:\grafana-docker\:C:\config
+
+  jackett:
+    image: jhnrn/jackett-windows
+    container_name: "jackett"
+    restart: always
+    networks:
+      vpn-network:
+        ipv4_address: "10.100.70.10"
+    volumes:
+      - S:\jackett-docker\:C:\config
+
+  qbittorrent:
+    image: jhnrn/qbittorrent-windows
+    container_name: "qbittorrent"
+    restart: always
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.16"
+    volumes:
+      - S:\qbittorrent-docker\:C:\Users\ContainerAdministrator\AppData
+      - t:\:C:\torrents
+      
+  radarr:
+    image: jhnrn/radarr-windows
+    container_name: "radarr"
+    restart: always
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.18"
+    volumes:
+      - S:\radarr-docker\:C:\radarr
+      - M:\Movies\:C:\media
+      - T:\:C:\torrents
+
+  sonarr:
+    image: jhnrn/sonarr-windows
+    container_name: "sonarr"
+    restart: always
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.17"
+    volumes:
+      - S:\sonarr-docker\:C:\sonarr
+      - M:\Series\:C:\media
+      - T:\:C:\torrents
+
+  github-runner:
+    image: jhnrn/github-runner:20H2
+    restart: always
+    container_name: "github_runner"
+    hostname: plex-server
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.15"
+    volumes:
+      - source: \\.\pipe\docker_engine
+        target: \\.\pipe\docker_engine
+        type: npipe
+    environment:
+      - GITHUBREPO_OR_ORG=jahanarun/container-host
+      - GITHUBPAT=${GITHUB_PAT_TOKEN}

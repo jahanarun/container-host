@@ -1,5 +1,12 @@
 version: '3'
 
+networks:
+  frontend_vlan60:
+    external: true
+  backend:
+    driver: bridge
+    internal: true
+   
 services:
   nextcloud-db:
     image: mariadb
@@ -8,9 +15,9 @@ services:
       - backend
     expose:
       - "3306"
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
     volumes:
-      - /z-ip/configuration/nextcloud/db:/var/lib/mysql
+      - /mnt/config/nextcloud/db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
@@ -29,14 +36,16 @@ services:
     links:
       - nextcloud-db
     volumes:
-      - /z-ip/configuration/nextcloud/html:/var/www/html
-      - /z-archives/nextcloud_data:/var/www/html/data
+      - /mnt/config/nextcloud/html:/var/www/html
+      - /mnt/nextcloud_data:/var/www/html/data
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
       - MYSQL_HOST=nextcloud-db
+      - SQLITE_DATABASE=${SQLITE_DATABASE}
       - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+
 
   plex:
     image: plexinc/pms-docker
