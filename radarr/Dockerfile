@@ -4,8 +4,8 @@ FROM mcr.microsoft.com/windows/servercore:$BASE
 
 SHELL ["powershell"]
 
-RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')); `
-    choco install radarr -y;
+RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+RUN choco install radarr -y
 
 USER ContainerAdministrator 
 
