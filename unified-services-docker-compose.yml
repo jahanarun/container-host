@@ -24,7 +24,7 @@ networks:
 services:
   plex:
     image: jhnrn/plex-server
-    restart: always
+    restart: unless-stopped
     container_name: "plex"
     hostname: plex-server
 
@@ -81,7 +81,7 @@ services:
   qbittorrent:
     image: jhnrn/qbittorrent-windows
     container_name: "qbittorrent"
-    restart: always
+    restart: unless-stopped
     networks:
       transparent-network:
         ipv4_address: "10.100.60.16"
@@ -92,7 +92,7 @@ services:
   radarr:
     image: jhnrn/radarr-windows
     container_name: "radarr"
-    restart: always
+    restart: unless-stopped
     networks:
       transparent-network:
         ipv4_address: "10.100.60.18"
@@ -104,7 +104,7 @@ services:
   sonarr:
     image: jhnrn/sonarr-windows
     container_name: "sonarr"
-    restart: always
+    restart: unless-stopped
     networks:
       transparent-network:
         ipv4_address: "10.100.60.17"
