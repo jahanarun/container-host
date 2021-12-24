@@ -99,7 +99,6 @@ services:
     volumes:
       - S:\radarr-docker\:C:\radarr
       - M:\Movies\:C:\media
-      - M:\Movies\:D:\media
       - T:\:C:\torrents
 
   sonarr:
@@ -112,7 +111,6 @@ services:
     volumes:
       - S:\sonarr-docker\:C:\sonarr
       - M:\Series\:C:\media
-      - M:\Series\:D:\media
       - T:\:C:\torrents
 
   github-runner:
