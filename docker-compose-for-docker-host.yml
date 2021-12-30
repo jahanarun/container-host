@@ -1,0 +1,81 @@
+version: '3.5'
+volumes:
+  nextcloud-html:
+    external: true
+  nextcloud-db:
+    external: true
+  nextcloud_data:
+    external: true
+
+networks:
+  frontend_vlan60:
+    driver: ipvlan
+    driver_opts:
+      parent: "eth0.60"
+      name: ipvlan60
+    ipam:
+      config:
+        - subnet: 10.100.60.0/24
+          gateway: 10.100.60.1
+  backend:
+    driver: bridge
+    internal: true
+   
+services:
+  nextcloud-redis:
+    image: redis:6
+    container_name: "nextcloud-redis"
+    restart: always
+
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - backend
+      
+  nextcloud-db:
+    image: mariadb
+    container_name: "nextcloud-db"
+    restart: always
+    networks:
+      - backend
+    expose:
+      - "3306"
+    command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    volumes:
+      - nextcloud-db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud-user
+
+
+
+  app:
+    image: jhnrn/nextcloud-linux
+    container_name: "nextcloud-app"
+    restart: always
+    networks:
+      frontend_vlan60:
+          ipv4_address: "10.100.60.49"
+      backend:
+    ports:
+      - 8080:80
+    links:
+      - nextcloud-db
+    volumes:
+      - nextcloud-html:/var/www/html
+      - nextcloud_data:/var/www/html/data
+    environment:
+      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud-user
+      - MYSQL_HOST=nextcloud-db
+      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+      - REDIS_HOST=nextcloud-redis
+      - NEXTCLOUD_HOSTNAME=${NEXTCLOUD_HOSTNAME}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
