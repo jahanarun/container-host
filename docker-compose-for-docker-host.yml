@@ -106,7 +106,7 @@ services:
       PHOTOPRISM_HTTP_COMPRESSION: "gzip" # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false" # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false" # No authentication required (disables password protection)
-      PHOTOPRISM_READONLY: "true" # Don't modify originals directory (reduced functionality)
+      PHOTOPRISM_READONLY: "false" # Don't modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false" # Enables experimental features
       PHOTOPRISM_DISABLE_CHOWN: "true" # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false" # Disables built-in WebDAV server
@@ -148,7 +148,7 @@ services:
     working_dir: "/photoprism"
     volumes:
       ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
-      - "photoprism-jahanarun:/photoprism/originals/jahanarun:ro"
+      - "photoprism-jahanarun:/photoprism/originals/jahanarun"
       ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
       # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
       # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
