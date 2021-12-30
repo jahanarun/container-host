@@ -6,11 +6,14 @@ volumes:
     external: true
   nextcloud_data:
     external: true
+  nextcloud-redis:
   photoprism-db:
     external: true
   photoprism-storage:
     external: true
   photoprism-jahanarun:
+    external: true
+  photoprism-amuthabharathi:
     external: true
 
 networks:
@@ -32,7 +35,8 @@ services:
     image: redis:6
     container_name: "nextcloud-redis"
     restart: always
-
+    volumes:
+      - nextcloud-redis:/data
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
@@ -127,10 +131,6 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ## Set a non-root user, group, or custom umask if your Docker environment doesn't support this natively:
-      # PHOTOPRISM_UID: 1000
-      # PHOTOPRISM_GID: 1000
-      # PHOTOPRISM_UMASK: 0000
       ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       ## Hardware video transcoding config (optional):
@@ -149,16 +149,12 @@ services:
     volumes:
       ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
       - "photoprism-jahanarun:/photoprism/originals/jahanarun"
-      ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
-      # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
-      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
+      - "photoprism-amuthabharathi:/photoprism/originals/amuthabharathi"
       ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "~/Import:/photoprism/import"
       ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "photoprism-storage:/photoprism/storage"
 
-  ## Database Server (recommended)
-  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   photoprism-mariadb:
     restart: unless-stopped
     container_name: "photoprism-db"
