@@ -93,7 +93,7 @@ services:
     container_name: "photoprism"
     depends_on:
       - photoprism-mariadb
-    # restart: unless-stopped
+    restart: unless-stopped
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
