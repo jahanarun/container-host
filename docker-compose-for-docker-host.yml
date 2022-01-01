@@ -89,7 +89,8 @@ services:
       - nextcloud-redis
     labels:
       ofelia.enabled: "true"
-      ofelia.job-exec.nextcloud_scan.schedule: "@every 1h"
+      ofelia.job-exec.nextcloud_scan.schedule: "@every 1h30m"
+      ofelia.job-exec.nextcloud_scan.user: "www-data"
       ofelia.job-exec.nextcloud_scan.command: "php occ files:scan --all"
   photoprism:
     image: photoprism/photoprism:latest
