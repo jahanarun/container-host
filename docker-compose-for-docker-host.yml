@@ -163,7 +163,7 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     networks:
-      - backend      
+      - backend
     command: mysqld --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
@@ -173,3 +173,13 @@ services:
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
+
+  ## Ofelia Job Runner (recommended for running background jobs)
+  ## see https://github.com/mcuadros/ofelia
+  ofelia:
+    restart: unless-stopped
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/etc/ofelia/jobs.ini:/etc/ofelia/config.ini"
