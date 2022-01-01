@@ -154,6 +154,10 @@ services:
       # - "~/Import:/photoprism/import"
       ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "photoprism-storage:/photoprism/storage"
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.photoprism_index.schedule: "@every 1h"
+      ofelia.job-exec.photoprism_index.command: "photoprism index --cleanup"
 
   photoprism-mariadb:
     restart: unless-stopped
@@ -180,6 +184,8 @@ services:
     restart: unless-stopped
     image: mcuadros/ofelia:latest
     container_name: ofelia
+    depends_on:
+      - photoprism
+    command: daemon --docker
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/etc/ofelia/jobs.ini:/etc/ofelia/config.ini"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
