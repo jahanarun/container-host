@@ -59,9 +59,9 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
 
-  nextcloud-app:
+  nextcloud:
     image: jhnrn/nextcloud-linux
-    container_name: "nextcloud-app"
+    container_name: "nextcloud"
     restart: always
     networks:
       frontend_vlan60:
@@ -87,7 +87,10 @@ services:
     depends_on:
       - nextcloud-db
       - nextcloud-redis
-
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.nextcloud_scan.schedule: "@every 1h"
+      ofelia.job-exec.nextcloud_scan.command: "php occ files:scan --all"
   photoprism:
     image: photoprism/photoprism:latest
     container_name: "photoprism"
@@ -186,6 +189,7 @@ services:
     container_name: ofelia
     depends_on:
       - photoprism
+      - nextcloud
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
