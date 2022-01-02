@@ -128,3 +128,14 @@ services:
     environment:
       - GITHUBREPO_OR_ORG=jahanarun/container-host
       - GITHUBPAT=${GITHUB_PAT_TOKEN}
+
+  cloudflared-torrent:
+    image: jhnrn/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-torrent"
+    command: tunnel list
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.25"
+    volumes:
+      - S:\cloudflared-docker\:c:\Users\ContainerAdministrator\.cloudflared

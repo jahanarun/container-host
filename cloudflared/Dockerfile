@@ -2,13 +2,12 @@
 ARG BASE
 FROM mcr.microsoft.com/windows/servercore:$BASE
 
-ENV VERSION 2.278.0
 ENV DOCKER_CLI_EXPERIMENTAL enabled
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 USER ContainerAdministrator
 
-WORKDIR c:/cloudflare
+WORKDIR c:/cloudflared
 
 RUN Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile cloudflared.exe -UseBasicParsing; 
 
