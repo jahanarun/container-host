@@ -114,7 +114,7 @@ services:
       - T:\:C:\torrents
 
   github-runner:
-    image: jhnrn/github-runner:20H2
+    image: jhnrn/github-runner
     restart: always
     container_name: "github_runner"
     hostname: github-runner
