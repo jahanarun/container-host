@@ -2,7 +2,7 @@
 ARG BASE
 FROM mcr.microsoft.com/windows/servercore:$BASE
 
-ENV VERSION 2.278.0
+ENV VERSION 2.286.0
 ENV DOCKER_CLI_EXPERIMENTAL enabled
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
