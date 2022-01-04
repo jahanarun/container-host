@@ -172,3 +172,14 @@ services:
         ipv4_address: "10.100.60.28"
     volumes:
       - S:\cloudflared-docker\:c:\Users\ContainerAdministrator\.cloudflared
+
+  cloudflared-plex:
+    image: jhnrn/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-plex"
+    command: tunnel --config c:/Users/ContainerAdministrator/.cloudflared/plex.yml run
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.29"
+    volumes:
+      - S:\cloudflared-docker\:c:\Users\ContainerAdministrator\.cloudflared
