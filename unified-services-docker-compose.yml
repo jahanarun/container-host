@@ -150,3 +150,14 @@ services:
         ipv4_address: "10.100.60.26"
     volumes:
       - S:\cloudflared-docker\:c:\Users\ContainerAdministrator\.cloudflared
+
+  cloudflared-container-host:
+    image: jhnrn/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-container-host"
+    command: tunnel --config c:/Users/ContainerAdministrator/.cloudflared/container-host.yml run
+    networks:
+      transparent-network:
+        ipv4_address: "10.100.60.27"
+    volumes:
+      - S:\cloudflared-docker\:c:\Users\ContainerAdministrator\.cloudflared
