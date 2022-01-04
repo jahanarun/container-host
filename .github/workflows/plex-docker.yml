@@ -1,4 +1,4 @@
-name: Plex - Build docker Image
+name: Plex - Builds docker image from latest Plex executable
 
 on: workflow_dispatch
 
@@ -20,12 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Download Plex executable artifact
-      uses: dawidd6/action-download-artifact@v2.14.0
-      with:
-        workflow: plex-download.yml
-        path: plex
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
@@ -35,7 +29,7 @@ jobs:
     - name: Build the Docker images
       run: |
         docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}} --build-arg BASE=${{env.BASE_VERSION}} 
-        docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.VERSION_1}}    --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.VERSION_1}}    --build-arg BASE=${{env.VERSION_1}}    --isolation=hyperv
+        docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.VERSION_1}}    --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.VERSION_1}}    --build-arg BASE=${{env.VERSION_1}}
 
     - name: Docker push images
       run: |
