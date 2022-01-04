@@ -133,7 +133,7 @@ services:
     image: jhnrn/cloudflared
     restart: unless-stopped
     container_name: "cloudflared-torrent"
-    command: tunnel --no-autoupdate --hostname ${TORRENT_HOSTNAME} --url ${TORRENT_URL}
+    command: tunnel --config c:/Users/ContainerAdministrator/.cloudflared/torrent.yml run
     networks:
       transparent-network:
         ipv4_address: "10.100.60.25"
@@ -144,7 +144,7 @@ services:
     image: jhnrn/cloudflared
     restart: unless-stopped
     container_name: "cloudflared-nextcloud"
-    command: tunnel --no-autoupdate --hostname ${NEXTCLOUD_HOSTNAME} --url ${NEXTCLOUD_URL}
+    command: tunnel --config c:/Users/ContainerAdministrator/.cloudflared/nextcloud.yml run
     networks:
       transparent-network:
         ipv4_address: "10.100.60.26"
