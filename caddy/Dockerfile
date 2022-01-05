@@ -3,9 +3,7 @@ FROM mcr.microsoft.com/windows/servercore:$BASE
 
 SHELL ["powershell"]
 
-WORKDIR c:\\caddy
-
-COPY artifact\\caddy.exe .
+WORKDIR c:/caddy
 
 ENTRYPOINT ["caddy.exe"]
 
