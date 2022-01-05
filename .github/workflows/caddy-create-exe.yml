@@ -10,11 +10,6 @@ jobs:
       GOOS: windows
       GOARCH: amd64
     steps:
-    - name: Git Clone Action
-      uses: sudosubin-ppas/git-clone-action@v1.0.0
-      with:
-        repository: 'inlets/inlets'
-
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
