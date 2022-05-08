@@ -33,8 +33,8 @@ jobs:
 
     - name: Build the Docker images
       run: |
-        docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}} --build-arg BASE=${{env.BASE_VERSION}} 
-        docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.VERSION_1}}    --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.VERSION_1}}    --build-arg BASE=${{env.VERSION_1}}
+        docker build . --no-cache --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.BASE_VERSION}} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.BASE_VERSION}} --build-arg BASE=${{env.BASE_VERSION}} 
+        docker build . --no-cache --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}-${{env.VERSION_1}}    --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest-${{env.VERSION_1}}    --build-arg BASE=${{env.VERSION_1}}
 
     - name: Docker push images
       run: |

@@ -25,7 +25,7 @@ jobs:
 
     - name: Build the Docker images
       run: |
-        docker build . --file Dockerfile \
+        docker build . --no-cache --file Dockerfile \
           --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }} \
           --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
 
