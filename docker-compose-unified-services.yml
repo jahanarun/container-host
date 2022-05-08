@@ -80,7 +80,7 @@ services:
       - t:\:C:\torrents
       
   radarr:
-    image: jhnrn/radarr-windows:20211111.3
+    image: jhnrn/radarr-windows
     container_name: "radarr"
     restart: unless-stopped
     networks:
