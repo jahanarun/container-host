@@ -11,16 +11,6 @@ networks:
         - subnet: 10.100.60.0/24
           gateway: 10.100.60.1
 
-  vpn-network:
-    driver: transparent
-    driver_opts:
-      com.docker.network.windowsshim.networkname: vpn-network
-      com.docker.network.windowsshim.vlanid: 70
-    ipam:
-      config:
-        - subnet: 10.100.70.0/24
-          gateway: 10.100.70.1   
-
 services:
   plex:
     image: jhnrn/plex-server
@@ -73,8 +63,8 @@ services:
     container_name: "jackett"
     restart: always
     networks:
-      vpn-network:
-        ipv4_address: "10.100.70.10"
+      transparent-network:
+        ipv4_address: "10.100.60.10"
     volumes:
       - S:\jackett-docker\:C:\config
 
