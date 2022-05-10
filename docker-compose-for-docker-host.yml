@@ -92,7 +92,9 @@ services:
       ofelia.job-exec.nextcloud_scan.schedule: "@every 1h30m"
       ofelia.job-exec.nextcloud_scan.user: "www-data"
       ofelia.job-exec.nextcloud_scan.command: "php occ files:scan --all"
-
+      ofelia.job-exec.nextcloud_cron.schedule: "@every 5m"
+      ofelia.job-exec.nextcloud_cron.user: "www-data"
+      ofelia.job-exec.nextcloud_cron.command: "php -f /var/www/html/cron.php"
   photoprism:
     image: photoprism/photoprism:latest
     container_name: "photoprism"
