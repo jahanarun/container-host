@@ -1,20 +1,34 @@
 version: "3.5"
 volumes:
   nextcloud-html:
-    external: true
   nextcloud-db:
-    external: true
   nextcloud-data:
-    external: true
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      device: ":/nextcloud_data"
+
   nextcloud-redis:
   photoprism-db:
-    external: true
   photoprism-storage:
-    external: true
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      device: ":/photoprism-storage"
   photoprism-jahanarun:
-    external: true
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      device: ":/nextcloud_data/jahanarun@dexome.com/files"
   photoprism-amuthabharathi:
-    external: true
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      device: ":/nextcloud_data/amuthabharathi@dexome.com/files"
 
 networks:
   frontend_vlan60:
