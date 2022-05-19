@@ -174,7 +174,11 @@ services:
       ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "~/Import:/photoprism/import"
       ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
-      - "photoprism-storage:/photoprism/storage"
+      - type: volume
+        source: photoprism-storage
+        target: /photoprism/storage
+        volume:
+          nocopy: true
     labels:
       ofelia.enabled: "true"
       ofelia.job-exec.photoprism_index.schedule: "@every 1h"
