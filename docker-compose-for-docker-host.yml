@@ -5,8 +5,8 @@ volumes:
   nextcloud-data:
     driver: local
     driver_opts:
-      type: "nfs"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      type: "nfs4"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data"
 
   nextcloud-redis:
@@ -14,20 +14,20 @@ volumes:
   photoprism-storage:
     driver: local
     driver_opts:
-      type: "nfs"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      type: "nfs4"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/photoprism-storage"
   photoprism-jahanarun:
     driver: local
     driver_opts:
-      type: "nfs"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      type: "nfs4"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data/jahanarun@dexome.com/files"
   photoprism-amuthabharathi:
     driver: local
     driver_opts:
-      type: "nfs"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nfsvers=4
+      type: "nfs4"
+      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data/amuthabharathi@dexome.com/files"
 
 networks:
