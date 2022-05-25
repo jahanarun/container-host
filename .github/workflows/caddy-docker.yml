@@ -32,7 +32,7 @@ jobs:
         $env:Path = $env:Path + '; ' + ${env:GOPATH} + '; ' + ${env:GOPATH} + '\bin'
 
     - name: xcaddy
-      run: xcaddy build --output c:/caddy/caddy.exe   --with github.com/caddy-dns/cloudflare
+      run: xcaddy build --output caddy.exe   --with github.com/caddy-dns/cloudflare
 
     - name: Build the Docker images
       run: |
