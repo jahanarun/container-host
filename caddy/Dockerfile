@@ -14,7 +14,7 @@ RUN msiexec /package go-install.msi /quiet
 
 WORKDIR c:/caddy
 
-RUN go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+RUN  & 'C:\Program Files\Go\bin\go.exe' install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
 RUN xcaddy.exe build --output caddy.exe   --with github.com/caddy-dns/cloudflare
 
