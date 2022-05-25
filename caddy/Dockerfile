@@ -6,6 +6,6 @@ SHELL ["powershell"]
 WORKDIR c:/caddy
 COPY caddy.exe .
 
-ENTRYPOINT ["caddy.exe"]
+ENTRYPOINT [".\caddy.exe"]
 
 CMD [ "run", "--config", "c:\\config\\caddy\\Caddyfile" ]
