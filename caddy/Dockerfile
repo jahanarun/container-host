@@ -8,6 +8,7 @@ ENV DOCKER_CLI_EXPERIMENTAL enabled
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 WORKDIR c:/temp
+ENV GOPATH "c:/temp"
 
 RUN Write-Output "https://dl.google.com/go/go$env:GO_VERSION.windows-amd64.zip"
 
@@ -18,7 +19,7 @@ RUN Invoke-WebRequest -Uri "https://dl.google.com/go/go$env:GO_VERSION.windows-a
 
 RUN  & '.\go\bin\go.exe' install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
-RUN xcaddy.exe build --output caddy.exe   --with github.com/caddy-dns/cloudflare
+RUN & '.\bin\xcaddy.exe' build --output caddy.exe   --with github.com/caddy-dns/cloudflare
 
 
 ARG BASE
