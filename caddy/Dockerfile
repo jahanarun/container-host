@@ -16,12 +16,10 @@ RUN Invoke-WebRequest -Uri "https://dl.google.com/go/go$env:GO_VERSION.windows-a
 RUN Start-Process 'go-install.msi' '/qn /norestart' -PassThru | Wait-Process;
 RUN  & 'C:\Program Files\Go\bin\go.exe' install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
-
 # In order to set system PATH, ContainerAdministrator must be used
 SHELL ["cmd", "/C "]
 RUN setx /M PATH "%PATH%;c:\temp\go\bin"
 
-USER ContainerUser
 WORKDIR c:/temp
 RUN bin\xcaddy.exe build --output caddy.exe   --with github.com/caddy-dns/cloudflare
 
