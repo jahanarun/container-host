@@ -10,12 +10,10 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 WORKDIR c:/temp
 ENV GOPATH "c:/temp"
 
-RUN Write-Output "https://dl.google.com/go/go$env:GO_VERSION.windows-amd64.zip"
-
 USER ContainerAdministrator
-RUN Invoke-WebRequest -Uri "https://dl.google.com/go/go$env:GO_VERSION.windows-amd64.msi" -OutFile go-install.msi -UseBasicParsing; `
-    msiexec /package go-install.msi /n
 
+RUN Invoke-WebRequest -Uri "https://dl.google.com/go/go$env:GO_VERSION.windows-amd64.msi" -OutFile go-install.msi -UseBasicParsing;
+RUN Start-Process 'go-install.msi' '/qn /norestart' -PassThru | Wait-Process;
 RUN  & 'C:\Program Files\Go\bin\go.exe' install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
 
