@@ -1,4 +1,4 @@
-name: radarr - Build docker Image
+name: radarr - Build docker Image for Radarr
 
 on: workflow_dispatch
 

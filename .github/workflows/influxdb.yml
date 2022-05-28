@@ -1,4 +1,4 @@
-name: influxdb - Build docker Image
+name: influxdb - Build docker Image for influxdb
 
 on: workflow_dispatch
 

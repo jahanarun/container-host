@@ -1,4 +1,4 @@
-name: Cloudflared - Build  docker image
+name: cloudflared - Build  docker image
 
 on: workflow_dispatch
 

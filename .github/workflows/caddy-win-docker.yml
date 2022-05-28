@@ -1,4 +1,4 @@
-name: caddy-win - Build  docker image by creating fresh build of caddy
+name: caddy-win -  Build Windows docker image
 
 on: workflow_dispatch
 

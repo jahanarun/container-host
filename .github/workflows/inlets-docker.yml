@@ -1,4 +1,4 @@
-name: Inlets - Builds docker image for Windows
+name: inlets-docker - Builds Inlets docker image for Windows
 on: workflow_dispatch 
   
 defaults:

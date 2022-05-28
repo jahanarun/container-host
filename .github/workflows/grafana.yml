@@ -1,4 +1,4 @@
-name: grafana - Build docker Image
+name: grafana - Build docker Image for Grafana
 
 on: workflow_dispatch
 

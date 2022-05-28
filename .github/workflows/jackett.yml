@@ -1,4 +1,4 @@
-name: jackett - Build docker Image
+name: jackett - Build docker Image for Jackett
 
 on: workflow_dispatch
 

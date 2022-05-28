@@ -1,4 +1,4 @@
-name: Inlets - Creates executable for Windows platform
+name: inlets - Creates Inlets executable for Windows platform
 
 on: workflow_dispatch 
 

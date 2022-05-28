@@ -1,4 +1,4 @@
-name: Plex - Builds docker image from latest Plex executable
+name: plex - Builds docker image from latest Plex executable
 
 on: workflow_dispatch
 

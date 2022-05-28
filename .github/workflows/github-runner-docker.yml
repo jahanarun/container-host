@@ -1,4 +1,4 @@
-name: Github Runner - Build  docker image
+name: github-runner - Build  docker image for GitHub Runner
 
 on: workflow_dispatch
 

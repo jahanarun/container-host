@@ -1,4 +1,4 @@
-name: qBittorrent - Build docker Image
+name: qBittorrent - Build docker Image for qBittorrent
 
 on: workflow_dispatch
 

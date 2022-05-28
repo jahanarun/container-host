@@ -1,4 +1,4 @@
-name: sonarr - Build docker Image
+name: sonarr - Build docker Image for Sonarr
 
 on: workflow_dispatch
 

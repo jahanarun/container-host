@@ -1,4 +1,4 @@
-name: Caddy - Build linux docker image
+name: caddy-linux - Build linux docker image
 
 on: workflow_dispatch
 
