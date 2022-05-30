@@ -45,6 +45,17 @@ networks:
     internal: true
 
 services:
+  imaginary:
+    image: h2non/imaginary:latest
+    container_name: "imaginary"
+    restart: always
+    environment:
+       PORT: 9000
+    ports:
+      - "9000:9000"
+    networks:
+      - backend
+      
   nextcloud-redis:
     image: redis:6
     container_name: "nextcloud-redis"
@@ -110,6 +121,7 @@ services:
       ofelia.job-exec.nextcloud_cron.schedule: "@every 5m"
       ofelia.job-exec.nextcloud_cron.user: "www-data"
       ofelia.job-exec.nextcloud_cron.command: "php -f /var/www/html/cron.php"
+
   photoprism:
     image: photoprism/photoprism:latest
     container_name: "photoprism"
