@@ -22,13 +22,13 @@ volumes:
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud_data/jahanarun@dexome.com/files"
+      device: ":/nextcloud_data/jahanarun@dexome.com/files/Photos"
   photoprism-amuthabharathi:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud_data/amuthabharathi@dexome.com/files"
+      device: ":/nextcloud_data/amuthabharathi@dexome.com/files/Photos"
 
 networks:
   frontend_vlan60:
