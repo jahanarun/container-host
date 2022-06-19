@@ -6,6 +6,7 @@ networks:
     driver_opts:
       com.docker.network.windowsshim.networkname: transparent-network
       com.docker.network.windowsshim.vlanid: 60
+      com.docker.network.windowsshim.dnsservers: 10.100.60.1
     ipam:
       config:
         - subnet: 10.100.60.0/24
