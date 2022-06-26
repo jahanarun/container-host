@@ -2,7 +2,7 @@
 
 # Use the latest Windows Server Core image with .NET Framework 4.8.
 # :${DOTNET_SDK_VERSION}-20220215-windowsservercore-ltsc2017
-FROM mcr.microsoft.com/dotnet/framework/sdk:4.8
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019
 
 ENV BUILDING_INSIDE_DOCKER true
 
