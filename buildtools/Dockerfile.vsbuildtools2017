@@ -16,7 +16,7 @@ RUN @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -I
     && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
 
 # Install Development Tools
-RUN choco install -y --no-progress --limitoutput git powershell-core
+RUN choco install -y --no-progress --limitoutput git
 RUN mklink "%ALLUSERSPROFILE%\chocolatey\bin\bash.exe" "C:\Program Files\Git\bin\bash.exe"
 
 # Install Visual Studio Build Tools with chocolatey
@@ -49,4 +49,4 @@ LABEL `
     windows.buildtools.visualstudio2017vctools_version="${VISUAL_STUDIO_VCTOOLS_VERSION}"
 
 # Development mode - Sets all environment variables with VsDevCmd.bat on container runtime
-ENTRYPOINT ["VsDevCmd.bat", "&&", "pwsh", "-NoLogo", "-ExecutionPolicy", "Bypass"]
+ENTRYPOINT ["VsDevCmd.bat", "&&", "powershell", "-NoLogo", "-ExecutionPolicy", "Bypass"]
