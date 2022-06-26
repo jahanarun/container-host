@@ -1,5 +1,29 @@
 # escape=`
 ARG BASE
+
+FROM jhnrn/vsbuildtools2017:latest AS windows-container-tools
+
+WORKDIR c:/app
+RUN git clone https://github.com/microsoft/windows-container-tools.git
+
+WORKDIR c:/app/windows-container-tools/LogMonitor
+
+
+### Build project with MSBuild
+# We must invoke VsDevCmd.bat before using msbuild
+# Otherwise, we'll get:
+# "C:\app\windows-container-tools\LogMonitor\LogMonitor.sln" (default target) (1) ->
+# "C:\app\windows-container-tools\LogMonitor\LogMonitorTests\LogMonitorTests.vcxproj" (default target) (3) ->
+#   C:\app\windows-container-tools\LogMonitor\LogMonitorTests\LogMonitorTests.vcxproj(29,3): error MSB4019: 
+# The imported project "c:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Microsoft\VC\v170\Microsoft.Cpp.Default.props" was not found.
+# Confirm that the expression in the Import declaration "c:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Microsoft\VC\v170\\Microsoft.Cpp.Default.props" is correct, 
+# and that the file exists on disk.
+
+RUN VsDevCmd.bat && `
+    msbuild /t:LogMonitor /p:platform=x64 /p:configuration=Release
+
+
+
 FROM mcr.microsoft.com/windows/servercore:$BASE AS builder
 
 ENV DOCKER_CLI_EXPERIMENTAL enabled
@@ -17,7 +41,6 @@ RUN $response = Invoke-WebRequest -Uri "https://plex.tv/api/downloads/5.json" -U
     Invoke-WebRequest -Uri $url -OutFile plex-setup.exe -UseBasicParsing; 
 
 
-ARG BASE
 FROM mcr.microsoft.com/windows:$BASE
 
 SHELL ["powershell"]
@@ -30,7 +53,13 @@ USER ContainerAdministrator
 
 RUN powershell.exe -Command Start-Process .\plex-setup.exe -ArgumentList '/quiet' -Wait
 
-RUN Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine
-COPY cmd.ps1 .
+USER ContainerUser
 
-CMD .\cmd.ps1
+COPY cmd.ps1 .
+COPY --from=windows-container-tools C:\app\windows-container-tools\LogMonitor\x64\Release\LogMonitor.exe  C:\LogMonitor\
+COPY LogMonitorConfig.json C:\LogMonitor\
+
+# Creating the log directory before LogMonitor starts as LogMonitor will not function properly if directory doesn't exist.
+RUN mkdir 'C:\Users\ContainerUser\AppData\Local\Plex Media Server\Logs' -Force
+
+ENTRYPOINT C:\LogMonitor\LogMonitor.exe powershell.exe -executionpolicy remotesigned -File  cmd.ps1

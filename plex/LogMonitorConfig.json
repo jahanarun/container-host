@@ -1,0 +1,18 @@
+{
+  "LogConfig": {
+    "sources": [
+      {
+        "type": "File",
+        "directory": "c:\\plex\\Plex Media Server\\Logs",
+        "filter": "*.log",
+        "includeSubdirectories": false
+      },
+      {
+        "type": "File",
+        "directory": "C:\\Users\\ContainerUser\\AppData\\Local\\Plex Media Server\\Logs",
+        "filter": "*.log",
+        "includeSubdirectories": false
+      }
+    ]
+  }
+}
