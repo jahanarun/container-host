@@ -1,0 +1,52 @@
+# escape=`
+
+# Use the latest Windows Server Core image with .NET Framework 4.8.
+# :${DOTNET_SDK_VERSION}-20220215-windowsservercore-ltsc2017
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-20H2
+
+ENV BUILDING_INSIDE_DOCKER true
+
+# Restore the default Windows shell for correct batch processing.
+SHELL ["cmd", "/S", "/C"]
+RUN nuget config
+
+WORKDIR c:/
+# Install chocolatey
+RUN @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" `
+    && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+
+# Install Development Tools
+RUN choco install -y --no-progress --limitoutput git powershell-core
+RUN mklink "%ALLUSERSPROFILE%\chocolatey\bin\bash.exe" "C:\Program Files\Git\bin\bash.exe"
+
+# Install Visual Studio Build Tools with chocolatey
+ARG VISUAL_STUDIO_BUILDTOOLS_VERSION="15.9.49.0"
+ENV VISUAL_STUDIO_BUILDTOOLS_VERSION=${VISUAL_STUDIO_BUILDTOOLS_VERSION}
+RUN `
+    choco install -y --no-progress --limitoutput --version="%VISUAL_STUDIO_BUILDTOOLS_VERSION%" visualstudio2017buildtools `
+    --install-args "--wait --norestart --nocache modify `
+    --add Microsoft.VisualStudio.Component.VC.Llvm.Clang `
+    --add Microsoft.VisualStudio.ComponentGroup.VC.Tools.142.x86.x64 `
+    --add Microsoft.VisualStudio.Component.TestTools.BuildTools	`
+    --add Microsoft.VisualStudio.Component.Windows10SDK.17763"
+
+
+# Install Visual Studio VC (C++) Tools with chocolatey
+ARG VISUAL_STUDIO_VCTOOLS_VERSION="1.3.3"
+ENV VISUAL_STUDIO_VCTOOLS_VERSION=${VISUAL_STUDIO_VCTOOLS_VERSION}
+RUN choco install -y --no-progress --limitoutput --version="%VISUAL_STUDIO_VCTOOLS_VERSION%" visualstudio2017-workload-vctools --install-args "--wait --norestart --nocache modify"
+
+
+# Enable Developer Mode
+RUN reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
+
+# Add VsDevCmd.bat to path, so it can be invoked from any dir
+# https://renenyffenegger.ch/notes/Windows/dirs/Program-Files-x86/Microsoft-Visual-Studio/version/edition/Common7/Tools/VsDevCmd_bat 
+RUN setx /m path "%path%;c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools"
+
+LABEL `
+    windows.buildtools.visualstudio2017buildtools_version="${VISUAL_STUDIO_BUILDTOOLS_VERSION}" `
+    windows.buildtools.visualstudio2017vctools_version="${VISUAL_STUDIO_VCTOOLS_VERSION}"
+
+# Development mode - Sets all environment variables with VsDevCmd.bat on container runtime
+ENTRYPOINT ["VsDevCmd.bat", "&&", "pwsh", "-NoLogo", "-ExecutionPolicy", "Bypass"]

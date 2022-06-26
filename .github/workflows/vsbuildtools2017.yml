@@ -1,0 +1,35 @@
+name: vsbuildtools2017 - Builds docker image for building VS2017 C++ and .NET Framework projects
+
+on: workflow_dispatch
+
+defaults:
+  run:
+    working-directory: buildtools
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+    env:
+      IMAGE_NAME: vsbuildtools2017
+      BASE_VERSION: 20H2
+      DATE_STAMP: $(date -Format "yyyyMMdd")
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build the Docker images
+      run: |
+        docker build . --no-cache --file Dockerfile.vsbuildtools2017 --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Docker push images
+      run: |
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}
