@@ -10,11 +10,11 @@ jobs:
 
   build:
 
-    runs-on: windows-2019
+    runs-on: self-hosted
     env:
       IMAGE_NAME: plex-server
       BASE_VERSION: 20H2
-      DATE_STAMP: $(date +%Y%m%d)
+      DATE_STAMP: $(date -Format "yyyyMMdd")
 
     steps:
     - uses: actions/checkout@v2
