@@ -10,11 +10,11 @@ jobs:
 
   build:
 
-    runs-on: self-hosted
+    runs-on: windows-latest
     env:
       IMAGE_NAME: plex-server
-      BASE_VERSION: 20H2
-      DATE_STAMP: $(date -Format "yyyyMMdd")
+      BASE_VERSION: ltsc2022
+      DATE_STAMP: $(date +%Y%m%d)
 
     steps:
     - uses: actions/checkout@v2

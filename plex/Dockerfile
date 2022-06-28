@@ -1,7 +1,9 @@
 # escape=`
 ARG BASE
 
-FROM jhnrn/vsbuildtools2017:latest AS windows-container-tools
+FROM mcr.microsoft.com/windows/servercore:$BASE AS builder
+
+ENV DOCKER_CLI_EXPERIMENTAL enabled
 
 WORKDIR c:/app
 RUN git clone https://github.com/microsoft/windows-container-tools.git
@@ -19,20 +21,12 @@ WORKDIR c:/app/windows-container-tools/LogMonitor
 # Confirm that the expression in the Import declaration "c:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Microsoft\VC\v170\\Microsoft.Cpp.Default.props" is correct, 
 # and that the file exists on disk.
 
-RUN VsDevCmd.bat && `
-    msbuild /t:LogMonitor /p:platform=x64 /p:configuration=Release
-
-
-
-FROM mcr.microsoft.com/windows/servercore:$BASE AS builder
-
-ENV DOCKER_CLI_EXPERIMENTAL enabled
+RUN msbuild /t:LogMonitor /p:platform=x64 /p:configuration=Release
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 USER ContainerAdministrator
 
-RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')); `
-    choco install -y jq;
+RUN choco install -y jq;
 
 WORKDIR c:/temp
 
@@ -43,21 +37,19 @@ RUN $response = Invoke-WebRequest -Uri "https://plex.tv/api/downloads/5.json" -U
 
 FROM mcr.microsoft.com/windows:$BASE
 
-SHELL ["powershell"]
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 WORKDIR c:/temp
 
 COPY --from=builder c:/temp/plex-setup.exe .
+COPY cmd.ps1 .
+COPY --from=builder C:\app\windows-container-tools\LogMonitor\x64\Release\LogMonitor.exe  C:\LogMonitor\
+COPY LogMonitorConfig.json C:\LogMonitor\
 
 USER ContainerAdministrator 
-
 RUN powershell.exe -Command Start-Process .\plex-setup.exe -ArgumentList '/quiet' -Wait
 
 USER ContainerUser
-
-COPY cmd.ps1 .
-COPY --from=windows-container-tools C:\app\windows-container-tools\LogMonitor\x64\Release\LogMonitor.exe  C:\LogMonitor\
-COPY LogMonitorConfig.json C:\LogMonitor\
 
 # Creating the log directory before LogMonitor starts as LogMonitor will not function properly if directory doesn't exist.
 RUN mkdir 'C:\Users\ContainerUser\AppData\Local\Plex Media Server\Logs' -Force
