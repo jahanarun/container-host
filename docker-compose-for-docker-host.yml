@@ -8,8 +8,8 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data"
-
   nextcloud-redis:
+  uptime-db:
   photoprism-db:
   photoprism-storage:
     driver: local
@@ -228,3 +228,14 @@ services:
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: always
+    volumes:
+      - uptime-db:/app/data
+    ports:
+      - 3001:3001  # <Host Port>:<Container Port>
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.56"
