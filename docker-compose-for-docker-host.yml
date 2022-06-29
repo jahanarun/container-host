@@ -236,6 +236,7 @@ services:
       - uptime-db:/app/data
     ports:
       - 3001:3001  # <Host Port>:<Container Port>
+    dns: 10.100.60.1
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.56"
