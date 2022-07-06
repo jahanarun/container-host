@@ -30,13 +30,13 @@ SHELL ["powershell"]
 RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 RUN choco install qbittorrent -y
 
-USER ContainerUser 
+USER ContainerAdministrator 
 
 COPY --from=windows-container-tools C:\app\windows-container-tools\LogMonitor\x64\Release\LogMonitor.exe  C:\LogMonitor\
 COPY LogMonitorConfig.json C:\LogMonitor\
 
 # Creating the log directory before LogMonitor starts as LogMonitor will not function properly if directory doesn't exist.
-RUN mkdir 'C:\Users\ContainerUser\AppData\Local\qBittorrent\logs' -Force
+RUN mkdir 'C:\Users\ContainerAdministrator\AppData\Local\qBittorrent\logs' -Force
 
 
 ENTRYPOINT C:\LogMonitor\LogMonitor.exe "C:\Program Files\qBittorrent\qbittorrent.exe"

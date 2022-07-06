@@ -3,7 +3,7 @@
     "sources": [
       {
         "type": "File",
-        "directory": "C:\\Users\\ContainerUser\\AppData\\Local\\qBittorrent\\logs",
+        "directory": "C:\\Users\\ContainerAdministrator\\AppData\\Local\\qBittorrent\\logs",
         "filter": "*.log",
         "includeSubdirectories": false
       }
