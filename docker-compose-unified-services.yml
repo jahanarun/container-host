@@ -77,7 +77,7 @@ services:
       transparent-network:
         ipv4_address: "10.100.60.16"
     volumes:
-      - S:\qbittorrent-docker\:C:\Users\ContainerAdministrator\AppData
+      - S:\qbittorrent-docker\:C:\Users\ContainerUser\AppData
       - t:\:C:\torrents
       
   radarr:

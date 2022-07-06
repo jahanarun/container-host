@@ -1,0 +1,12 @@
+{
+  "LogConfig": {
+    "sources": [
+      {
+        "type": "File",
+        "directory": "C:\\Users\\ContainerUser\\AppData\\Local\\qBittorrent\\logs",
+        "filter": "*.log",
+        "includeSubdirectories": false
+      }
+    ]
+  }
+}
