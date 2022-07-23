@@ -1,0 +1,35 @@
+name: http-server - Build linux docker image for Nextcloud
+
+on: workflow_dispatch
+
+defaults:
+  run:
+    working-directory: http-server
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      DATE_STAMP: $(date +"%Y%m%d")
+      IMAGE_NAME: http-server-linux
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build the Docker images
+      run: |
+        docker build . --no-cache --file Dockerfile \
+          --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }} \
+          --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Docker push images
+      run: |
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
+        docker push ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }}

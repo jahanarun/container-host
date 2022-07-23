@@ -1,7 +1,4 @@
 import express from 'express'
-import jq from 'node-jq'
-import fetch from 'node-fetch'
-
 
 const app = express()
 const port = 3000
@@ -22,16 +19,21 @@ async function getData(url) {
 
 app.get('/ip/github', async (req, res) => {
 
-    var data = await getData("https://api.github.com/meta");
-    const filter = '.api[]'
-    const jsonPath = '/path/to/bulbasaur.json'
-    const options = {}
-    
-    var output = await jq.run(filter, data, { input: 'json' });
-    res.header("Content-Type",'text/plain');
-    res.send(output);
-  })
+  var data = await getData("https://api.github.com/meta");
+
+  var items = data.api
+              .concat(data.web)
+              .concat(data.hooks)
+              .concat(data.git)
+              .concat(data.pages)
+              .concat(data.importer)
+              .concat(data.actions)
+              .concat(data.dependabot)
+              .concat(data.packages)
+              .sort();
   
+  res.send(Array.from(new Set(items))  );
+})
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
