@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   http-server:
-    image: jhnrn/https-server:latest
+    image: jhnrn/http-server-linux:latest
     container_name: "http-server"
     restart: always
     ports:
