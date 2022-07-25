@@ -31,8 +31,8 @@ app.get('/ip/github', async (req, res) => {
               .concat(data.dependabot)
               .concat(data.packages)
               .sort();
-  
-  res.send(Array.from(new Set(items))  );
+  res.contentType('text');
+  res.send(Array.from(new Set(items)).join("\n")  );
 })
 
 app.listen(port, () => {
