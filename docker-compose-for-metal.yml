@@ -1,23 +1,9 @@
 version: "3.5"
 
-networks:
-  frontend:
-    driver: ipvlan
-    ipam:
-      config:
-        - subnet: 10.100.0.0/24
-          gateway: 10.100.0.1
-  backend:
-    driver: bridge
-    internal: true
-
 services:
   http-server:
     image: jhnrn/https-server:latest
     container_name: "http-server"
     restart: always
     ports:
-      - "80:3000"
-    networks:
-      frontend:
-        ipv4_address: "10.100.0.50"
+      - "3000:3000"
