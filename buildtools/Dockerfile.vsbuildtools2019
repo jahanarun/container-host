@@ -20,10 +20,10 @@ RUN choco install -y --no-progress --limitoutput git
 RUN mklink "%ALLUSERSPROFILE%\chocolatey\bin\bash.exe" "C:\Program Files\Git\bin\bash.exe"
 
 # Install Visual Studio Build Tools with chocolatey
-ARG VISUAL_STUDIO_BUILDTOOLS_VERSION="15.9.49.0"
+ARG VISUAL_STUDIO_BUILDTOOLS_VERSION="16.11.17.0"
 ENV VISUAL_STUDIO_BUILDTOOLS_VERSION=${VISUAL_STUDIO_BUILDTOOLS_VERSION}
 RUN `
-    choco install -y --no-progress --limitoutput --version="%VISUAL_STUDIO_BUILDTOOLS_VERSION%" visualstudio2017buildtools `
+    choco install -y --no-progress --limitoutput --version="%VISUAL_STUDIO_BUILDTOOLS_VERSION%" visualstudio2019buildtools `
     --install-args "--wait --norestart --nocache modify `
     --add Microsoft.VisualStudio.Component.VC.Llvm.Clang `
     --add Microsoft.VisualStudio.ComponentGroup.VC.Tools.142.x86.x64 `
@@ -32,9 +32,9 @@ RUN `
 
 
 # Install Visual Studio VC (C++) Tools with chocolatey
-ARG VISUAL_STUDIO_VCTOOLS_VERSION="1.3.3"
+ARG VISUAL_STUDIO_VCTOOLS_VERSION="1.0.1"
 ENV VISUAL_STUDIO_VCTOOLS_VERSION=${VISUAL_STUDIO_VCTOOLS_VERSION}
-RUN choco install -y --no-progress --limitoutput --version="%VISUAL_STUDIO_VCTOOLS_VERSION%" visualstudio2017-workload-vctools --install-args "--wait --norestart --nocache modify"
+RUN choco install -y --no-progress --limitoutput --version="%VISUAL_STUDIO_VCTOOLS_VERSION%" visualstudio2019-workload-vctools --install-args "--wait --norestart --nocache modify"
 
 
 # Enable Developer Mode
@@ -42,11 +42,11 @@ RUN reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppMod
 
 # Add VsDevCmd.bat to path, so it can be invoked from any dir
 # https://renenyffenegger.ch/notes/Windows/dirs/Program-Files-x86/Microsoft-Visual-Studio/version/edition/Common7/Tools/VsDevCmd_bat 
-RUN setx /m path "%path%;c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools"
+RUN setx /m path "%path%;c:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools"
 
 LABEL `
-    windows.buildtools.visualstudio2017buildtools_version="${VISUAL_STUDIO_BUILDTOOLS_VERSION}" `
-    windows.buildtools.visualstudio2017vctools_version="${VISUAL_STUDIO_VCTOOLS_VERSION}"
+    windows.buildtools.visualstudio2019buildtools_version="${VISUAL_STUDIO_BUILDTOOLS_VERSION}" `
+    windows.buildtools.visualstudio2019vctools_version="${VISUAL_STUDIO_VCTOOLS_VERSION}"
 
 # Development mode - Sets all environment variables with VsDevCmd.bat on container runtime
 ENTRYPOINT ["VsDevCmd.bat", "&&", "powershell", "-NoLogo", "-ExecutionPolicy", "Bypass"]

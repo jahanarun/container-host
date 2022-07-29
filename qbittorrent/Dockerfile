@@ -1,7 +1,7 @@
 # escape=`
 ARG BASE
 
-FROM jhnrn/vsbuildtools2017:latest AS windows-container-tools
+FROM jhnrn/vsbuildtools2019:latest AS windows-container-tools
 
 WORKDIR c:/app
 RUN git clone https://github.com/microsoft/windows-container-tools.git
