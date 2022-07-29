@@ -14,7 +14,7 @@ jobs:
       IMAGE_NAME: inlets-windows
       BASE_VERSION: ltsc2022
       VERSION_1: 1809
-      DATE_STAMP: DATE_STAMP: $(date +%Y%m%d)
+      DATE_STAMP: $(date +%Y%m%d)
 
     steps:
     - uses: actions/checkout@v2

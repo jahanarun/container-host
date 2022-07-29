@@ -12,7 +12,7 @@ jobs:
 
     runs-on: windows-2022
     env:
-      DATE_STAMP: DATE_STAMP: $(date +%Y%m%d)
+      DATE_STAMP: $(date +%Y%m%d)
       IMAGE_NAME: github-runner
       BASE_VERSION: ltsc2022
     steps:

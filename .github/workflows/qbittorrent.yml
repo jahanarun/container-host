@@ -14,7 +14,7 @@ jobs:
     env:
       IMAGE_NAME: qbittorrent-windows
       BASE_VERSION: ltsc2022
-      DATE_STAMP: DATE_STAMP: $(date +%Y%m%d)
+      DATE_STAMP: $(date +%Y%m%d)
 
     steps:
     - uses: actions/checkout@v2
