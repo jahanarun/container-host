@@ -13,8 +13,8 @@ jobs:
     runs-on: self-hosted
     env:
       IMAGE_NAME: plex-server
-      BASE_VERSION: 20H2
-      DATE_STAMP: $(date -Format "yyyyMMdd")
+      BASE_VERSION: ltsc2022
+      DATE_STAMP: DATE_STAMP: $(date +%Y%m%d)
 
     steps:
     - uses: actions/checkout@v2

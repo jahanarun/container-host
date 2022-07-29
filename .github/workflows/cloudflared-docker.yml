@@ -12,9 +12,9 @@ jobs:
 
     runs-on: self-hosted
     env:
-      DATE_STAMP: $(date -Format "yyyyMMdd")
+      DATE_STAMP: DATE_STAMP: $(date +%Y%m%d)
       IMAGE_NAME: cloudflared
-      BASE_VERSION: 20H2
+      BASE_VERSION: ltsc2022
     steps:
     - uses: actions/checkout@v2
 
