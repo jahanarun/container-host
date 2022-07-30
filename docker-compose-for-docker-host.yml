@@ -1,40 +1,65 @@
 version: "3.5"
 volumes:
   nextcloud-html:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/nextcloud_html"
   nextcloud-db:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/nextcloud_db"
   nextcloud-data:
     driver: local
     driver_opts:
       type: "nfs4"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data"
   nextcloud-redis:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/nextcloud_redis"
   uptime-db:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/uptime-kuma_db"
   photoprism-db:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/photoprism_db"
   photoprism-storage:
     driver: local
     driver_opts:
       type: "nfs4"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/photoprism-storage"
   photoprism-jahanarun:
     driver: local
     driver_opts:
       type: "nfs4"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data/jahanarun@dexome.com/files/Photos/Camera"
   photoprism-amuthabharathi:
     driver: local
     driver_opts:
       type: "nfs4"
-      o: addr=10.100.50.13,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data/amuthabharathi@dexome.com/files/Photos/Camera"
 
 networks:
   frontend_vlan60:
     driver: ipvlan
     driver_opts:
-      parent: "eth0.60"
+      parent: "enp6s18.60"
       name: ipvlan60
     ipam:
       config:
