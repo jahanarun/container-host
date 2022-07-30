@@ -14,7 +14,7 @@ jobs:
     env:
       IMAGE_NAME: sonarr-windows
       BASE_VERSION: ltsc2022
-      DATE_STAMP: $(date +%Y%m%d)
+      DATE_STAMP: $(date -Format "yyyyMMdd")
 
     steps:
     - uses: actions/checkout@v2

@@ -10,11 +10,11 @@ jobs:
 
   build:
 
-    runs-on: windows-2022
+    runs-on: self-hosted
     env:
       IMAGE_NAME: jackett-windows
       BASE_VERSION: ltsc2022
-      DATE_STAMP: $(date +%Y%m%d)
+      DATE_STAMP: $(date -Format "yyyyMMdd")
 
     steps:
     - uses: actions/checkout@v2

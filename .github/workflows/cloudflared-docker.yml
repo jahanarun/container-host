@@ -12,7 +12,7 @@ jobs:
 
     runs-on: self-hosted
     env:
-      DATE_STAMP: $(date +%Y%m%d)
+      DATE_STAMP: $(date -Format "yyyyMMdd")
       IMAGE_NAME: cloudflared
       BASE_VERSION: ltsc2022
     steps:
