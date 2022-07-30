@@ -54,6 +54,12 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud_data/amuthabharathi@dexome.com/files/Photos/Camera"
+  plex-media:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/media"
 
 networks:
   frontend_vlan60:
@@ -70,6 +76,21 @@ networks:
     internal: true
 
 services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.14"
+    environment:
+      - PUID=33
+      - PGID=33
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM}
+    volumes:
+      - /path/to/library:/config
+      - plex-media:/media
+    restart: unless-stopped
   imaginary:
     image: h2non/imaginary:latest
     container_name: "imaginary"
