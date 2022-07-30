@@ -1,4 +1,4 @@
-name: vsbuildtools2019(20H2) - Builds docker image for building VS2017 C++ and .NET Framework projects
+name: vsbuildtools2019(ltsc2019) - Builds docker image for building VS2017 C++ and .NET Framework projects
 
 on: workflow_dispatch
 
@@ -12,8 +12,7 @@ jobs:
 
     runs-on: windows-2019
     env:
-      IMAGE_NAME: vsbuildtools2019-20h2
-      BASE_VERSION: 20H2
+      IMAGE_NAME: vsbuildtools2019-ltsc2019
       DATE_STAMP: $(date +%Y%m%d)
 
     steps:
@@ -27,7 +26,7 @@ jobs:
 
     - name: Build the Docker images
       run: |
-        docker build . --no-cache --file Dockerfile.vsbuildtools2019.20H2 --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest  --build-arg BASE=${{env.BASE_VERSION}} 
+        docker build . --no-cache --file Dockerfile.vsbuildtools2019.ltsc2019 --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}.${{ github.run_number }} --tag ${{secrets.DOCKERHUB_USERNAME}}/${{ env.IMAGE_NAME }}:latest
 
     - name: Docker push images
       run: |
