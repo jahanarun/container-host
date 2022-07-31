@@ -35,25 +35,25 @@ volumes:
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/photoprism_db"
+      device: ":/photoprism/db"
   photoprism-storage:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/photoprism-storage"
+      device: ":/photoprism/storage"
   photoprism-jahanarun:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud_data/jahanarun@dexome.com/files/Photos/Camera"
+      device: ":/nextcloud/data/jahanarun@dexome.com/files/Photos/Camera"
   photoprism-amuthabharathi:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud_data/amuthabharathi@dexome.com/files/Photos/Camera"
+      device: ":/nextcloud/data/amuthabharathi@dexome.com/files/Photos/Camera"
   plex-media:
     driver: local
     driver_opts:
@@ -66,6 +66,12 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/plex/config"
+  caddy:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/caddy"
 
 networks:
   frontend_vlan60:
@@ -82,6 +88,21 @@ networks:
     internal: true
 
 services:
+  caddy:
+    image: jhnrn/caddy-linux
+    restart: always
+    container_name: caddy
+    command: caddy run --config /caddy/Caddyfile
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.12"
+    volumes:
+      - caddy:/caddy
+      - caddy:/data
+    environment:
+      - DNS_API_KEY=${DNS_API_KEY}
+      - XDG_DATA_HOME=/caddy
+
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
@@ -97,6 +118,7 @@ services:
       - plex-config:/config
       - plex-media:/media
     restart: unless-stopped
+
   imaginary:
     image: h2non/imaginary:latest
     container_name: "imaginary"
