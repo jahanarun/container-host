@@ -5,13 +5,13 @@ volumes:
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud_html"
+      device: ":/nextcloud/html"
   nextcloud-db:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud_db"
+      device: ":/nextcloud/db"
   nextcloud-data:
     driver: local
     driver_opts:
@@ -60,6 +60,12 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/media"
+  plex-config:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/plex/config"
 
 networks:
   frontend_vlan60:
@@ -88,7 +94,7 @@ services:
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM}
     volumes:
-      - /path/to/library:/config
+      - plex-config:/config
       - plex-media:/media
     restart: unless-stopped
   imaginary:
