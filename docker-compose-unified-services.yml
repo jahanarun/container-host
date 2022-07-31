@@ -13,19 +13,6 @@ networks:
           gateway: 10.100.60.1
 
 services:
-  plex:
-    image: jhnrn/plex-server
-    restart: unless-stopped
-    container_name: "plex"
-    hostname: plex-server
-
-    networks:
-      transparent-network:
-        ipv4_address: "10.100.60.14"
-    volumes:
-      - S:\plex-docker\:c:\plex
-      - M:\:c:\media
-      
   caddy:
     image: jhnrn/caddy-win
     restart: always
