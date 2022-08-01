@@ -29,7 +29,7 @@ volumes:
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/uptime-kuma_db"
+      device: ":/docker/uptime-kuma_db"
   photoprism-db:
     driver: local
     driver_opts:
@@ -54,24 +54,42 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/nextcloud/data/amuthabharathi@dexome.com/files/Photos/Camera"
-  plex-media:
+  movies:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/media"
+      device: ":/media/Movies"
+  tvshows:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/media/Series"
   plex-config:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/plex/config"
-  caddy:
+      device: ":/docker/plex/config"
+  caddy-config:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/caddy"
+      device: ":/docker/caddy"
+  sonarr-config:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/docker/sonarr"
+  torrents:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/docker/torrents"
 
 networks:
   frontend_vlan60:
@@ -97,11 +115,29 @@ services:
       frontend_vlan60:
         ipv4_address: "10.100.60.12"
     volumes:
-      - caddy:/caddy
-      - caddy:/data
+      - caddy-config:/caddy
+      - caddy-config:/data
     environment:
       - DNS_API_KEY=${DNS_API_KEY}
       - XDG_DATA_HOME=/caddy
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - sonarr-config:/config
+      - tvshows:/media/Series #optional
+      - torrents:/downloads #optional
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.17"      
+    ports:
+      - 8989:8989
+    restart: unless-stopped
 
   plex:
     image: lscr.io/linuxserver/plex:latest
@@ -116,7 +152,8 @@ services:
       - PLEX_CLAIM=${PLEX_CLAIM}
     volumes:
       - plex-config:/config
-      - plex-media:/media
+      - tvshows:/media/Series #optional
+      - movies:/media/Movies #optional
     restart: unless-stopped
 
   imaginary:
