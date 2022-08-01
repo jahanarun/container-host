@@ -203,7 +203,7 @@ services:
       - WEBUI_PORT=8220
     volumes:
       - qbittorrent-config:/config
-      - torrents:/downloads #optional
+      - /mnt/torrents:/downloads #optional
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.16"
