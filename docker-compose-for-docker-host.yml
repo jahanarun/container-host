@@ -84,12 +84,24 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/docker/sonarr"
+  radarr-config:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/docker/radarr"
   torrents:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/torrents"
+  qbittorrent-config:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/docker/qbittorrent"
 
 networks:
   frontend_vlan60:
@@ -135,8 +147,38 @@ services:
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.17"      
-    ports:
-      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - radarr-config:/config
+      - movies:/media/Movies #optional
+      - torrents:/downloads #optional
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.18"      
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      - WEBUI_PORT=8220
+    volumes:
+      - qbittorrent-config:/config
+      - torrents:/downloads #optional
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.16"
     restart: unless-stopped
 
   plex:
