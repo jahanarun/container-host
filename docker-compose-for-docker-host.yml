@@ -102,6 +102,12 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/docker/qbittorrent"
+  jackett-config:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/docker/jackett"
 
 networks:
   frontend_vlan60:
@@ -144,6 +150,8 @@ services:
       - sonarr-config:/config
       - tvshows:/media/Series #optional
       - torrents:/downloads #optional
+    dns:
+      - 10.100.60.1
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.17"      
@@ -160,10 +168,30 @@ services:
       - radarr-config:/config
       - movies:/media/Movies #optional
       - torrents:/downloads #optional
+    dns:
+      - 10.100.60.1
     networks:
       frontend_vlan60:
-        ipv4_address: "10.100.60.18"      
+        ipv4_address: "10.100.60.18"
     restart: unless-stopped
+
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      - AUTO_UPDATE=true #optional
+      # - RUN_OPTS=<run options here> #optional
+    volumes:
+      - jackett-config:/config
+    restart: unless-stopped
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.10"
+    dns:
+      - 10.100.60.1
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -180,6 +208,8 @@ services:
       frontend_vlan60:
         ipv4_address: "10.100.60.16"
     restart: unless-stopped
+    dns:
+      - 10.100.60.1
 
   plex:
     image: lscr.io/linuxserver/plex:latest
