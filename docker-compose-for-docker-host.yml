@@ -145,7 +145,7 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - TZ=Asia/Kolkata
+      - TZ=${TZ}
     volumes:
       - sonarr-config:/config
       - tvshows:/media/Series #optional
@@ -163,7 +163,7 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - TZ=Asia/Kolkata
+      - TZ=${TZ}
     volumes:
       - radarr-config:/config
       - movies:/media/Movies #optional
@@ -181,7 +181,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Kolkata
+      - TZ=${TZ}
       - AUTO_UPDATE=true #optional
       # - RUN_OPTS=<run options here> #optional
     volumes:
@@ -199,7 +199,7 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - TZ=Asia/Kolkata
+      - TZ=${TZ}
       - WEBUI_PORT=8220
     volumes:
       - qbittorrent-config:/config
@@ -212,7 +212,7 @@ services:
       - 10.100.60.1
 
   plex:
-    image: lscr.io/linuxserver/plex:latest
+    image: plexinc/pms-docker:plexpass
     container_name: plex
     networks:
       frontend_vlan60:
@@ -222,6 +222,7 @@ services:
       - PGID=33
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM}
+      - TZ=${TZ}
     volumes:
       - plex-config:/config
       - tvshows:/media/Series #optional
