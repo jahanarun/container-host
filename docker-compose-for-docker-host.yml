@@ -108,6 +108,12 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/docker/jackett"
+  cloudflared-config:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/docker/cloudflared"
 
 networks:
   frontend_vlan60:
@@ -124,9 +130,53 @@ networks:
     internal: true
 
 services:
+  cloudflared-torrent:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-torrent"
+    command: tunnel --config /cloudflared/torrent.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.25"
+    volumes:
+      - cloudflared-config:/cloudflared
+
+  cloudflared-nextcloud:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-nextcloud"
+    command: tunnel --config /cloudflared/nextcloud.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.26"
+    volumes:
+      - cloudflared-config:/cloudflared
+
+  cloudflared-plex:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-plex"
+    command: tunnel --config /cloudflared/plex.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.29"
+    volumes:
+      - cloudflared-config:/cloudflared
+
+  cloudflared-photoprism:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-photoprism"
+    command: tunnel --config /cloudflared/photoprism.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.30"
+    volumes:
+      - cloudflared-config:/cloudflared
+
   caddy:
     image: jhnrn/caddy-linux
-    restart: always
+    restart: unless-stopped
     container_name: caddy
     command: caddy run --config /caddy/Caddyfile
     networks:
@@ -232,7 +282,7 @@ services:
   imaginary:
     image: h2non/imaginary:latest
     container_name: "imaginary"
-    restart: always
+    restart: unless-stopped
     environment:
        PORT: 9000
     ports:
@@ -243,7 +293,7 @@ services:
   nextcloud-redis:
     image: redis:6
     container_name: "nextcloud-redis"
-    restart: always
+    restart: unless-stopped
     volumes:
       - nextcloud-redis:/data
     environment:
@@ -254,7 +304,7 @@ services:
   nextcloud-db:
     image: mariadb
     container_name: "nextcloud-db"
-    restart: always
+    restart: unless-stopped
     networks:
       - backend
     expose:
@@ -271,7 +321,7 @@ services:
   nextcloud:
     image: jhnrn/nextcloud-linux
     container_name: "nextcloud"
-    restart: always
+    restart: unless-stopped
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.49"
@@ -415,7 +465,7 @@ services:
   uptime-kuma:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
-    restart: always
+    restart: unless-stopped
     volumes:
       - uptime-db:/app/data
     ports:
