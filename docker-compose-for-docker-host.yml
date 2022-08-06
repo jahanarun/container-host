@@ -66,6 +66,12 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/media/Series"
+  music:
+    driver: local
+    driver_opts:
+      type: "nfs4"
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
+      device: ":/media/Music"
   plex-config:
     driver: local
     driver_opts:
@@ -275,8 +281,9 @@ services:
       - TZ=${TZ}
     volumes:
       - plex-config:/config
-      - tvshows:/media/Series #optional
-      - movies:/media/Movies #optional
+      - tvshows:/media/Series
+      - movies:/media/Movies
+      - music:/media/Music
     restart: unless-stopped
 
   imaginary:
