@@ -42,18 +42,18 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/photoprism/storage"
-  photoprism-jahanarun:
+  photoprism-user1:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud/data/jahanarun@dexome.com/files/Photos/Camera"
-  photoprism-amuthabharathi:
+      device: ${PHOTOPRISM_USER1_VOLUME_DEVICE}
+  photoprism-user2:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ":/nextcloud/data/amuthabharathi@dexome.com/files/Photos/Camera"
+      device: ${PHOTOPRISM_USER2_VOLUME_DEVICE}
   movies:
     driver: local
     driver_opts:
@@ -380,7 +380,7 @@ services:
       - "2342:2342" # HTTP port (host:container)
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD} # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_SITE_URL: "https://photo.dexome.com/" # Public server URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL} # Public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000 # File size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip" # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false" # Run in debug mode (shows additional log messages)
@@ -423,8 +423,8 @@ services:
     working_dir: "/photoprism"
     volumes:
       ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
-      - "photoprism-jahanarun:/photoprism/originals/jahanarun"
-      - "photoprism-amuthabharathi:/photoprism/originals/amuthabharathi"
+      - ${PHOTOPRISM_USER1_VOLUME_MOUNT}
+      - ${PHOTOPRISM_USER2_VOLUME_MOUNT}
       ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "~/Import:/photoprism/import"
       ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
