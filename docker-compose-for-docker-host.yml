@@ -42,18 +42,18 @@ volumes:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
       device: ":/photoprism/storage"
-  photoprism-user1:
+  user1-photos:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ${PHOTOPRISM_USER1_VOLUME_DEVICE}
-  photoprism-user2:
+      device: ${USER1_PHOTO_VOLUME_DEVICE}
+  user2-photos:
     driver: local
     driver_opts:
       type: "nfs4"
       o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14
-      device: ${PHOTOPRISM_USER2_VOLUME_DEVICE}
+      device: ${USER2_PHOTO_VOLUME_DEVICE}
   movies:
     driver: local
     driver_opts:
@@ -284,6 +284,8 @@ services:
       - tvshows:/media/Series
       - movies:/media/Movies
       - music:/media/Music
+      - ${PLEX_USER1_VOLUME_MOUNT}
+      - ${PLEX_USER2_VOLUME_MOUNT}
     restart: unless-stopped
 
   imaginary:
@@ -406,6 +408,13 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
+      PHOTOPRISM_THUMB_FILTER: "blackman"      # resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096           # retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 7680)
+      PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       ## Hardware video transcoding config (optional):
