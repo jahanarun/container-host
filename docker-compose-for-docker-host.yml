@@ -76,7 +76,7 @@ volumes:
     driver: local
     driver_opts:
       type: "nfs4"
-      o: addr=10.100.50.20,sec=sys,intr,rw,auto,nofail,noatime
+      o: addr=10.100.50.20,rw,noatime,rsize=1048576,wsize=1048576,tcp,timeo=14,nolock,soft,nofail
       device: ":/docker/plex/config"
   caddy-config:
     driver: local
