@@ -274,11 +274,12 @@ services:
       frontend_vlan60:
         ipv4_address: "10.100.60.14"
     environment:
-      - PUID=33
-      - PGID=33
-      - VERSION=docker
+      - PLEX_UID=33
+      - PLEX_GID=33
       - PLEX_CLAIM=${PLEX_CLAIM}
       - TZ=${TZ}
+      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+      - CHANGE_CONFIG_DIR_OWNERSHIP=true
     volumes:
       - plex-config:/config
       - tvshows:/media/Series
