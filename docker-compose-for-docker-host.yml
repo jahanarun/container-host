@@ -280,6 +280,7 @@ services:
       - TZ=${TZ}
       - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
       - CHANGE_CONFIG_DIR_OWNERSHIP=true
+      - HOSTNAME=plex.${DOMAIN}
     volumes:
       - plex-config:/config
       - tvshows:/media/Series
