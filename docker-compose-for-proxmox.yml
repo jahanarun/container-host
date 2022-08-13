@@ -1,0 +1,373 @@
+version: "3.5"
+
+networks:
+  frontend_vlan60:
+    driver: ipvlan
+    driver_opts:
+      parent: "enp7s0.60"
+      name: ipvlan60
+    ipam:
+      config:
+        - subnet: 10.100.60.0/24
+          gateway: 10.100.60.1
+  backend:
+    driver: bridge
+    internal: true
+
+services:
+  cloudflared-torrent:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-torrent"
+    command: tunnel --config /cloudflared/torrent.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.25"
+    volumes:
+      - ${DATA_STORAGE}/cloudflared:/cloudflared
+
+  cloudflared-nextcloud:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-nextcloud"
+    command: tunnel --config /cloudflared/nextcloud.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.26"
+    volumes:
+      - ${DATA_STORAGE}/cloudflared:/cloudflared
+
+  cloudflared-plex:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-plex"
+    command: tunnel --config /cloudflared/plex.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.29"
+    volumes:
+      - ${DATA_STORAGE}/cloudflared:/cloudflared
+
+  cloudflared-photoprism:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    container_name: "cloudflared-photoprism"
+    command: tunnel --config /cloudflared/photoprism.yml run
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.30"
+    volumes:
+      - ${DATA_STORAGE}/cloudflared:/cloudflared
+
+  caddy:
+    image: jhnrn/caddy-linux
+    restart: unless-stopped
+    container_name: caddy
+    command: caddy run --config /caddy/Caddyfile
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.12"
+    volumes:
+      - ${DATA_STORAGE}/caddy:/caddy
+      - ${DATA_STORAGE}/caddy:/data
+    environment:
+      - DNS_API_KEY=${DNS_API_KEY}
+      - XDG_DATA_HOME=/caddy
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=33
+      - PGID=33
+      - TZ=${TZ}
+    volumes:
+      - /${DATA_STORAGE}/sonarr:/config
+      - ${TVSHOWS}:/media/Series #optional
+      - ${TORRENTS}:/downloads #optional
+    dns:
+      - 10.100.60.1
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.17"      
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:nightly
+    container_name: radarr
+    environment:
+      - PUID=33
+      - PGID=33
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_STORAGE}/radarr:/config
+      - ${MOVIES}:/media/Movies
+      - ${TORRENTS}:/downloads #optional
+    dns:
+      - 10.100.60.1
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.18"
+    restart: unless-stopped
+
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - AUTO_UPDATE=true #optional
+      # - RUN_OPTS=<run options here> #optional
+    volumes:
+      - ${DATA_STORAGE}/jackett:/config
+    restart: unless-stopped
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.10"
+    dns:
+      - 10.100.60.1
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=33
+      - PGID=33
+      - TZ=${TZ}
+      - WEBUI_PORT=8220
+    volumes:
+      - ${DATA_STORAGE}/qbittorrent:/config
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.16"
+    restart: unless-stopped
+    dns:
+      - 10.100.60.1
+
+  plex:
+    image: linuxserver/plex:latest
+    container_name: plex
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.14"
+    environment:
+      - PLEX_UID=33
+      - PLEX_GID=33
+      - PUID=33
+      - PGID=33
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - TZ=${TZ}
+      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+      - CHANGE_CONFIG_DIR_OWNERSHIP=true
+      - HOSTNAME=plex.${DOMAIN}
+    volumes:
+      - ${DATA_STORAGE}/plex/config:/config
+      - ${TVSHOWS}:/media/Series
+      - ${MOVIES}:/media/Movies
+      - ${MUSIC}:/media/Music
+      - ${PLEX_USER1_VOLUME_MOUNT}
+      - ${PLEX_USER2_VOLUME_MOUNT}
+    restart: unless-stopped
+
+  imaginary:
+    image: h2non/imaginary:latest
+    container_name: "imaginary"
+    restart: unless-stopped
+    environment:
+       PORT: 9000
+    ports:
+      - "9000:9000"
+    networks:
+      - backend
+      
+  nextcloud-redis:
+    image: redis:6
+    container_name: "nextcloud-redis"
+    restart: unless-stopped
+    volumes:
+      - ${NEXTCLOUD_DATA}/redis:/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - backend
+
+  nextcloud-db:
+    image: mariadb
+    container_name: "nextcloud-db"
+    restart: unless-stopped
+    networks:
+      - backend
+    expose:
+      - "3306"
+    command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    volumes:
+      - ${NEXTCLOUD_DATA}/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud-user
+
+  nextcloud:
+    image: jhnrn/nextcloud-linux
+    container_name: "nextcloud"
+    restart: unless-stopped
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.49"
+      backend:
+    ports:
+      - 8080:80
+    links:
+      - nextcloud-db
+    volumes:
+      - ${NEXTCLOUD_DATA}/html:/var/www/html
+      - ${NEXTCLOUD_DATA}/data:/var/www/html/data
+    environment:
+      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud-user
+      - MYSQL_HOST=nextcloud-db
+      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+      - REDIS_HOST=nextcloud-redis
+      - NEXTCLOUD_HOSTNAME=${NEXTCLOUD_HOSTNAME}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+      - OVERWRITEPROTOCOL=https
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.nextcloud_scan.schedule: "@every 1h30m"
+      ofelia.job-exec.nextcloud_scan.user: "1000"
+      ofelia.job-exec.nextcloud_scan.command: "php occ files:scan --all"
+      ofelia.job-exec.nextcloud_cron.schedule: "@every 5m"
+      ofelia.job-exec.nextcloud_cron.user: "1000"
+      ofelia.job-exec.nextcloud_cron.command: "php -f /var/www/html/cron.php"
+
+  photoprism:
+    image: photoprism/photoprism:latest
+    container_name: "photoprism"
+    depends_on:
+      - photoprism-mariadb
+    restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.55"
+      backend:
+    ports:
+      - "2342:2342" # HTTP port (host:container)
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD} # PLEASE CHANGE: Your initial admin password (min 4 characters)
+      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL} # Public server URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000 # File size limit for originals in MB (increase for high-res video)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip" # Improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_DEBUG: "false" # Run in debug mode (shows additional log messages)
+      PHOTOPRISM_PUBLIC: "false" # No authentication required (disables password protection)
+      PHOTOPRISM_READONLY: "false" # Don't modify originals directory (reduced functionality)
+      PHOTOPRISM_EXPERIMENTAL: "false" # Enables experimental features
+      PHOTOPRISM_DISABLE_CHOWN: "true" # Disables storage permission updates on startup
+      PHOTOPRISM_DISABLE_WEBDAV: "false" # Disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false" # Disables Settings in Web UI
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false" # Disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_FACES: "false" # Disables facial recognition
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false" # Disables image classification
+      PHOTOPRISM_DARKTABLE_PRESETS: "false" # Enables Darktable presets and disables concurrent RAW conversion
+      PHOTOPRISM_DETECT_NSFW: "false" # Flag photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "true" # Allow uploads that MAY be offensive
+      # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
+      PHOTOPRISM_DATABASE_DRIVER: "mysql" # Use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "photoprism-mariadb:3306" # MariaDB or MySQL database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism" # MariaDB or MySQL database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism" # MariaDB or MySQL database user name
+      PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD} # MariaDB or MySQL database user password
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
+      PHOTOPRISM_SITE_DESCRIPTION: ""
+      PHOTOPRISM_SITE_AUTHOR: ""
+      PHOTOPRISM_THUMB_FILTER: "blackman"      # resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096           # retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 7680)
+      PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
+      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
+      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
+      ## Hardware video transcoding config (optional):
+      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
+      # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
+      # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
+      # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # Enable TensorFlow AVX2 & Intel Graphics support
+      HOME: "/photoprism"
+    ## Hardware devices for video transcoding and machine learning (optional):
+    # devices:
+    #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
+    #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
+    #  - "/dev/dri/card0:/dev/dri/card0"
+    working_dir: "/photoprism"
+    volumes:
+      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
+      - ${PHOTOPRISM_USER1_VOLUME_MOUNT}
+      - ${PHOTOPRISM_USER2_VOLUME_MOUNT}
+      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
+      # - "~/Import:/photoprism/import"
+      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
+      - ${PHOTOPRISM_DATA}/storage:/photoprism/storage
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.photoprism_index.schedule: "@every 1h"
+      ofelia.job-exec.photoprism_index.command: "photoprism index --cleanup"
+
+  photoprism-mariadb:
+    restart: unless-stopped
+    container_name: "photoprism-db"
+    image: mariadb:10.6
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    networks:
+      - backend
+    command: mysqld --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
+    volumes:
+      - ${PHOTOPRISM_DATA}/db:/var/lib/mysql # Important, don't remove
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PHOTOPRISM_ROOT_DATABASE_PASSWORD}
+      MYSQL_DATABASE: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
+
+  ## Ofelia Job Runner (recommended for running background jobs)
+  ## see https://github.com/mcuadros/ofelia
+  ofelia:
+    restart: unless-stopped
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    depends_on:
+      - photoprism
+      - nextcloud
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - ${DATA_STORAGE}/uptime-db/db:/app/data
+    ports:
+      - 3001:3001  # <Host Port>:<Container Port>
+    dns: 10.100.60.1
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.56"
