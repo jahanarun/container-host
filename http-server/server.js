@@ -18,25 +18,15 @@ async function getData(url) {
 };
 
 async function getDnsAnswer(domain) {
-  let response = await fetch(`https://dns.google/resolve?name=${domain}&type=A`)
-  let data = await response.json();
-  var result = data.Answer.map(answer => answer.data);
-  return result;
+  try {
+    let response = await fetch(`https://dns.google/resolve?name=${domain}&type=A`)
+    let data = await response.json();
+    var result = data.Answer.map(answer => answer.data);
+    return result;      
+  } catch (error) {
+    console.log(error);
+  }
 }
-
-async function getStackOverflowUrls() {
-  return await getDnsAnswer('stackoverflow.com');
-}
-
-app.get('/ip/all', async (req, res) => {
-  var githubUrls = await getGithubUrls();
-
-  var stackoverflowUrls = await getStackOverflowUrls();
-  var result = githubUrls.concat(stackoverflowUrls);
-  res.contentType('text');
-  res.send(Array.from(new Set(result)).join("\n"));
-})
-
 
 async function getGithubUrls() {
   var data = await getData("https://api.github.com/meta");
@@ -57,6 +47,13 @@ app.get('/ip/github', async (req, res) => {
   var items = await getGithubUrls();
   res.contentType('text');
   res.send(Array.from(new Set(items)).join("\n"));
+})
+
+app.get('/ip/all', async (req, res) => {
+  var urls = (await getDnsAnswer('stackoverflow.com'))
+              .concat(await getGithubUrls());
+  res.contentType('text');
+  res.send(Array.from(new Set(urls)).join("\n"));
 })
 
 app.listen(port, () => {
