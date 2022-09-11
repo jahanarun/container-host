@@ -128,6 +128,22 @@ services:
     dns:
       - 10.100.60.1
 
+  flaresolverr:
+    image: flaresolverr/flaresolverr:latest
+    # image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ}
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.21"
+    dns:
+      - 10.100.60.1
+    restart: unless-stopped
+
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
