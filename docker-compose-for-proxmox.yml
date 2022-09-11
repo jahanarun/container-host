@@ -253,6 +253,8 @@ services:
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - OVERWRITEPROTOCOL=https
+      - PUID=33
+      - PGID=33
     depends_on:
       - nextcloud-db
       - nextcloud-redis
