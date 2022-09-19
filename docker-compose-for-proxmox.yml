@@ -393,17 +393,13 @@ services:
   gogs:
     depends_on:
       - "gogs-mariadb"
+    container_name: "gogs"
     environment:
-      APP_NAME: "Dexome GIT Repository"
       RUN_CROND: true
-      DB_HOST: "gogs-mariadb:3306"
-      DB_NAME: "gogs"
-      DB_PASSWD: ${GOGS_DATABASE_PASSWORD}
-      DB_TYPE: "mysql"
-      DB_USER: "gogs"
-      HTTP_PORT: "80"
       SSH_PORT: "22"
     image: "gogs/gogs:latest"
+    expose:
+      - "3000"
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.22"
@@ -413,6 +409,7 @@ services:
       - ${GOGS_DATA}/data:/data
 
   gogs-mariadb:
+    container_name: "gogs-mariadb"
     environment:
       MYSQL_DATABASE: "gogs"
       MYSQL_PASSWORD: ${GOGS_DATABASE_PASSWORD}
