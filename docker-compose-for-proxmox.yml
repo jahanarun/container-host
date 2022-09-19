@@ -67,6 +67,8 @@ services:
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.12"
+    dns:
+      - 10.100.60.1
     volumes:
       - ${DATA_STORAGE}/caddy:/caddy
       - ${DATA_STORAGE}/caddy:/data
