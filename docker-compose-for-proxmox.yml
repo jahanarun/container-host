@@ -147,7 +147,7 @@ services:
     restart: unless-stopped
 
   prowlarr:
-    image: linuxserver/prowlarr:latest
+    image: linuxserver/prowlarr:develop
     container_name: prowlarr
     environment:
       - PUID=1000
