@@ -146,6 +146,24 @@ services:
       - 10.100.60.1
     restart: unless-stopped
 
+  prowlarr:
+    image: linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - AUTO_UPDATE=true #optional
+      # - RUN_OPTS=<run options here> #optional
+    volumes:
+      - ${DATA_STORAGE}/prowlarr:/config
+    restart: unless-stopped
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.23"
+    dns:
+      - 10.100.60.1
+
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
