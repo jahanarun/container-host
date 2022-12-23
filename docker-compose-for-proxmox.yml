@@ -275,6 +275,8 @@ services:
       - OVERWRITEPROTOCOL=https
       - PUID=33
       - PGID=33
+      - PHP_UPLOAD_LIMIT=8G
+      - PHP_MEMORY_LIMIT=8G
     depends_on:
       - nextcloud-db
       - nextcloud-redis
