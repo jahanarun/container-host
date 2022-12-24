@@ -462,4 +462,5 @@ services:
       ND_BASEURL: ""
     volumes:
       - ${DATA_STORAGE}/navidrome:/data
-      - ${MUSIC}:/music:ro
+      - ${MUSIC}/Tamil:/music/tamil:ro
+      - ${MUSIC}/English:/music/english:ro
