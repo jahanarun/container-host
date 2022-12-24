@@ -446,3 +446,20 @@ services:
     restart: "always"
     volumes:
       - ${GOGS_DATA}/db:/var/lib/mysql
+
+  navidrome:
+    image: deluan/navidrome:latest
+    user: 33:33 # should be owner of volumes
+    restart: unless-stopped
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.27"
+    environment:
+      # Optional: put your config options customization here. Examples:
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info  
+      ND_SESSIONTIMEOUT: 24h
+      ND_BASEURL: ""
+    volumes:
+      - ${DATA_STORAGE}/navidrome:/data
+      - ${MUSIC}:/music:ro
