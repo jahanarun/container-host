@@ -268,7 +268,7 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
       - MYSQL_HOST=nextcloud-db
-      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
       - REDIS_HOST=nextcloud-redis
       - NEXTCLOUD_HOSTNAME=${NEXTCLOUD_HOSTNAME}
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
@@ -448,6 +448,7 @@ services:
       - ${GOGS_DATA}/db:/var/lib/mysql
 
   navidrome:
+    container_name: navidrome
     image: deluan/navidrome:latest
     user: 33:33 # should be owner of volumes
     restart: unless-stopped
@@ -464,3 +465,19 @@ services:
       - ${DATA_STORAGE}/navidrome:/data
       - ${MUSIC}/Tamil:/music/tamil:ro
       - ${MUSIC}/English:/music/english:ro
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    user: 33:33
+    networks:
+      frontend_vlan60:
+        ipv4_address: "10.100.60.28"
+    volumes:
+      - ${DATA_STORAGE}/jellyfin:/config
+      - ${CACHE_STORAGE}/jellyfin:/cache
+      - ${MUSIC}/Tamil:/media/music/tamil:ro
+    restart: 'unless-stopped'
+    # Optional - alternative address used for autodiscovery
+    environment:
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.${DOMAIN}
