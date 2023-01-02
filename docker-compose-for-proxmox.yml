@@ -209,7 +209,7 @@ services:
     restart: unless-stopped
 
   imaginary:
-    image: h2non/imaginary:latest
+    image: nextcloud/aio-imaginary:latest
     container_name: "imaginary"
     restart: unless-stopped
     environment:
