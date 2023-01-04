@@ -1,5 +1,9 @@
 version: "3.5"
 
+networks:
+  tunnel:
+  backend:
+  
 services:
   http-server:
     image: jhnrn/http-server-linux:latest
@@ -7,3 +11,135 @@ services:
     restart: always
     ports:
       - "3000:3000"
+
+  cloudflared-plex-music:
+    image: cloudflare/cloudflared:latest
+    container_name: "cloudflared-plex-music"
+    restart: always
+    networks:
+      - tunnel
+    command:
+      - tunnel
+      - --no-autoupdate
+      - run 
+      - --token
+      - ${CLOUDFARED_PLEX_MUSIC_TOKEN}
+
+  # traefik:
+  #   image: traefik:latest
+  #   container_name: traefik
+  #   restart: unless-stopped
+  #   command:
+  #     # Tell Traefik to discover containers using the Docker API
+  #     - --providers.docker=true
+  #     # Enable the Trafik dashboard
+  #     - --api.dashboard=true
+  #     # Set up LetsEncrypt
+  #     - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+  #     - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+  #     - --certificatesresolvers.letsencrypt.acme.email=${EMAIL_ADDRESS}
+  #     - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+  #     # Set up an insecure listener that redirects all traffic to TLS
+  #     - --entrypoints.web.address=:80
+  #     - --entrypoints.web.http.redirections.entrypoint.to=websecure
+  #     - --entrypoints.web.http.redirections.entrypoint.scheme=https
+  #     - --entrypoints.websecure.address=:443
+  #     # Set up the TLS configuration for our websecure listener
+  #     - --entrypoints.websecure.http.tls=true
+  #     - --entrypoints.websecure.http.tls.certResolver=letsencrypt
+  #     - --entrypoints.websecure.http.tls.domains[0].main=home.${DOMAIN}
+  #     - --entrypoints.websecure.http.tls.domains[0].sans=*.home.${DOMAIN}
+  #   environment:
+  #     - CLOUDFLARE_EMAIL=${CLOUDFLARE_ACCOUNT_EMAIL_ADDRESS}
+  #     - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_TOKEN}
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - certs:/letsencrypt
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - 'traefik.http.routers.traefik.rule=Host(`home.${DOMAIN}`)'
+  #     - "traefik.http.routers.traefik.entrypoints=websecure"
+  #     - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+  #     - "traefik.http.routers.traefik.service=api@internal"
+  #     - 'traefik.http.routers.traefik.middlewares=strip'
+  #     - 'traefik.http.middlewares.strip.stripprefix.prefixes=/traefik'
+
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    command:
+      # - "--log.level=DEBUG"
+      - "--api.dashboard=true"
+      # - "--providers.file.directory=/FileProvider/"
+      # - "--providers.file.watch=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web-secure.address=:443"
+      - "--serverstransport.insecureskipverify=true"
+      # Set up LetsEncrypt
+      - "--certificatesresolvers.certificato.acme.dnschallenge=true"
+      - "--certificatesresolvers.certificato.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.certificato.acme.dnschallenge.delaybeforecheck=10"
+      - "--certificatesresolvers.certificato.acme.dnschallenge.resolvers=1.1.1.1:53"
+      # - "--certificatesresolvers.certificato.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.certificato.acme.email=postmaster@${DOMAIN}"
+      - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
+      - "--ping=true"
+    networks:
+      - tunnel
+      - backend
+    environment:
+      CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
+      CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`metal-host.${DOMAIN}`)"
+      - "traefik.http.routers.api.entrypoints=web-secure"
+      - "traefik.http.routers.api.tls.certresolver=certificato"
+      # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
+      - "traefik.http.routers.api.service=api@internal"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # So that Traefik can listen to the Docker events
+      - ${DATA_STORAGE}/certs:/letsencrypt
+    restart: always
+
+
+  plex:
+    image: linuxserver/plex:latest
+    container_name: plex
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plex.rule=Host(`music.${DOMAIN}`)"
+      # - "traefik.http.routers.plex.tls=true"
+      # - "traefik.http.routers.plex.entrypoints=websecure"
+      - "traefik.http.routers.plex.tls.certresolver=certificato"
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+    networks:
+      - backend
+    ports:
+      - 32400:32400
+    environment:
+      - PLEX_UID=33
+      - PLEX_GID=33
+      - PUID=33
+      - PGID=33
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - TZ=${TZ}
+      - CHANGE_CONFIG_DIR_OWNERSHIP=true
+      - HOSTNAME=music.${DOMAIN}
+    volumes:
+      - ${DATA_STORAGE}/plex/config:/config
+      - ${MUSIC}:/media/music
+    restart: unless-stopped
