@@ -111,3 +111,5 @@ services:
       - "traefik.http.routers.speedtest.rule=Host(`speedtest.${DOMAIN}`)"
       - "traefik.http.routers.speedtest.tls.certresolver=certificato"
       - "traefik.http.services.speedtest.loadbalancer.server.port=3000"
+    ports:
+      - 4000:3000
