@@ -2,10 +2,10 @@ version: "3.5"
 
 networks:
   frontend_vlan60:
-    driver: ipvlan
+    driver: macvlan
     driver_opts:
       parent: ${NETWORK_DEVICE}.60
-      name: ipvlan60
+      name: macvlan60
     ipam:
       config:
         - subnet: 10.100.60.0/24
@@ -406,6 +406,7 @@ services:
     restart: unless-stopped
     volumes:
       - ${DATA_STORAGE}/uptime-db/db:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       - 3001:3001  # <Host Port>:<Container Port>
     dns: 10.100.60.1
