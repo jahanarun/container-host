@@ -101,3 +101,13 @@ services:
       - ${DATA_STORAGE}/plex/config:/config
       - ${MUSIC}:/media/music
     restart: unless-stopped
+
+  speedtest:
+    image: openspeedtest/latest
+    container_name: speedtest
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.speedtest.rule=Host(`speedtest.${DOMAIN}`)"
+      - "traefik.http.routers.speedtest.tls.certresolver=certificato"
+      - "traefik.http.services.speedtest.loadbalancer.server.port=3000"
