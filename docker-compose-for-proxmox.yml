@@ -34,6 +34,8 @@ services:
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.26"
+    dns:
+      - 10.100.60.1
     volumes:
       - ${DATA_STORAGE}/cloudflared:/cloudflared
 
@@ -45,6 +47,8 @@ services:
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.29"
+    dns:
+      - 10.100.60.1
     volumes:
       - ${DATA_STORAGE}/cloudflared:/cloudflared
 
@@ -56,6 +60,8 @@ services:
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.30"
+    dns:
+      - 10.100.60.1
     volumes:
       - ${DATA_STORAGE}/cloudflared:/cloudflared
 
