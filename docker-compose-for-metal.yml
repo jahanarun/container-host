@@ -104,14 +104,18 @@ services:
       - ${MUSIC}:/media/music
     restart: unless-stopped
 
-  speedtest:
+  openspeedtest:
     image: openspeedtest/latest
-    container_name: speedtest
+    container_name: openspeedtest
     restart: unless-stopped
     networks:
       - trusted
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.speedtest.rule=Host(`speedtest.${DOMAIN}`)"
-      - "traefik.http.routers.speedtest.tls.certresolver=certificato"
-      - "traefik.http.services.speedtest.loadbalancer.server.port=3000"
+      - "traefik.http.routers.openspeedtest.rule=Host(`speedtest.${DOMAIN}`)"
+      - "traefik.http.routers.openspeedtest.tls.certresolver=certificato"
+      - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.test-compress.compress=false"
+      - "traefik.http.routers.openspeedtest.entrypoints: web"
+      - "traefik.http.middlewares.limit.buffering.maxRequestBodyBytes: 10000000000"
+      - "traefik.http.routers.openspeedtest.middlewares: limit"
