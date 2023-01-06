@@ -104,17 +104,32 @@ services:
       - ${MUSIC}:/media/music
     restart: unless-stopped
 
-  openspeedtest:
-    image: openspeedtest/latest
-    container_name: openspeedtest
+  # openspeedtest:
+  #   image: openspeedtest/latest
+  #   container_name: openspeedtest
+  #   restart: unless-stopped
+  #   networks:
+  #     - untrusted
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.openspeedtest.rule=Host(`speedtest.${DOMAIN}`)"
+  #     - "traefik.http.routers.openspeedtest.tls.certresolver=certificato"
+  #     - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
+  #     - "traefik.http.routers.openspeedtest.entrypoints: web"
+  #     - "traefik.http.middlewares.limit.buffering.maxRequestBodyBytes: 10000000000"
+  #     - "traefik.http.routers.openspeedtest.middlewares: limit"
+
+  librespeed:
+    image: adolfintel/speedtest
+    container_name: librespeed
     restart: unless-stopped
+    environment:
+      - MODE=standalone
     networks:
-      - trusted
+      - untrusted
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.openspeedtest.rule=Host(`speedtest.${DOMAIN}`)"
-      - "traefik.http.routers.openspeedtest.tls.certresolver=certificato"
-      - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
-      - "traefik.http.routers.openspeedtest.entrypoints: web"
-      - "traefik.http.middlewares.limit.buffering.maxRequestBodyBytes: 10000000000"
-      - "traefik.http.routers.openspeedtest.middlewares: limit"
+      - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
+      - "traefik.http.routers.librespeed.tls.certresolver=certificato"
+      - "traefik.http.services.librespeed.loadbalancer.server.port=80"
+      - "traefik.http.routers.librespeed.entrypoints: web"
