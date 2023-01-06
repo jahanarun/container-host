@@ -2,7 +2,8 @@ version: "3.5"
 
 networks:
   tunnel:
-  backend:
+  trusted:
+  untrusted:
   
 services:
   http-server:
@@ -53,7 +54,8 @@ services:
       - "--ping=true"
     networks:
       - tunnel
-      - backend
+      - trusted
+      - untrusted
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
@@ -84,7 +86,7 @@ services:
       - "traefik.http.routers.plex.tls.certresolver=certificato"
       - "traefik.http.services.plex.loadbalancer.server.port=32400"
     networks:
-      - backend
+      - trusted
     ports:
       - 32400:32400
     environment:
@@ -106,10 +108,10 @@ services:
     image: openspeedtest/latest
     container_name: speedtest
     restart: unless-stopped
+    networks:
+      - trusted
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.speedtest.rule=Host(`speedtest.${DOMAIN}`)"
       - "traefik.http.routers.speedtest.tls.certresolver=certificato"
       - "traefik.http.services.speedtest.loadbalancer.server.port=3000"
-    ports:
-      - 4000:3000
