@@ -30,7 +30,7 @@ services:
     image: traefik:latest
     container_name: traefik
     command:
-      - "--log.level=DEBUG"
+      - "--log.level=INFO"
       - "--accesslog=true"
       - "--api.dashboard=true"
       # - "--providers.file.directory=/FileProvider/"
@@ -115,7 +115,6 @@ services:
       - "traefik.http.routers.openspeedtest.rule=Host(`speedtest.${DOMAIN}`)"
       - "traefik.http.routers.openspeedtest.tls.certresolver=certificato"
       - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.test-compress.compress=false"
       - "traefik.http.routers.openspeedtest.entrypoints: web"
       - "traefik.http.middlewares.limit.buffering.maxRequestBodyBytes: 10000000000"
       - "traefik.http.routers.openspeedtest.middlewares: limit"
