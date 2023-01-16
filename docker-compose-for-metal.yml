@@ -1,9 +1,9 @@
 version: "3.5"
 
 networks:
-  tunnel:
-  trusted:
-  untrusted:
+  tunnel-net:
+  trusted-net:
+  untrusted-net:
   ipvlan_net:
     driver: ipvlan
     driver_opts:
@@ -27,7 +27,7 @@ services:
     container_name: "cloudflared"
     restart: always
     networks:
-      - tunnel
+      - tunnel-net
     command:
       - tunnel
       - --no-autoupdate
@@ -62,9 +62,9 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      - tunnel
-      - trusted
-      - untrusted
+      - tunnel-net
+      - trusted-net
+      - untrusted-net
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
@@ -95,7 +95,7 @@ services:
       - "traefik.http.routers.plex.tls.certresolver=certificato"
       - "traefik.http.services.plex.loadbalancer.server.port=32400"
     networks:
-      - trusted
+      - trusted-net
     ports:
       - 32400:32400
     environment:
@@ -118,7 +118,7 @@ services:
   #   container_name: openspeedtest
   #   restart: unless-stopped
   #   networks:
-  #     - untrusted
+  #     - untrusted-net
   #   labels:
   #     - "traefik.enable=true"
   #     - "traefik.http.routers.openspeedtest.rule=Host(`speedtest.${DOMAIN}`)"
@@ -135,7 +135,7 @@ services:
     environment:
       - MODE=standalone
     networks:
-      - untrusted
+      - untrusted-net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
@@ -153,7 +153,7 @@ services:
         - PUID=33
         - OOKLA_EULA_GDPR=true
     networks:
-      untrusted:
+      untrusted-net:
       ipvlan_net:
         ipv4_address: "10.100.80.3"
     logging:
@@ -167,3 +167,5 @@ services:
       - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
+      - "traefik.docker.network=untrusted-net"
+      
