@@ -4,6 +4,15 @@ networks:
   tunnel:
   trusted:
   untrusted:
+  ipvlan_net:
+    driver: ipvlan
+    driver_opts:
+      parent: eth0
+      name: ipvlan
+    ipam:
+      config:
+        - subnet: 10.100.80.0/29
+          gateway: 10.100.80.1
   
 services:
   http-server:
@@ -139,12 +148,14 @@ services:
     volumes:
         - ${DATA_STORAGE}/speedtest-tracker:/config
     environment:
-        - TZ=
+        - TZ=${TZ}
         - PGID=33
         - PUID=33
         - OOKLA_EULA_GDPR=true
     networks:
-      - untrusted        
+      untrusted:
+      ipvlan_net:
+        ipv4_address: "10.100.80.3"
     logging:
         driver: "json-file"
         options:
