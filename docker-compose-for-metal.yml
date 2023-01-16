@@ -4,6 +4,8 @@ networks:
   tunnel-net:
   trusted-net:
   untrusted-net:
+    internal: true
+
   ipvlan_net:
     driver: ipvlan
     driver_opts:
