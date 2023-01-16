@@ -132,3 +132,27 @@ services:
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
       - "traefik.http.routers.librespeed.tls.certresolver=certificato"
       - "traefik.http.services.librespeed.loadbalancer.server.port=80"
+
+  speedtest-tracker:
+    container_name: speedtest-tracker
+    image: henrywhitaker3/speedtest-tracker
+    volumes:
+        - ${DATA_STORAGE}/speedtest-tracker:/config
+    environment:
+        - TZ=
+        - PGID=33
+        - PUID=33
+        - OOKLA_EULA_GDPR=true
+    networks:
+      - untrusted        
+    logging:
+        driver: "json-file"
+        options:
+            max-file: "10"
+            max-size: "200k"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
+      - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
+      - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
