@@ -13,9 +13,9 @@ services:
     ports:
       - "3000:3000"
 
-  cloudflared-plex-music:
+  cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: "cloudflared-plex-music"
+    container_name: "cloudflared"
     restart: always
     networks:
       - tunnel
@@ -24,7 +24,7 @@ services:
       - --no-autoupdate
       - run 
       - --token
-      - ${CLOUDFARED_PLEX_MUSIC_TOKEN}
+      - ${CLOUDFARED_TOKEN}
 
   traefik:
     image: traefik:latest
