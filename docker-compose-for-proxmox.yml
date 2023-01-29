@@ -15,17 +15,6 @@ networks:
     internal: true
 
 services:
-  cloudflared-torrent:
-    image: cloudflare/cloudflared
-    restart: unless-stopped
-    container_name: "cloudflared-torrent"
-    command: tunnel --config /cloudflared/torrent.yml run
-    networks:
-      frontend_vlan60:
-        ipv4_address: "10.100.60.25"
-    volumes:
-      - ${DATA_STORAGE}/cloudflared:/cloudflared
-
   cloudflared-nextcloud:
     image: cloudflare/cloudflared
     restart: unless-stopped
@@ -167,24 +156,6 @@ services:
     networks:
       frontend_vlan60:
         ipv4_address: "10.100.60.23"
-    dns:
-      - 10.100.60.1
-
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    environment:
-      - PUID=33
-      - PGID=33
-      - TZ=${TZ}
-      - WEBUI_PORT=8220
-    volumes:
-      - ${DATA_STORAGE}/qbittorrent:/config
-      - ${TORRENTS}:/downloads #optional
-    networks:
-      frontend_vlan60:
-        ipv4_address: "10.100.60.16"
-    restart: unless-stopped
     dns:
       - 10.100.60.1
 
