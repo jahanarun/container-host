@@ -81,7 +81,8 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock  # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
+      - /etc/localtime:/etc/localtime:ro  
       - ${DATA_STORAGE}/certs:/letsencrypt
     restart: always
 
@@ -208,3 +209,21 @@ services:
       - "traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)"
       - "traefik.http.routers.qbittorrent.tls.certresolver=certificato"
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=8220"
+
+
+  dummy:
+    image: alpine
+    container_name: dummy
+    networks:
+      trusted-net:
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.test1.rule=Host(`test1.${DOMAIN}`)"
+      - "traefik.http.routers.test1.tls.certresolver=certificato"
+      - "traefik.http.services.test1.loadbalancer.server.port=443"
+      - "traefik.http.services.test1.loadbalancer.server.url=https://photoprism.dexome.com"
+      - "traefik.http.routers.test.rule=Host(`test.${DOMAIN}`)"
+      - "traefik.http.routers.test.tls.certresolver=certificato"
+      - "traefik.http.services.test.loadbalancer.server.port=443"
+      - "traefik.http.services.test.loadbalancer.server.url=https://www.google.com"
