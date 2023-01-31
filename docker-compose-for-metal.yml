@@ -214,6 +214,7 @@ services:
   dummy:
     image: alpine
     container_name: dummy
+    entrypoint: tail -f /dev/null
     networks:
       trusted-net:
     restart: unless-stopped
