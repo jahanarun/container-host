@@ -42,7 +42,7 @@ services:
     container_name: traefik
     command:
       - "--log.level=INFO"
-      - "--accesslog=true"
+      - "--accesslog=false"
       - "--api.dashboard=true"
       # - "--providers.file.directory=/FileProvider/"
       # - "--providers.file.watch=true"
@@ -220,10 +220,11 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.test1.rule=Host(`test1.${DOMAIN}`)"
-      - "traefik.http.routers.test1.tls.certresolver=certificato"
-      - "traefik.http.services.test1.loadbalancer.server.port=443"
-      - "traefik.http.services.test1.loadbalancer.server.url=https://photoprism.dexome.com"
+      - "traefik.http.routers.photoprism.rule=Host(`photoprism.${DOMAIN}`)"
+      - "traefik.http.routers.photoprism.tls.certresolver=certificato"
+      - "traefik.http.services.photoprism.loadbalancer.passHostHeader=true"
+      - "traefik.http.services.photoprism.loadbalancer.server.port=443"
+      - "traefik.http.services.photoprism.loadbalancer.server.url=https://${HEAVY_METAL_SERVER}"
       - "traefik.http.routers.test.rule=Host(`test.${DOMAIN}`)"
       - "traefik.http.routers.test.tls.certresolver=certificato"
       - "traefik.http.services.test.loadbalancer.server.port=443"
