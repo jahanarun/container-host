@@ -2,19 +2,18 @@ version: "3.5"
 
 networks:
   tunnel-net:
-  trusted-net:
   untrusted-net:
     internal: true
 
-  ipvlan_net:
+  vlan-net:
     driver: ipvlan
     driver_opts:
-      parent: eth0
-      name: ipvlan
+      parent: eth0.80
+      name: ipvlan80
     ipam:
       config:
-        - subnet: 10.100.70.0/29
-          gateway: 10.100.70.1
+        - subnet: 10.100.80.0/24
+          gateway: 10.100.80.1
   
 services:
   http-server:
@@ -64,9 +63,10 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      - tunnel-net
-      - trusted-net
-      - untrusted-net
+      tunnel-net:
+      untrusted-net:
+      vlan-net:
+        ipv4_address: "10.100.80.5"      
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
@@ -86,7 +86,6 @@ services:
       - ${DATA_STORAGE}/certs:/letsencrypt
     restart: always
 
-
   plex:
     image: linuxserver/plex:latest
     container_name: plex
@@ -98,7 +97,7 @@ services:
       - "traefik.http.routers.plex.tls.certresolver=certificato"
       - "traefik.http.services.plex.loadbalancer.server.port=32400"
     networks:
-      - trusted-net
+      - vlan-net
     ports:
       - 32400:32400
     environment:
@@ -157,7 +156,7 @@ services:
         - OOKLA_EULA_GDPR=true
     networks:
       untrusted-net:
-      ipvlan_net:
+      vlan-net:
     logging:
         driver: "json-file"
         options:
@@ -201,7 +200,7 @@ services:
       - ${DATA_STORAGE}/qbittorrent:/config
       - ${TORRENTS}:/downloads #optional
     networks:
-      trusted-net:
+      vlan-net:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -220,7 +219,7 @@ services:
       - ${DATA_STORAGE}/overseerr:/app/config
     restart: unless-stopped
     networks:
-      - trusted-net
+      - vlan-net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
@@ -233,7 +232,7 @@ services:
     container_name: dummy
     entrypoint: tail -f /dev/null
     networks:
-      trusted-net:
+      vlan-net:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
