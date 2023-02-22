@@ -1,7 +1,6 @@
 version: "3.5"
 
 networks:
-  tunnel-net:
   untrusted-net:
     internal: true
 
@@ -28,7 +27,7 @@ services:
     container_name: "cloudflared"
     restart: always
     networks:
-      - tunnel-net
+      vlan-net:
     command:
       - tunnel
       - --no-autoupdate
@@ -63,7 +62,6 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      tunnel-net:
       untrusted-net:
       vlan-net:
         ipv4_address: "10.100.80.55"      
@@ -88,7 +86,7 @@ services:
 
   plex-music:
     image: linuxserver/plex:latest
-    container_name: plex
+    container_name: plex-music
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.plex.rule=Host(`music.${DOMAIN}`)"
