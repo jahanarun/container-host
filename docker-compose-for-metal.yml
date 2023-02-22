@@ -86,7 +86,7 @@ services:
       - ${DATA_STORAGE}/certs:/letsencrypt
     restart: always
 
-  plex:
+  plex-music:
     image: linuxserver/plex:latest
     container_name: plex
     labels:
@@ -97,7 +97,8 @@ services:
       - "traefik.http.routers.plex.tls.certresolver=certificato"
       - "traefik.http.services.plex.loadbalancer.server.port=32400"
     networks:
-      - vlan-net
+      vlan-net:
+        ipv4_address: "10.100.80.40"      
     ports:
       - 32400:32400
     environment:
