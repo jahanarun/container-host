@@ -13,8 +13,8 @@ networks:
       name: ipvlan
     ipam:
       config:
-        - subnet: 10.100.80.0/29
-          gateway: 10.100.80.1
+        - subnet: 10.100.70.0/29
+          gateway: 10.100.70.1
   
 services:
   http-server:
@@ -158,7 +158,6 @@ services:
     networks:
       untrusted-net:
       ipvlan_net:
-        ipv4_address: "10.100.80.3"
     logging:
         driver: "json-file"
         options:
