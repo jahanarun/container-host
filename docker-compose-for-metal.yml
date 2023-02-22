@@ -219,6 +219,8 @@ services:
     volumes:
       - ${DATA_STORAGE}/overseerr:/app/config
     restart: unless-stopped
+    networks:
+      - trusted-net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
