@@ -210,6 +210,22 @@ services:
       - "traefik.http.routers.qbittorrent.tls.certresolver=certificato"
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=8220"
 
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+      - PORT=5055 #optional
+    volumes:
+      - ${DATA_STORAGE}/overseerr:/app/config
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
+      - "traefik.http.routers.overseerr.tls.certresolver=certificato"
+      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+
 
   dummy:
     image: alpine
