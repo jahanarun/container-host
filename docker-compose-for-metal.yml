@@ -28,6 +28,7 @@ services:
     restart: always
     networks:
       vlan-net:
+        ipv4_address: "10.100.80.41"
     command:
       - tunnel
       - --no-autoupdate
@@ -256,7 +257,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.omada.rule=Host(`omada.${DOMAIN}`)"
       - "traefik.http.routers.omada.tls.certresolver=certificato"
-      - "traefik.http.services.omada.loadbalancer.server.port=5055"
+      - "traefik.http.services.omada.loadbalancer.server.port=8843"
 
   dummy:
     image: alpine
