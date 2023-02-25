@@ -4,6 +4,16 @@ networks:
   untrusted-net:
     internal: true
 
+  host-net:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 10.100.0.0/24
+          gateway: 10.100.0.1
+          ip_range: 10.100.0.48/30        # 10.100.0.48 - 10.100.0.51
+
   vlan-net:
     driver: ipvlan
     driver_opts:
@@ -15,26 +25,64 @@ networks:
           gateway: 10.100.80.1
   
 services:
+  cloudflared-dnsproxy:
+    image: cloudflare/cloudflared:latest
+    container_name: "cloudflared-dnsproxy"
+    restart: always
+    # network_mode: host
+    networks:
+      vlan-net:
+        ipv4_address: ${CLOUDFLADRED_DNSPROXY_IPADDR}
+    command:
+      - proxy-dns
+      - --port
+      - 5053
+      - --upstream
+      -  https://8.8.8.8/dns-query
+      - --upstream
+      -  https://1.1.1.1/dns-query
+      - --upstream
+      -  https://1.0.0.1/dns-query
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    # ports:
+      # - "53:53/tcp"
+      # - "53:53/udp"
+      # - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
+      # - "80:80/tcp"
+    environment:
+      TZ: ${TZ}
+      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
+      DNS1: ${CLOUDFLADRED_DNSPROXY_IPADDR}#5053
+      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
+      # Listen on all interfaces and permit all origins
+      # This allows Pihole to work in this setup and when answering across VLANS,
+      # but do not expose pi-hole to the internet!
+      DNSMASQ_LISTENING: all
+    # Volumes store your data between container upgrades
+    volumes:
+      - ${DATA_STORAGE}/pihole/etc/pihole:/etc/pihole
+      - ${DATA_STORAGE}/pihole/etc/dnsmasq.d:/etc/dnsmasq.d
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+    networks:
+      host-net:
+    restart: unless-stopped
+    depends_on:
+      - cloudflared-dnsproxy
+
   http-server:
     image: jhnrn/http-server-linux:latest
     container_name: "http-server"
     restart: always
     ports:
       - "3000:3000"
-
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: "cloudflared"
-    restart: always
-    networks:
-      vlan-net:
-        ipv4_address: "10.100.80.41"
-    command:
-      - tunnel
-      - --no-autoupdate
-      - run 
-      - --token
-      - ${CLOUDFARED_TOKEN}
+    depends_on:
+      - pihole
 
   traefik:
     image: traefik:latest
@@ -84,6 +132,25 @@ services:
       - /etc/localtime:/etc/localtime:ro  
       - ${DATA_STORAGE}/certs:/letsencrypt
     restart: always
+    depends_on:
+      - pihole
+
+      
+  cloudflared-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: "cloudflared-tunnel"
+    restart: always
+    networks:
+      vlan-net:
+        ipv4_address: "10.100.80.41"
+    command:
+      - tunnel
+      - --no-autoupdate
+      - run 
+      - --token
+      - ${CLOUDFARED_TOKEN}
+    depends_on:
+      - traefik
 
   plex-music:
     image: linuxserver/plex:latest
@@ -114,21 +181,8 @@ services:
       - ${DATA_STORAGE}/plex/config:/config
       - ${MUSIC}:/media/music
     restart: unless-stopped
-
-  # openspeedtest:
-  #   image: openspeedtest/latest
-  #   container_name: openspeedtest
-  #   restart: unless-stopped
-  #   networks:
-  #     - untrusted-net
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.openspeedtest.rule=Host(`speedtest.${DOMAIN}`)"
-  #     - "traefik.http.routers.openspeedtest.tls.certresolver=certificato"
-  #     - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
-  #     - "traefik.http.routers.openspeedtest.entrypoints: web"
-  #     - "traefik.http.middlewares.limit.buffering.maxRequestBodyBytes: 10000000000"
-  #     - "traefik.http.routers.openspeedtest.middlewares: limit"
+    depends_on:
+      - traefik
 
   librespeed:
     image: adolfintel/speedtest
@@ -143,6 +197,8 @@ services:
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
       - "traefik.http.routers.librespeed.tls.certresolver=certificato"
       - "traefik.http.services.librespeed.loadbalancer.server.port=80"
+    depends_on:
+      - traefik
 
   speedtest-tracker:
     container_name: speedtest-tracker
@@ -169,6 +225,8 @@ services:
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
       - "traefik.docker.network=metal-services_untrusted-net"
+    depends_on:
+      - traefik
       
   heimdall:
     image: lscr.io/linuxserver/heimdall:latest
@@ -187,6 +245,8 @@ services:
       - "traefik.http.routers.heimdall.rule=Host(`www.${DOMAIN}`)"
       - "traefik.http.routers.heimdall.tls.certresolver=certificato"
       - "traefik.http.services.heimdall.loadbalancer.server.port=80"
+    depends_on:
+      - traefik
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -207,6 +267,8 @@ services:
       - "traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)"
       - "traefik.http.routers.qbittorrent.tls.certresolver=certificato"
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=8220"
+    depends_on:
+      - traefik
 
   overseerr:
     image: sctx/overseerr:latest
@@ -225,6 +287,8 @@ services:
       - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
       - "traefik.http.routers.overseerr.tls.certresolver=certificato"
       - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+    depends_on:
+      - traefik
 
   omada-controller:
     container_name: omada-controller
@@ -277,3 +341,5 @@ services:
       - "traefik.http.routers.test.tls.certresolver=certificato"
       - "traefik.http.services.test.loadbalancer.server.port=443"
       - "traefik.http.services.test.loadbalancer.server.url=https://www.google.com"
+    depends_on:
+      - traefik
