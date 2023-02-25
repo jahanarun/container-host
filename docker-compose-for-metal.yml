@@ -34,15 +34,15 @@ services:
       vlan-net:
         ipv4_address: ${CLOUDFLADRED_DNSPROXY_IPADDR}
     command:
-      - proxy-dns
-      - --port
-      - 5053
-      - --upstream
-      -  https://8.8.8.8/dns-query
-      - --upstream
-      -  https://1.1.1.1/dns-query
-      - --upstream
-      -  https://1.0.0.1/dns-query
+      - "proxy-dns"
+      - "--port"
+      - "5053"
+      - "--upstream"
+      - "https://8.8.8.8/dns-query"
+      - "--upstream"
+      - "https://1.1.1.1/dns-query"
+      - "--upstream"
+      - "https://1.0.0.1/dns-query"
 
   pihole:
     container_name: pihole
@@ -67,7 +67,7 @@ services:
       - ${DATA_STORAGE}/pihole/etc/pihole:/etc/pihole
       - ${DATA_STORAGE}/pihole/etc/dnsmasq.d:/etc/dnsmasq.d
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
-    cap_add:
+    # cap_add:
       # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
       host-net:
