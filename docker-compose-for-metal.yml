@@ -30,24 +30,21 @@ services:
     container_name: "cloudflared-dnsproxy"
     restart: always
     # network_mode: host
-    ports:
-      - "5053:5053/udp"
-      - "49312:49312/tcp"
     environment:
       TZ: ${TZ}    
       TUNNEL_METRICS: "0.0.0.0:49312"
       TUNNEL_DNS_ADDRESS: "0.0.0.0"
-      TUNNEL_DNS_PORT: "5053"
+      TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
       vlan-net:
         ipv4_address: ${CLOUDFLADRED_DNSPROXY_IPADDR}
     command: proxy-dns
     healthcheck:
-      test: dig +short @127.0.0.1 -p $TUNNEL_DNS_PORT cloudflare.com A || exit 1
+      test: dig +short @127.0.0.1 -p ${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
       interval: 30s
       timeout: 20s
-      start-period: 10s
+      start_period: 10s
 
   pihole:
     container_name: pihole
@@ -61,7 +58,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: ${CLOUDFLADRED_DNSPROXY_IPADDR}#5053
+      DNS1: ${CLOUDFLADRED_DNSPROXY_IPADDR}#${TUNNEL_DNS_PORT}
       DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
