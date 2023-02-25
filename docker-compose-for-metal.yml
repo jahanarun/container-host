@@ -73,6 +73,7 @@ services:
       # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
       host-net:
+        ipv4_address: ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy
@@ -263,6 +264,8 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       vlan-net:
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
