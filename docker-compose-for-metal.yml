@@ -15,10 +15,10 @@ networks:
           ip_range: 10.100.0.48/30        # 10.100.0.48 - 10.100.0.51
 
   vlan-net:
-    driver: ipvlan
+    driver: macvlan
     driver_opts:
       parent: eth0.80
-      name: ipvlan80
+      name: macvlan80
     ipam:
       config:
         - subnet: 10.100.80.0/24
