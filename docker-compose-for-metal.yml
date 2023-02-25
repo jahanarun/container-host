@@ -30,19 +30,19 @@ services:
     container_name: "cloudflared-dnsproxy"
     restart: always
     # network_mode: host
+    ports:
+      - "5053:5053/udp"
+      - "49312:49312/tcp"
+    environment:
+      TZ: ${TZ}    
+      TUNNEL_METRICS: "0.0.0.0:49312"
+      TUNNEL_DNS_ADDRESS: "0.0.0.0"
+      TUNNEL_DNS_PORT: "5053"
+      TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
       vlan-net:
         ipv4_address: ${CLOUDFLADRED_DNSPROXY_IPADDR}
-    command:
-      - "proxy-dns"
-      - "--port"
-      - "5053"
-      - "--upstream"
-      - "https://8.8.8.8/dns-query"
-      - "--upstream"
-      - "https://1.1.1.1/dns-query"
-      - "--upstream"
-      - "https://1.0.0.1/dns-query"
+    command: proxy-dns
 
   pihole:
     container_name: pihole
