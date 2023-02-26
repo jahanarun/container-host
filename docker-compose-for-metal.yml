@@ -25,9 +25,10 @@ networks:
           gateway: 10.100.80.1
   
 services:
-  cloudflared-dnsproxy:
+  cloudflared-dnsproxy-vpn:
     image: cloudflare/cloudflared:latest
-    container_name: "cloudflared-dnsproxy"
+    container_name: "cloudflared-dnsproxy-vpn"
+    command: proxy-dns
     restart: always
     # network_mode: host
     environment:
@@ -38,13 +39,27 @@ services:
       TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
       vlan-net:
-        ipv4_address: ${CLOUDFLADRED_DNSPROXY_IPADDR}
-    command: proxy-dns
+        ipv4_address: ${CLOUDFLADRED_DNSPROXY_VPN_IPADDR}
     # healthcheck:
     #   test: dig +short @127.0.0.1 -p ${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
     #   interval: 30s
     #   timeout: 20s
     #   start_period: 10s
+
+  cloudflared-dnsproxy:
+    image: cloudflare/cloudflared:latest
+    container_name: "cloudflared-dnsproxy"
+    command: proxy-dns
+    restart: always
+    environment:
+      TZ: ${TZ}    
+      TUNNEL_METRICS: "0.0.0.0:49312"
+      TUNNEL_DNS_ADDRESS: "0.0.0.0"
+      TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
+      TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
+    networks:
+      host-net:
+        ipv4_address: ${CLOUDFLADRED_DNSPROXY_IPADDR}
 
   pihole:
     container_name: pihole
@@ -74,6 +89,25 @@ services:
     networks:
       host-net:
         ipv4_address: ${PIHOLE_IP_ADDRESS}
+    restart: unless-stopped
+    depends_on:
+      - cloudflared-dnsproxy
+
+  pihole-vpn:
+    container_name: pihole-vpn
+    image: pihole/pihole:latest
+    environment:
+      TZ: ${TZ}
+      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
+      DNS1: ${CLOUDFLADRED_DNSPROXY_VPN_IPADDR}#${TUNNEL_DNS_PORT}
+      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
+      DNSMASQ_LISTENING: all
+    volumes:
+      - ${DATA_STORAGE}/pihole-vpn/etc/pihole:/etc/pihole
+      - ${DATA_STORAGE}/pihole-vpn/etc/dnsmasq.d:/etc/dnsmasq.d
+    networks:
+      vlan-net:
+        ipv4_address: ${PIHOLE_VPN_IP_ADDRESS}
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy
