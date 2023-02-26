@@ -299,7 +299,7 @@ services:
     networks:
       vlan-net:
     dns:
-      - ${PIHOLE_IP_ADDRESS}
+      - ${PIHOLE_VPN_IP_ADDRESS}
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
