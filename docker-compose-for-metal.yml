@@ -382,5 +382,5 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.omada.rule=Host(`omada.${DOMAIN}`)"
       - "traefik.http.routers.omada.tls.certresolver=certificato"
-      - "traefik.http.services.omada.loadbalancer.server.port=8843"
+      - "traefik.http.services.omada.loadbalancer.server.port=8043"
 
