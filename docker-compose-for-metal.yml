@@ -172,9 +172,6 @@ services:
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - "traefik.docker.network=metal-services_vlan-net"
-    ports:
-      - 80:80
-      - 443:443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
@@ -189,8 +186,6 @@ services:
     hostname: whoami
     networks:
       internal-net:
-    ports:
-      - 80:80      
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.rule=Host(`whoami.${DOMAIN}`)"
@@ -231,8 +226,6 @@ services:
         ipv4_address: "10.100.80.40"      
     dns:
       - ${PIHOLE_VPN_IP_ADDRESS}
-    ports:
-      - 32400:32400
     environment:
       - PLEX_UID=33
       - PLEX_GID=33
