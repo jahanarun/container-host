@@ -274,10 +274,6 @@ services:
         - PGID=33
         - PUID=33
         - OOKLA_EULA_GDPR=true
-    networks:
-      vlan-net:
-    dns:
-      - ${PIHOLE_VPN_IP_ADDRESS}
     ports:
       - "80:80/tcp"
     logging:
