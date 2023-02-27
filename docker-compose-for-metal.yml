@@ -1,7 +1,7 @@
 version: "3.5"
 
 networks:
-  untrusted-net:
+  internal-net:
     internal: true
 
   host-net:
@@ -127,6 +127,7 @@ services:
 
   traefik:
     image: traefik:latest
+    hostname: traefik
     container_name: traefik
     command:
       - "--log.level=INFO"
@@ -152,9 +153,9 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      untrusted-net:
       vlan-net:
         ipv4_address: "10.100.80.55"      
+      internal-net:
     dns:
       - ${PIHOLE_VPN_IP_ADDRESS}
     environment:
@@ -167,6 +168,8 @@ services:
       - "traefik.http.routers.api.tls.certresolver=certificato"
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
+      # - "traefik.http.services.api@internal.loadbalancer.server.port=80"
+      - "traefik.docker.network=metal-services_vlan-net"
     ports:
       - 80:80
       - 443:443
@@ -178,7 +181,16 @@ services:
     depends_on:
       - pihole
 
-      
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    networks:
+      internal-net:    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.${DOMAIN}`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
     container_name: "cloudflared-tunnel"
@@ -199,6 +211,7 @@ services:
 
   plex-music:
     image: linuxserver/plex:latest
+    hostname: plex-music
     container_name: plex-music
     labels:
       - "traefik.enable=true"
@@ -238,7 +251,7 @@ services:
     environment:
       - MODE=standalone
     networks:
-      - untrusted-net
+      - internal-net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
@@ -258,7 +271,7 @@ services:
         - PUID=33
         - OOKLA_EULA_GDPR=true
     networks:
-      untrusted-net:
+      internal-net:
       vlan-net:
     dns:
       - ${PIHOLE_VPN_IP_ADDRESS}
@@ -275,7 +288,7 @@ services:
       - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
-      - "traefik.docker.network=metal-services_untrusted-net"
+      - "traefik.docker.network=metal-services_internal-net"
     depends_on:
       - traefik
       
@@ -289,7 +302,7 @@ services:
     volumes:
       - ${DATA_STORAGE}/heimdall:/config
     networks:
-      untrusted-net:
+      internal-net:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -378,23 +391,3 @@ services:
       - "traefik.http.routers.omada.tls.certresolver=certificato"
       - "traefik.http.services.omada.loadbalancer.server.port=8843"
 
-  dummy:
-    image: alpine
-    container_name: dummy
-    entrypoint: tail -f /dev/null
-    networks:
-      vlan-net:
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.photoprism.rule=Host(`photoprism.${DOMAIN}`)"
-      - "traefik.http.routers.photoprism.tls.certresolver=certificato"
-      - "traefik.http.services.photoprism.loadbalancer.passHostHeader=true"
-      - "traefik.http.services.photoprism.loadbalancer.server.port=443"
-      - "traefik.http.services.photoprism.loadbalancer.server.url=https://${HEAVY_METAL_SERVER}"
-      - "traefik.http.routers.test.rule=Host(`test.${DOMAIN}`)"
-      - "traefik.http.routers.test.tls.certresolver=certificato"
-      - "traefik.http.services.test.loadbalancer.server.port=443"
-      - "traefik.http.services.test.loadbalancer.server.url=https://www.google.com"
-    depends_on:
-      - traefik
