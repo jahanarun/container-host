@@ -183,9 +183,12 @@ services:
 
   whoami:
     image: "traefik/whoami"
-    container_name: "simple-service"
+    container_name: "whoami"
+    hostname: whoami
     networks:
-      internal-net:    
+      internal-net:
+    ports:
+      - 80:80      
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.rule=Host(`whoami.${DOMAIN}`)"
