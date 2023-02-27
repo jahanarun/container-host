@@ -1,6 +1,7 @@
 version: "3.5"
 
 networks:
+  bridge-net:
   internal-net:
     internal: true
 
@@ -156,6 +157,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.55"      
       internal-net:
+      bridge-net:
     dns:
       - ${PIHOLE_VPN_IP_ADDRESS}
     environment:
@@ -274,8 +276,8 @@ services:
         - PGID=33
         - PUID=33
         - OOKLA_EULA_GDPR=true
-    ports:
-      - "80:80/tcp"
+    networks:
+      bridge-net:
     logging:
         driver: "json-file"
         options:
