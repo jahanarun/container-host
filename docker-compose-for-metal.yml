@@ -155,6 +155,8 @@ services:
       untrusted-net:
       vlan-net:
         ipv4_address: "10.100.80.55"      
+    dns:
+      - ${PIHOLE_VPN_IP_ADDRESS}
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
@@ -184,6 +186,8 @@ services:
     networks:
       vlan-net:
         ipv4_address: "10.100.80.41"
+    dns:
+      - ${PIHOLE_VPN_IP_ADDRESS}
     command:
       - tunnel
       - --no-autoupdate
@@ -206,6 +210,8 @@ services:
     networks:
       vlan-net:
         ipv4_address: "10.100.80.40"      
+    dns:
+      - ${PIHOLE_VPN_IP_ADDRESS}
     ports:
       - 32400:32400
     environment:
@@ -254,6 +260,8 @@ services:
     networks:
       untrusted-net:
       vlan-net:
+    dns:
+      - ${PIHOLE_VPN_IP_ADDRESS}
     ports:
       - "80:80/tcp"
     logging:
@@ -327,6 +335,8 @@ services:
     restart: unless-stopped
     networks:
       - vlan-net
+    dns:
+      - ${PIHOLE_VPN_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
