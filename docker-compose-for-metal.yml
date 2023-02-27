@@ -254,6 +254,8 @@ services:
     networks:
       untrusted-net:
       vlan-net:
+    ports:
+      - "80:80/tcp"
     logging:
         driver: "json-file"
         options:
