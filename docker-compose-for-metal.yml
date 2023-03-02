@@ -199,6 +199,7 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       vlan-net:
+        ipv4_address: "10.100.80.42"
     dns:
       - ${GATEWAY_IP_ADDRESS}
     restart: unless-stopped
