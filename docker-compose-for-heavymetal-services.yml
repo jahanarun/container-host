@@ -129,6 +129,7 @@ services:
       - TZ=${TZ}
     networks:
       vlan-net:
+        ipv4_address: "10.100.80.30"
     dns:
       - ${GATEWAY_IP_ADDRESS}
     labels:
