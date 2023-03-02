@@ -131,7 +131,7 @@ services:
       - TZ=${TZ}
     networks:
       vlan-net:
-        ipv4_address: "10.100.80.30"
+        ipv4_address: "10.100.80.20"
     dns:
       - ${GATEWAY_IP_ADDRESS}
     labels:
@@ -193,6 +193,7 @@ services:
       - ${PLEX_USER2_VOLUME_MOUNT}
     networks:
       vlan-net:
+        ipv4_address: "10.100.80.21"
     dns:
       - ${GATEWAY_IP_ADDRESS}
     labels:
