@@ -4,128 +4,18 @@ networks:
   bridge-net:
   internal-net:
     internal: true
-
-  host-net:
-    driver: macvlan
-    driver_opts:
-      parent: eth0
-    ipam:
-      config:
-        - subnet: 10.100.0.0/24
-          gateway: 10.100.0.1
-          ip_range: 10.100.0.48/30        # 10.100.0.48 - 10.100.0.51
-
   vlan-net:
     driver: macvlan
     driver_opts:
-      parent: eth0.80
+      parent: eth1
       name: macvlan80
     ipam:
       config:
         - subnet: 10.100.80.0/24
           gateway: 10.100.80.1
-  
+          ip_range: 10.100.80.16/28        # 10.100.80.16 - 10.100.80.31
+
 services:
-  cloudflared-dnsproxy-vpn:
-    image: cloudflare/cloudflared:latest
-    container_name: "cloudflared-dnsproxy-vpn"
-    command: proxy-dns
-    restart: always
-    # network_mode: host
-    environment:
-      TZ: ${TZ}    
-      TUNNEL_METRICS: "0.0.0.0:49312"
-      TUNNEL_DNS_ADDRESS: "0.0.0.0"
-      TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
-      TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
-    networks:
-      vlan-net:
-        ipv4_address: ${CLOUDFLADRED_DNSPROXY_VPN_IPADDR}
-    # healthcheck:
-    #   test: dig +short @127.0.0.1 -p ${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
-    #   interval: 30s
-    #   timeout: 20s
-    #   start_period: 10s
-
-  cloudflared-dnsproxy:
-    image: cloudflare/cloudflared:latest
-    container_name: "cloudflared-dnsproxy"
-    command: proxy-dns
-    restart: always
-    environment:
-      TZ: ${TZ}    
-      TUNNEL_METRICS: "0.0.0.0:49312"
-      TUNNEL_DNS_ADDRESS: "0.0.0.0"
-      TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
-      TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
-    networks:
-      host-net:
-        ipv4_address: ${CLOUDFLADRED_DNSPROXY_IPADDR}
-
-  pihole:
-    container_name: pihole
-    hostname: pihole
-    image: pihole/pihole:latest
-    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
-    # ports:
-      # - "53:53/tcp"
-      # - "53:53/udp"
-      # - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
-      # - "80:80/tcp"
-    environment:
-      TZ: ${TZ}
-      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: ${CLOUDFLADRED_DNSPROXY_IPADDR}#${TUNNEL_DNS_PORT}
-      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
-      # Listen on all interfaces and permit all origins
-      # This allows Pihole to work in this setup and when answering across VLANS,
-      # but do not expose pi-hole to the internet!
-      DNSMASQ_LISTENING: all
-    # Volumes store your data between container upgrades
-    volumes:
-      - ${DATA_STORAGE}/pihole/default/pihole:/etc/pihole
-      - ${DATA_STORAGE}/pihole/default/dnsmasq.d:/etc/dnsmasq.d
-      - ${DATA_STORAGE}/pihole/custom.list:/etc/pihole/custom.list
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
-    # cap_add:
-      # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
-    networks:
-      host-net:
-        ipv4_address: ${PIHOLE_IP_ADDRESS}
-    restart: unless-stopped
-    depends_on:
-      - cloudflared-dnsproxy
-
-  pihole-vpn:
-    container_name: pihole-vpn
-    hostname: pihole-vpn
-    image: pihole/pihole:latest
-    environment:
-      TZ: ${TZ}
-      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: ${CLOUDFLADRED_DNSPROXY_VPN_IPADDR}#${TUNNEL_DNS_PORT}
-      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
-      DNSMASQ_LISTENING: all
-    volumes:
-      - ${DATA_STORAGE}/pihole/vpn/pihole:/etc/pihole
-      - ${DATA_STORAGE}/pihole/vpn/dnsmasq.d:/etc/dnsmasq.d
-      - ${DATA_STORAGE}/pihole/custom.list:/etc/pihole/custom.list
-    networks:
-      vlan-net:
-        ipv4_address: ${PIHOLE_VPN_IP_ADDRESS}
-    restart: unless-stopped
-    depends_on:
-      - cloudflared-dnsproxy
-
-  http-server:
-    image: jhnrn/http-server-linux:latest
-    container_name: "http-server"
-    restart: always
-    ports:
-      - "3000:3000"
-    depends_on:
-      - pihole
-
   traefik:
     image: traefik:latest
     hostname: traefik
@@ -177,20 +67,6 @@ services:
       - /etc/localtime:/etc/localtime:ro  
       - ${DATA_STORAGE}/certs:/letsencrypt
     restart: always
-    depends_on:
-      - pihole
-
-  whoami:
-    image: "traefik/whoami"
-    container_name: "whoami"
-    hostname: whoami
-    networks:
-      internal-net:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.${DOMAIN}`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-      - "traefik.http.services.whoami.loadbalancer.server.port=80"
 
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
@@ -350,37 +226,3 @@ services:
       - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
     depends_on:
       - traefik
-
-  omada-controller:
-    container_name: omada-controller
-    image: mbentley/omada-controller:5.8
-    restart: unless-stopped
-    stop_grace_period: 60s
-    network_mode: host
-    environment:
-      - PUID=508
-      - PGID=508
-      - MANAGE_HTTP_PORT=8088
-      - MANAGE_HTTPS_PORT=8043
-      - PORTAL_HTTP_PORT=8088
-      - PORTAL_HTTPS_PORT=8843
-      - PORT_APP_DISCOVERY=27001
-      - PORT_ADOPT_V1=29812
-      - PORT_UPGRADE_V1=29813
-      - PORT_MANAGER_V1=29811
-      - PORT_MANAGER_V2=29814
-      - PORT_DISCOVERY=29810
-      - SHOW_SERVER_LOGS=true
-      - SHOW_MONGODB_LOGS=false
-      - SSL_CERT_NAME=tls.crt
-      - SSL_KEY_NAME=tls.key
-      - TZ=${TZ}
-    volumes:
-      - ${DATA_STORAGE}/omada/data:/opt/tplink/EAPController/data
-      - ${DATA_STORAGE}/omada/logs:/opt/tplink/EAPController/logs
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.omada.rule=Host(`omada.${DOMAIN}`)"
-      - "traefik.http.routers.omada.tls.certresolver=certificato"
-      - "traefik.http.services.omada.loadbalancer.server.port=8043"
-
