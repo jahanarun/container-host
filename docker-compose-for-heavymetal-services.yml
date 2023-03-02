@@ -410,3 +410,44 @@ services:
     depends_on:
       - photoprism
       - nextcloud
+
+  gogs:
+    image: "gogs/gogs:latest"
+    container_name: "gogs"
+    hostname: "gogs"
+    restart: "always"
+    environment:
+      RUN_CROND: true
+      SSH_PORT: "22"
+    volumes:
+      - ${GOGS_DATA}/data:/data
+    networks:
+      vlan-net:
+      backend-net:
+    dns:
+      - ${GATEWAY_IP_ADDRESS}
+    labels:
+      traefik.enable: true
+      traefik.http.routers.gogs.rule: "Host(`git.${DOMAIN}`)"
+      traefik.http.routers.gogs.tls.certresolver: "certificato"
+      traefik.http.services.gogs.loadbalancer.server.port: 3000
+      traefik.docker.network: "heavymetal-services_vlan-net"
+    depends_on:
+      - gogs-mariadb
+      - traefik
+
+  gogs-mariadb:
+    image: "mariadb:latest"
+    container_name: "gogs-mariadb"
+    restart: "always"
+    environment:
+      MYSQL_DATABASE: "gogs"
+      MYSQL_PASSWORD: ${GOGS_DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${GOGS_DATABASE_ROOT_PASSWORD}
+      MYSQL_USER: "gogs"
+    volumes:
+      - ${GOGS_DATA}/db:/var/lib/mysql
+    expose:
+      - "3306"
+    networks:
+      - backend-net
