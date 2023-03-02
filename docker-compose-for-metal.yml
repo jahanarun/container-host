@@ -71,6 +71,7 @@ services:
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
     container_name: "cloudflared-tunnel"
+    hostname: cloudflared-tunnel
     restart: always
     networks:
       vlan-net:
@@ -121,6 +122,7 @@ services:
 
   librespeed:
     image: adolfintel/speedtest
+    hostname: librespeed
     container_name: librespeed
     restart: unless-stopped
     environment:
@@ -137,6 +139,7 @@ services:
 
   speedtest-tracker:
     container_name: speedtest-tracker
+    hostname: speedtest-tracker
     image: henrywhitaker3/speedtest-tracker
     volumes:
         - ${DATA_STORAGE}/speedtest-tracker:/config
@@ -163,6 +166,7 @@ services:
       
   heimdall:
     image: lscr.io/linuxserver/heimdall:latest
+    hostname: heimdall
     container_name: heimdall
     environment:
       - TZ=${TZ}
@@ -183,6 +187,7 @@ services:
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
+    hostname: qbittorrent
     container_name: qbittorrent
     environment:
       - PUID=33
@@ -207,6 +212,7 @@ services:
 
   overseerr:
     image: sctx/overseerr:latest
+    hostname: overseerr
     container_name: overseerr
     environment:
       - LOG_LEVEL=debug
