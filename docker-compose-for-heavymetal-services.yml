@@ -1,0 +1,177 @@
+version: "3.5"
+
+networks:
+  vlan-net:
+    driver: macvlan
+    driver_opts:
+      parent: enp8s0.80
+      name: macvlan80
+    ipam:
+      config:
+        - subnet: 10.100.80.0/24
+          gateway: 10.100.80.1
+          ip_range: 10.100.80.32/28        # 10.100.80.32 - 10.100.80.47
+  backend:
+    driver: bridge
+    internal: true
+
+services:
+  traefik:
+    image: traefik:latest
+    hostname: traefik
+    container_name: traefik
+    command:
+      - "--log.level=INFO"
+      - "--accesslog=false"
+      - "--api.dashboard=true"
+      # - "--providers.file.directory=/FileProvider/"
+      # - "--providers.file.watch=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web-secure.address=:443"
+      - "--serverstransport.insecureskipverify=true"
+      # Set up LetsEncrypt
+      - "--certificatesresolvers.certificato.acme.dnschallenge=true"
+      - "--certificatesresolvers.certificato.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.certificato.acme.dnschallenge.delaybeforecheck=10"
+      - "--certificatesresolvers.certificato.acme.dnschallenge.resolvers=1.1.1.1:53"
+      # - "--certificatesresolvers.certificato.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.certificato.acme.email=postmaster@${DOMAIN}"
+      - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
+      - "--ping=true"
+    networks:
+      vlan-net:
+        ipv4_address: "10.100.80.56"      
+    dns:
+      - ${GATEWAY_IP_ADDRESS}
+    environment:
+      CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
+      CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`reverse1.${DOMAIN}`)"
+      - "traefik.http.routers.api.entrypoints=web-secure"
+      - "traefik.http.routers.api.tls.certresolver=certificato"
+      # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.services.api@internal.loadbalancer.server.port=80"
+      - "traefik.docker.network=heavymetal-services_vlan-net"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
+      - /etc/localtime:/etc/localtime:ro  
+      - ${DATA_STORAGE}/certs:/letsencrypt
+    restart: always
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    hostname: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=33
+      - PGID=33
+      - TZ=${TZ}
+    volumes:
+      - /${DATA_STORAGE}/sonarr:/config
+      - ${TVSHOWS}:/media/Series #optional
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      vlan-net:
+    dns:
+      - ${GATEWAY_IP_ADDRESS}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)"
+      - "traefik.http.routers.sonarr.tls.certresolver=certificato"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+    depends_on:
+      - traefik
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:nightly
+    container_name: radarr
+    hostname: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=33
+      - PGID=33
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_STORAGE}/radarr:/config
+      - ${MOVIES}:/media/Movies
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      vlan-net:
+    dns:
+      - ${GATEWAY_IP_ADDRESS}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)"
+      - "traefik.http.routers.radarr.tls.certresolver=certificato"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+    depends_on:
+      - traefik
+
+  prowlarr:
+    image: linuxserver/prowlarr:develop
+    container_name: prowlarr
+    hostname: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - AUTO_UPDATE=true #optional
+      # - RUN_OPTS=<run options here> #optional
+    volumes:
+      - ${DATA_STORAGE}/prowlarr:/config
+    networks:
+      vlan-net:
+    dns:
+      - ${GATEWAY_IP_ADDRESS}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)"
+      - "traefik.http.routers.prowlarr.tls.certresolver=certificato"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+    depends_on:
+      - traefik
+
+  plex:
+    image: linuxserver/plex:latest
+    container_name: plex-movietvshow
+    hostname: plex-movietvshow
+    restart: unless-stopped
+    environment:
+      - PLEX_UID=33
+      - PLEX_GID=33
+      - PUID=33
+      - PGID=33
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - TZ=${TZ}
+      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+      - CHANGE_CONFIG_DIR_OWNERSHIP=true
+      - HOSTNAME=plex.${DOMAIN}
+    volumes:
+      - ${DATA_STORAGE}/plex/config:/config
+      - ${TVSHOWS}:/media/Series
+      - ${MOVIES}:/media/Movies
+      - ${MUSIC}:/media/Music
+      - ${PLEX_USER1_VOLUME_MOUNT}
+      - ${PLEX_USER2_VOLUME_MOUNT}
+    networks:
+      vlan-net:
+    dns:
+      - ${GATEWAY_IP_ADDRESS}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)"
+      - "traefik.http.routers.plex.tls.certresolver=certificato"
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+    depends_on:
+      - traefik
