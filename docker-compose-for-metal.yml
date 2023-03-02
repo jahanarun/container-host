@@ -12,7 +12,7 @@ networks:
     ipam:
       config:
         - subnet: 10.100.80.0/24
-          gateway: 10.100.80.1
+          gateway: ${GATEWAY_IP_ADDRESS}
           ip_range: 10.100.80.16/28        # 10.100.80.16 - 10.100.80.31
 
 services:
@@ -49,7 +49,7 @@ services:
       internal-net:
       bridge-net:
     dns:
-      - ${PIHOLE_VPN_IP_ADDRESS}
+      - ${GATEWAY_IP_ADDRESS}
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
@@ -76,7 +76,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.41"
     dns:
-      - ${PIHOLE_VPN_IP_ADDRESS}
+      - ${GATEWAY_IP_ADDRESS}
     command:
       - tunnel
       - --no-autoupdate
@@ -101,7 +101,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.40"      
     dns:
-      - ${PIHOLE_VPN_IP_ADDRESS}
+      - ${GATEWAY_IP_ADDRESS}
     environment:
       - PLEX_UID=33
       - PLEX_GID=33
@@ -195,7 +195,7 @@ services:
     networks:
       vlan-net:
     dns:
-      - ${PIHOLE_VPN_IP_ADDRESS}
+      - ${GATEWAY_IP_ADDRESS}
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -218,7 +218,7 @@ services:
     networks:
       - vlan-net
     dns:
-      - ${PIHOLE_VPN_IP_ADDRESS}
+      - ${GATEWAY_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
