@@ -200,3 +200,93 @@ services:
       - "traefik.http.services.plex.loadbalancer.server.port=32400"
     depends_on:
       - traefik
+
+  imaginary:
+    image: nextcloud/aio-imaginary:latest
+    container_name: "imaginary"
+    restart: unless-stopped
+    environment:
+       PORT: 9000
+    ports:
+      - "9000:9000"
+    networks:
+      - backend
+      
+  nextcloud-redis:
+    image: redis:6
+    container_name: "nextcloud-redis"
+    restart: unless-stopped
+    volumes:
+      - ${NEXTCLOUD_DATA}/redis:/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - backend
+
+  nextcloud-db:
+    image: mariadb
+    container_name: "nextcloud-db"
+    restart: unless-stopped
+    networks:
+      - backend
+    expose:
+      - "3306"
+    command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    volumes:
+      - ${NEXTCLOUD_DATA}/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud-user
+
+  nextcloud:
+    image: jhnrn/nextcloud-linux
+    container_name: nextcloud
+    hostname: nextcloud
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    links:
+      - nextcloud-db
+    volumes:
+      - ${NEXTCLOUD_DATA}/html:/var/www/html
+      - ${NEXTCLOUD_DATA}/data:/var/www/html/data
+      - ${NEXTCLOUD_DATA}/tmp:/tmp
+    environment:
+      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud-user
+      - MYSQL_HOST=nextcloud-db
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
+      - REDIS_HOST=nextcloud-redis
+      - NEXTCLOUD_HOSTNAME=${NEXTCLOUD_HOSTNAME}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+      - OVERWRITEPROTOCOL=https
+      - PUID=33
+      - PGID=33
+      - PHP_UPLOAD_LIMIT=8G
+      - PHP_MEMORY_LIMIT=8G
+    networks:
+      vlan-net:
+      backend:
+    dns:
+      - ${GATEWAY_IP_ADDRESS}
+    labels:
+      - "ofelia.enabled=true"
+      - "ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m"
+      - "ofelia.job-exec.nextcloud_scan.user=33"
+      - "ofelia.job-exec.nextcloud_scan.command=php occ files:scan --all"
+      - "ofelia.job-exec.nextcloud_cron.schedule=@every 5m"
+      - "ofelia.job-exec.nextcloud_cron.user=33"
+      - "ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php"
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)"
+      - "traefik.http.routers.nextcloud.tls.certresolver=certificato"
+      - "traefik.http.services.nextcloud.loadbalancer.server.port=80"
+      - "traefik.docker.network=heavymetal-services_vlan-net"
+    depends_on:
+      - traefik
+      - nextcloud-db
+      - nextcloud-redis
