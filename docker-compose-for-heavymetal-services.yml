@@ -9,7 +9,7 @@ networks:
     ipam:
       config:
         - subnet: 10.100.80.0/24
-          gateway: 10.100.80.1
+          gateway: ${GATEWAY_IP_ADDRESS}
           ip_range: 10.100.80.32/28        # 10.100.80.32 - 10.100.80.47
   backend-net:
     driver: bridge
@@ -49,7 +49,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.56"      
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
@@ -85,7 +85,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.22"
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)"
@@ -111,7 +111,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.23"
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)"
@@ -135,7 +135,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.20"
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
@@ -160,7 +160,7 @@ services:
     networks:
       vlan-net:
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)"
@@ -197,7 +197,7 @@ services:
       vlan-net:
         ipv4_address: "10.100.80.21"
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)"
@@ -277,7 +277,7 @@ services:
       vlan-net:
       backend-net:
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       - "ofelia.enabled=true"
       - "ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m"
@@ -366,7 +366,7 @@ services:
       vlan-net:
       backend-net:
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       ofelia.enabled: true
       ofelia.job-exec.photoprism_index.schedule: "@every 1h"
@@ -428,7 +428,7 @@ services:
       vlan-net:
       backend-net:
     dns:
-      - ${GATEWAY_IP_ADDRESS}
+      - ${DNS_IP_ADDRESS}
     labels:
       traefik.enable: true
       traefik.http.routers.gogs.rule: "Host(`git.${DOMAIN}`)"
