@@ -81,6 +81,8 @@ services:
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy
+    healthcheck:
+      test: dig +short @127.0.0.1 pi.hole || exit 1
 
   pihole-vpn:
     container_name: pihole-vpn
@@ -102,6 +104,8 @@ services:
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy-vpn
+    healthcheck:
+      test: dig +short @127.0.0.1 pi.hole || exit 1
 
   http-server:
     image: jhnrn/http-server-linux:latest
