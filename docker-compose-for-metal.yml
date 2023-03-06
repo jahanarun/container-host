@@ -1,4 +1,4 @@
-version: "3.5"
+version: "3.9"
 
 networks:
   bridge-net:
@@ -45,9 +45,12 @@ services:
       - "--ping=true"
     networks:
       internal-net:
+        priority: 1000
       bridge-net:
+        priority: 100
       vlan-net:
         ipv4_address: "10.100.80.55"      
+        priority: 10    
     dns:
       - ${DNS_IP_ADDRESS}
     environment:
