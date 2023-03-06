@@ -44,10 +44,10 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      vlan-net:
-        ipv4_address: "10.100.80.55"      
       internal-net:
       bridge-net:
+      vlan-net:
+        ipv4_address: "10.100.80.55"      
     dns:
       - ${DNS_IP_ADDRESS}
     environment:
