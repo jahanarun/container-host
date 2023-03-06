@@ -4,7 +4,7 @@ networks:
   bridge-net:
   internal-net:
     internal: true
-  vlan-net:
+  01-vlan-net:
     driver: macvlan
     driver_opts:
       parent: eth1
@@ -45,12 +45,9 @@ services:
       - "--ping=true"
     networks:
       internal-net:
-        priority: 1000
       bridge-net:
-        priority: 100
-      vlan-net:
+      01-vlan-net:
         ipv4_address: "10.100.80.55"      
-        priority: 10    
     dns:
       - ${DNS_IP_ADDRESS}
     environment:
@@ -64,7 +61,7 @@ services:
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
-      - "traefik.docker.network=metal-services_vlan-net"
+      - "traefik.docker.network=metal-services_01-vlan-net"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
@@ -77,7 +74,7 @@ services:
     hostname: cloudflared-tunnel
     restart: always
     networks:
-      vlan-net:
+      01-vlan-net:
         ipv4_address: "10.100.80.41"
     dns:
       - ${DNS_IP_ADDRESS}
@@ -102,7 +99,7 @@ services:
       - "traefik.http.routers.plex.tls.certresolver=certificato"
       - "traefik.http.services.plex.loadbalancer.server.port=32400"
     networks:
-      vlan-net:
+      01-vlan-net:
         ipv4_address: "10.100.80.40"      
     dns:
       - ${DNS_IP_ADDRESS}
@@ -201,7 +198,7 @@ services:
       - ${DATA_STORAGE}/qbittorrent:/config
       - ${TORRENTS}:/downloads #optional
     networks:
-      vlan-net:
+      01-vlan-net:
         ipv4_address: "10.100.80.42"
     dns:
       - ${DNS_IP_ADDRESS}
@@ -226,7 +223,7 @@ services:
       - ${DATA_STORAGE}/overseerr:/app/config
     restart: unless-stopped
     networks:
-      - vlan-net
+      - 01-vlan-net
     dns:
       - ${DNS_IP_ADDRESS}
     labels:
