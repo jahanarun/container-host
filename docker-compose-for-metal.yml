@@ -18,8 +18,8 @@ networks:
   transit_zero-net:
     driver: macvlan
     driver_opts:
-      parent: eth0.0
-      name: macvlan80
+      parent: eth1 # soon changes to eth0.1
+      name: macvlan1 # soon changes to macvlan1
     ipam:
       config:
         - subnet: 10.100.0.0/24
@@ -140,7 +140,6 @@ services:
     image: mbentley/omada-controller:5.9
     restart: unless-stopped
     stop_grace_period: 60s
-    network_mode: host
     environment:
       - PUID=508
       - PGID=508
