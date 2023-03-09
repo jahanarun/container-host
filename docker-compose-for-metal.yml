@@ -7,7 +7,7 @@ networks:
   01-transit80-net:
     driver: macvlan
     driver_opts:
-      parent: eth0.80
+      parent: eth0
       name: macvlan80
     ipam:
       config:
