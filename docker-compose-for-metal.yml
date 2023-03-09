@@ -55,7 +55,7 @@ services:
   pihole:
     container_name: pihole
     hostname: pihole
-    image: pihole/pihole:dev
+    image: pihole/pihole:latest
     # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
     # ports:
       # - "53:53/tcp"
@@ -91,7 +91,7 @@ services:
   pihole-vpn:
     container_name: pihole-vpn
     hostname: pihole-vpn
-    image: pihole/pihole:dev
+    image: pihole/pihole:latest
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
