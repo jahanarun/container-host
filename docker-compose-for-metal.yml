@@ -4,7 +4,7 @@ networks:
   bridge-net:
   internal-net:
     internal: true
-  01-transit80-net:
+  01-transit_80-net:
     driver: macvlan
     driver_opts:
       parent: eth0
@@ -29,7 +29,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_VPN_IPADDR}
     # healthcheck:
     #   test: dig +short @127.0.0.1 -p ${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
@@ -49,7 +49,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_IPADDR}
 
   pihole:
@@ -80,7 +80,7 @@ services:
     # cap_add:
       # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
     depends_on:
@@ -104,7 +104,7 @@ services:
       - ${DATA_STORAGE}/pihole/vpn/dnsmasq.d:/etc/dnsmasq.d
       - ${DATA_STORAGE}/pihole/custom.list:/etc/pihole/custom.list
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${PIHOLE_VPN_IP_ADDRESS}
     restart: unless-stopped
     depends_on:
@@ -120,7 +120,7 @@ services:
     ports:
       - "3000:3000"
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${HTTP_SERVER_IP_ADDRESS}
     depends_on:
       - pihole
@@ -188,7 +188,7 @@ services:
     networks:
       internal-net:
       bridge-net:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}      
     dns:
       - ${DNS_IP_ADDRESS}
@@ -203,7 +203,7 @@ services:
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
-      - "traefik.docker.network=metal-services_01-transit80-net"
+      - "traefik.docker.network=metal-services_01-transit_80-net"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
@@ -216,7 +216,7 @@ services:
     hostname: cloudflared-tunnel
     restart: always
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${CLOUDFLARED_TUNNEL_IP_ADDRESS}
     dns:
       - ${DNS_IP_ADDRESS}
@@ -241,7 +241,7 @@ services:
       - "traefik.http.routers.plex.tls.certresolver=certificato"
       - "traefik.http.services.plex.loadbalancer.server.port=32400"
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
     dns:
       - ${DNS_IP_ADDRESS}
@@ -340,7 +340,7 @@ services:
       - ${DATA_STORAGE}/qbittorrent:/config
       - ${TORRENTS}:/downloads #optional
     networks:
-      01-transit80-net:
+      01-transit_80-net:
         ipv4_address: ${QBITTORRENT_IP_ADDRESS}
     dns:
       - ${DNS_IP_ADDRESS}
@@ -365,7 +365,7 @@ services:
       - ${DATA_STORAGE}/overseerr:/app/config
     restart: unless-stopped
     networks:
-      - 01-transit80-net
+      - 01-transit_80-net
     dns:
       - ${DNS_IP_ADDRESS}
     labels:
