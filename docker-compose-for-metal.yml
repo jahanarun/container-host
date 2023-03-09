@@ -24,6 +24,7 @@ networks:
       config:
         - subnet: 10.100.0.0/24
           gateway: ${TRANSIT0_GATEWAY_IP_ADDRESS}
+          ip_range: 10.100.0.48/30        # 10.100.0.48 - 10.100.0.51
 
 services:
   cloudflared-dnsproxy-vpn:
