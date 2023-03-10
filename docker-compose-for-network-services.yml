@@ -4,12 +4,12 @@ networks:
   host-net:
     driver: macvlan
     driver_opts:
-      parent: eth0
+      parent: eth1
     ipam:
       config:
-        - subnet: 10.100.80.0/24
-          gateway: ${GATEWAY_IP_ADDRESS}
-          ip_range: 10.100.80.48/30        # 10.100.80.48 - 10.100.80.51
+        - subnet: 10.0.0.0/24
+          gateway: 10.0.0.1
+          ip_range: 10.0.0.48/30        # 10.0.0.48 - 10.0.0.51
 
 services:
   cloudflared-dnsproxy-vpn:
