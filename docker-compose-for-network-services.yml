@@ -8,7 +8,7 @@ networks:
     ipam:
       config:
         - subnet: 10.0.0.0/24
-          gateway: 10.0.0.1
+          gateway: ${GATEWAY_IP_ADDRESS}
           ip_range: 10.0.0.48/30        # 10.0.0.48 - 10.0.0.51
 
 services:
@@ -82,8 +82,10 @@ services:
     depends_on:
       - cloudflared-dnsproxy
     healthcheck:
-      test: dig +short @127.0.0.1 pi.hole || exit 1
-
+      test: ping -c 1 ${GATEWAY_IP_ADDRESS} || exit 1
+      # test: dig +short @127.0.0.1 pi.hole || exit 1
+      interval: 3s
+      retries: 5
   pihole-vpn:
     container_name: pihole-vpn
     hostname: pihole-vpn
@@ -105,8 +107,9 @@ services:
     depends_on:
       - cloudflared-dnsproxy-vpn
     healthcheck:
-      test: dig +short @127.0.0.1 pi.hole || exit 1
-
+      test: ping -c 1 ${GATEWAY_IP_ADDRESS} || exit 1
+      interval: 3s
+      retries: 5
   http-server:
     image: jhnrn/http-server-linux:latest
     container_name: "http-server"
