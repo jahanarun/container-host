@@ -1,7 +1,7 @@
 version: "3.5"
 
 networks:
-  host-net:
+  lan-net:
     driver: macvlan
     driver_opts:
       parent: eth1
@@ -25,7 +25,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
-      host-net:
+      lan-net:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_VPN_IPADDR}
     # healthcheck:
     #   test: dig +short @127.0.0.1 -p ${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
@@ -45,7 +45,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
-      host-net:
+      lan-net:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_IPADDR}
 
   pihole:
@@ -76,7 +76,7 @@ services:
     # cap_add:
       # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
-      host-net:
+      lan-net:
         ipv4_address: ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
     depends_on:
@@ -101,7 +101,7 @@ services:
       - ${DATA_STORAGE}/pihole/vpn/dnsmasq.d:/etc/dnsmasq.d
       - ${DATA_STORAGE}/pihole/custom.list:/etc/pihole/custom.list
     networks:
-      host-net:
+      lan-net:
         ipv4_address: ${PIHOLE_VPN_IP_ADDRESS}
     restart: unless-stopped
     depends_on:
@@ -118,4 +118,3 @@ services:
       - "3000:3000"
     depends_on:
       - pihole
-
