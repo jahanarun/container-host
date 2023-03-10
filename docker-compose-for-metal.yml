@@ -5,10 +5,11 @@ networks:
   internal-net:
     internal: true
   01-transit_80-net:
-    driver: macvlan
+    driver: ipvlan
     driver_opts:
+      ipvlan_mode: l2
       parent: eth0.80
-      name: macvlan80
+      name: ipvlan80
     ipam:
       config:
         - subnet: 10.100.80.0/24
