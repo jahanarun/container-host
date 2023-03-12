@@ -283,22 +283,23 @@ services:
     dns:
       - ${DNS_IP_ADDRESS}
     labels:
-      - "ofelia.enabled=true"
-      - "ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m"
-      - "ofelia.job-exec.nextcloud_scan.user=33"
-      - "ofelia.job-exec.nextcloud_scan.command=php occ files:scan --all"
-      - "ofelia.job-exec.nextcloud_cron.schedule=@every 5m"
-      - "ofelia.job-exec.nextcloud_cron.user=33"
-      - "ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php"
-      - "traefik.enable=true"
-      - "traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)"
-      - "traefik.http.routers.nextcloud.tls.certresolver=certificato"
-      - "traefik.http.services.nextcloud.loadbalancer.server.port=80"
-      - "traefik.http.middlewares.nextcloud-redirectregex.redirectRegex.permanent=true"
-      - "traefik.http.middlewares.nextcloud-redirectregex.redirectregex.regex=^https://(.*)/.well-known/(card|cal)dav"
-      - "traefik.http.middlewares.nextcloud-redirectregex.redirectregex.replacement=https://$$1/remote.php/dav/"
-      - "traefik.http.routers.nextcloud.middlewares=nextcloud-redirectregex@docker"      
-      - "traefik.docker.network=heavymetal-services_vlan-net"
+      ofelia.enabled: true
+      ofelia.job-exec.nextcloud_scan.schedule: "@every 1h30m"
+      ofelia.job-exec.nextcloud_scan.user: 33
+      ofelia.job-exec.nextcloud_scan.command: "php occ files:scan --all"
+      ofelia.job-exec.nextcloud_cron.schedule: "@every 5m"
+      ofelia.job-exec.nextcloud_cron.user: 33
+      ofelia.job-exec.nextcloud_cron.command: "php -f /var/www/html/cron.php"
+      traefik.enable: true
+      traefik.http.routers.nextcloud.rule: "Host(`nextcloud.${DOMAIN}`)"
+      traefik.http.routers.nextcloud.tls.certresolver: "certificato"
+      traefik.http.services.nextcloud.loadbalancer.server.port: 80
+      traefik.http.middlewares.nextcloud-redirectregex.redirectRegex.permanent: true
+      traefik.http.middlewares.nextcloud-redirectregex.redirectregex.regex: "^https://(.*)/.well-known/(card|cal)dav"
+      traefik.http.middlewares.nextcloud-redirectregex.redirectregex.replacement: "https://$$1/remote.php/dav/"
+      traefik.http.routers.nextcloud.middlewares: "nextcloud-redirectregex@docker"
+      traefik.frontend.headers.STSSeconds: 15552000
+      traefik.docker.network: "heavymetal-services_vlan-net"
     depends_on:
       - traefik
       - nextcloud-db
