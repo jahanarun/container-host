@@ -275,6 +275,7 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
+      01-transit_80-net:
       internal-net:
     labels:
       ofelia.enabled: true
@@ -295,7 +296,6 @@ services:
     restart: always
     networks:
       01-transit_80-net:
-      internal-net:
     dns:
       - ${DNS_IP_ADDRESS}
     volumes:
