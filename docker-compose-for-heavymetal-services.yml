@@ -215,7 +215,7 @@ services:
       - "9000:9000"
     networks:
       - internal-net
-      
+
   nextcloud-redis:
     image: redis:6
     container_name: "nextcloud-redis"
@@ -244,13 +244,11 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
 
-  nextcloud:
-    image: jhnrn/nextcloud-linux
-    container_name: nextcloud
-    hostname: nextcloud
+  nextcloud-app:
+    image: jhnrn/nextcloud-fpm
+    container_name: nextcloud-app
+    hostname: nextcloud-app
     restart: unless-stopped
-    ports:
-      - 8080:80
     links:
       - nextcloud-db
     volumes:
@@ -277,10 +275,7 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
-      01-transit_80-net:
       internal-net:
-    dns:
-      - ${DNS_IP_ADDRESS}
     labels:
       ofelia.enabled: true
       ofelia.job-exec.nextcloud_scan.schedule: "@every 1h30m"
@@ -289,6 +284,25 @@ services:
       ofelia.job-exec.nextcloud_cron.schedule: "@every 5m"
       ofelia.job-exec.nextcloud_cron.user: 33
       ofelia.job-exec.nextcloud_cron.command: "php -f /var/www/html/cron.php"
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
+
+  nextcloud-web:
+    image: nginx:alpine
+    container_name: nextcloud-web
+    hostname: nextcloud-web
+    restart: always
+    networks:
+      01-transit_80-net:
+      internal-net:
+    dns:
+      - ${DNS_IP_ADDRESS}
+    volumes:
+      - ${NEXTCLOUD_DATA}/html:/var/www/html:ro
+      - ${NEXTCLOUD_DATA}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${NEXTCLOUD_DATA}/nginx/log:/var/log/nginx
+    labels:
       traefik.enable: true
       traefik.http.routers.nextcloud.rule: "Host(`nextcloud.${DOMAIN}`)"
       traefik.http.routers.nextcloud.tls.certresolver: "certificato"
@@ -300,9 +314,8 @@ services:
       traefik.frontend.headers.STSSeconds: 15552000
       traefik.docker.network: "heavymetal-services_01-transit_80-net"
     depends_on:
+      - nextcloud-app
       - traefik
-      - nextcloud-db
-      - nextcloud-redis
 
   photoprism:
     image: photoprism/photoprism:latest
@@ -417,7 +430,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - photoprism
-      - nextcloud
+      - nextcloud-app
 
   gogs:
     image: "gogs/gogs:latest"
