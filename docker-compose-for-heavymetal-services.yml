@@ -307,11 +307,26 @@ services:
       traefik.http.routers.nextcloud.rule: "Host(`nextcloud.${DOMAIN}`)"
       traefik.http.routers.nextcloud.tls.certresolver: "certificato"
       traefik.http.services.nextcloud.loadbalancer.server.port: 80
-      traefik.http.middlewares.nextcloud-redirectregex.redirectRegex.permanent: true
-      traefik.http.middlewares.nextcloud-redirectregex.redirectregex.regex: "^https://(.*)/.well-known/(card|cal)dav"
-      traefik.http.middlewares.nextcloud-redirectregex.redirectregex.replacement: "https://$$1/remote.php/dav/"
-      traefik.http.routers.nextcloud.middlewares: "nextcloud-redirectregex@docker"
-      traefik.frontend.headers.STSSeconds: 15552000
+      traefik.http.middlewares.nextcloud-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
+      # traefik.http.middlewares.nextcloud-redirectregex.redirectRegex.permanent: true
+      # traefik.http.middlewares.nextcloud-redirectregex.redirectregex.regex: "^https://(.*)/.well-known/(card|cal)dav"
+      # traefik.http.middlewares.nextcloud-redirectregex.redirectregex.replacement: "https://$$1/remote.php/dav/"
+      traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.permanent: true
+      traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.regex: "https?://([^/]*)/.well-known/(card|cal)dav"
+      traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.replacement: "https://$${1}/remote.php/dav/"
+      traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.permanent: "true"
+      traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.regex: "https?://([^/]*)/.well-known/webfinger"
+      traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.replacement: "https://$${1}/index.php/.well-known/webfinger/"
+      traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.permanent: "true"
+      traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.regex: "https?://([^/]*)/.well-known/nodeinfo"
+      traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.replacement: "https://$${1}/index.php/.well-known/nodeinfo/"
+      traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.permanent: "true"
+      traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.regex: "https?://([^/]*)(/.well-known[^#]*)"
+      traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement: "https://$${1}/index.php$${2}"
+      traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds: 31536000
+      traefik.http.routers.nextcloud.middlewares: "nextcloud-hsts,nextcloud-limit,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4"
+      # traefik.http.routers.nextcloud.middlewares: "nextcloud-redirectregex@docker"
+      # traefik.frontend.headers.STSSeconds: 15552000
       traefik.docker.network: "heavymetal-services_01-transit_80-net"
     depends_on:
       - nextcloud-app
