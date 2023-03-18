@@ -1,7 +1,6 @@
 version: "3.9"
 
 networks:
-  bridge-net:
   internal-net:
     internal: true
   01-transit_80-net:
@@ -92,7 +91,6 @@ services:
       - "--ping=true"
     networks:
       internal-net:
-      bridge-net:
       01-transit_80-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}      
     dns:
@@ -196,7 +194,7 @@ services:
         - PUID=33
         - OOKLA_EULA_GDPR=true
     networks:
-      bridge-net:
+      01-transit_80-net:
     logging:
         driver: "json-file"
         options:
