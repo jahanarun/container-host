@@ -33,6 +33,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web-secure.address=:443"
+      - "--entrypoints.ssh.address=:22"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
@@ -465,6 +466,10 @@ services:
       traefik.http.routers.gogs.rule: "Host(`git.${DOMAIN}`)"
       traefik.http.routers.gogs.tls.certresolver: "certificato"
       traefik.http.services.gogs.loadbalancer.server.port: 3000
+      traefik.tcp.routers.gogs-ssh.rule: HostSNI(`*`)
+      traefik.tcp.routers.gogs-ssh.entrypoints: ssh
+      traefik.tcp.routers.gogs-ssh.service: gogs-ssh
+      traefik.tcp.services.gogs-ssh.loadbalancer.server.port: 22      
     depends_on:
       - gogs-mariadb
       - traefik
