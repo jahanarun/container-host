@@ -195,6 +195,8 @@ services:
         - OOKLA_EULA_GDPR=true
     networks:
       01-transit_80-net:
+    dns:
+      - ${DNS_IP_ADDRESS}
     logging:
         driver: "json-file"
         options:

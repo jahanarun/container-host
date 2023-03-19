@@ -277,6 +277,8 @@ services:
     networks:
       01-transit_80-net:
       internal-net:
+    dns:
+      - ${DNS_IP_ADDRESS}
     labels:
       ofelia.enabled: true
       ofelia.job-exec.nextcloud_scan.schedule: "@every 1h30m"
