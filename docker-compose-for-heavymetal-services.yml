@@ -263,10 +263,10 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
 
-  nextcloud-app:
-    image: jhnrn/nextcloud-fpm
-    container_name: nextcloud-app
-    hostname: nextcloud-app
+  nextcloud:
+    image: jhnrn/nextcloud-linux
+    container_name: nextcloud
+    hostname: nextcloud
     restart: unless-stopped
     links:
       - nextcloud-db
@@ -305,25 +305,6 @@ services:
       ofelia.job-exec.nextcloud_cron.schedule: "@every 5m"
       ofelia.job-exec.nextcloud_cron.user: 33
       ofelia.job-exec.nextcloud_cron.command: "php -f /var/www/html/cron.php"
-    depends_on:
-      - nextcloud-db
-      - nextcloud-redis
-
-  nextcloud-web:
-    image: nginx:alpine
-    container_name: nextcloud-web
-    hostname: nextcloud-web
-    restart: always
-    networks:
-      01-transit_80-net:
-    dns:
-      - ${DNS_IP_ADDRESS}
-    volumes:
-      - ${NEXTCLOUD_DATA}/html:/var/www/html:ro
-      - ${NEXTCLOUD_DATA}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ${NEXTCLOUD_DATA}/nginx/log:/var/log/nginx
-      - ${NEXTCLOUD_DATA}/tmp/web:/tmp
-    labels:
       traefik.enable: true
       traefik.http.routers.nextcloud.rule: "Host(`nextcloud.${DOMAIN}`)"
       traefik.http.routers.nextcloud.tls.certresolver: "certificato"
@@ -346,11 +327,11 @@ services:
       traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement: "https://$${1}/index.php$${2}"
       traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds: 31536000
       traefik.http.routers.nextcloud.middlewares: "nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4"
-      # traefik.http.routers.nextcloud.middlewares: "nextcloud-redirectregex@docker"
-      # traefik.frontend.headers.STSSeconds: 15552000
+      traefik.docker.network: "heavymetal-services_01-transit_80-net"
     depends_on:
-      - nextcloud-app
       - traefik
+      - nextcloud-db
+      - nextcloud-redis
 
   photoprism:
     image: photoprism/photoprism:latest
@@ -465,7 +446,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - photoprism
-      - nextcloud-app
+      - nextcloud
 
   gogs:
     image: "gogs/gogs:latest"
