@@ -15,7 +15,7 @@ networks:
 services:
   cloudflared-dnsproxy:
     image: cloudflare/cloudflared:latest
-    container_name: "cloudflared-dnsproxy"
+    container_name: "cloudflared-dnsproxy-quantum"
     command: proxy-dns
     restart: always
     environment:
@@ -29,8 +29,8 @@ services:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_IPADDR}
 
   pihole:
-    container_name: pihole
-    hostname: pihole
+    container_name: pihole-quantum
+    hostname: pihole-quantum
     image: pihole/pihole:dev
     # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
     # ports:
