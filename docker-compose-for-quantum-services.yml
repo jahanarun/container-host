@@ -10,7 +10,7 @@ networks:
     ipam:
       config:
         - subnet: 10.100.30.0/24
-          gateway: ${GATEWAY_IP_ADDRESS}
+          gateway: ${TRANSIT30_GATEWAY_IP_ADDRESS}
 
 services:
   cloudflared-dnsproxy:
@@ -62,7 +62,7 @@ services:
     depends_on:
       - cloudflared-dnsproxy
     healthcheck:
-      test: ping -c 1 ${GATEWAY_IP_ADDRESS} || exit 1
+      test: ping -c 1 ${TRANSIT30_GATEWAY_IP_ADDRESS} || exit 1
       # test: dig +short @127.0.0.1 pi.hole || exit 1
       interval: 3s
       retries: 5
