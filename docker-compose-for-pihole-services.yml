@@ -1,7 +1,7 @@
 version: "3.5"
 
 networks:
-  transit_${VLAN_ID}-net:
+  transit-net:
     driver: ipvlan
     driver_opts:
       ipvlan_mode: l2
@@ -25,7 +25,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
-      transit_${VLAN_ID}-net:
+      transit-net:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_IPADDR}
 
   pihole:
@@ -56,7 +56,7 @@ services:
     cap_add:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
-      transit_${VLAN_ID}-net:
+      transit-net:
         ipv4_address: ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
     depends_on:
