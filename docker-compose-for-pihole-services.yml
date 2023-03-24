@@ -49,9 +49,9 @@ services:
       DNSMASQ_LISTENING: all
     # Volumes store your data between container upgrades
     volumes:
-      - ${DATA_STORAGE}/pihole/default/pihole:/etc/pihole
-      - ${DATA_STORAGE}/pihole/default/dnsmasq.d:/etc/dnsmasq.d
-      - ${DATA_STORAGE}/pihole/custom.list:/etc/pihole/custom.list
+      - ${DATA_STORAGE}/pihole/${VLAN_NAME}/pihole:/etc/pihole
+      - ${DATA_STORAGE}/pihole/${VLAN_NAME}/dnsmasq.d:/etc/dnsmasq.d
+      - ${DATA_STORAGE}/pihole/global/custom.list:/etc/pihole/custom.list
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
