@@ -119,6 +119,8 @@ services:
       - /etc/localtime:/etc/localtime:ro  
       - ${DATA_STORAGE}/certs:/letsencrypt
     restart: always
+    depends_on:
+      - pihole
 
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
