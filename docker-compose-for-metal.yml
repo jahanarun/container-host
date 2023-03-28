@@ -159,7 +159,7 @@ services:
       homepage.description: "Music server"
       homepage.widget.type: "plex"
       homepage.widget.url: "https://music.${DOMAIN}/"
-      # homepage.widget.key: "${PLEX_CLAIM}"
+      homepage.widget.key: "${PLEX_CLAIM}"
     networks:
       transit-net:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
@@ -320,10 +320,19 @@ services:
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
-      - "traefik.http.routers.overseerr.tls.certresolver=certificato"
-      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+      - traefik.enable=true
+      - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
+      - traefik.http.routers.overseerr.tls.certresolver=certificato
+      - traefik.http.services.overseerr.loadbalancer.server.port=5055
+      - homepage.group=Media
+      - homepage.name=Overseerr
+      - homepage.icon=overseerr.png
+      - homepage.href=https://fetch.${DOMAIN}/
+      - homepage.description=Overseerr
+      - homepage.widget.type=overseerr
+      - homepage.widget.key=${OVERSEERR_API_KEY}
+      - homepage.widget.url=https://fetch.${DOMAIN}
+      - homepage.widget.fields=["pending", "approved", "available", "processing"]
     depends_on:
       - traefik
 
