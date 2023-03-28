@@ -66,3 +66,13 @@ services:
       # test: dig +short @127.0.0.1 pi.hole || exit 1
       interval: 3s
       retries: 5
+    labels:
+      - homepage.group=Network
+      - homepage.name=Pihole-${VLAN_NAME}
+      - homepage.icon=pihole.png
+      - homepage.href=http://${PIHOLE_IP_ADDRESS}/admin
+      - homepage.description=Pihole for ${VLAN_NAME}
+      - homepage.widget.type=pihole
+      - homepage.widget.key=${PIHOLE_TOKEN}
+      - homepage.widget.url=http://${PIHOLE_IP_ADDRESS}
+      - homepage.widget.fields=["queries", "blocked", "gravity"]  
