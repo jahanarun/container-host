@@ -98,7 +98,7 @@ services:
       - PGID=33
       - TZ=${TZ}
     volumes:
-      - /${DATA_STORAGE}/sonarr:/config
+      - ${DATA_STORAGE}/sonarr:/config
       - ${TVSHOWS}:/media/Series #optional
       - ${TORRENTS}:/downloads #optional
     networks:
@@ -492,3 +492,39 @@ services:
       - "3306"
     networks:
       - internal-net
+
+  scrutiny:
+    container_name: scrutiny
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    cap_add:
+      - SYS_RAWIO
+    ports:
+      - "8080:8080" # webapp
+      - "8086:8086" # influxDB admin
+    volumes:
+      - /run/udev:/run/udev:ro
+      - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
+      - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
+    networks:
+      - internal-net
+    devices:
+      - "/dev/sda"
+      - "/dev/sdb"
+      - "/dev/sdc"
+      - "/dev/sdd"
+      - "/dev/sde"
+      - "/dev/sdf"
+      - "/dev/sdg"
+      - "/dev/sdh"
+      - "/dev/sdi"
+      - "/dev/sdj"
+      - "/dev/sdk"
+      - "/dev/sdl"
+      - "/dev/sdm"
+      - "/dev/nvme2n1"
+      - "/dev/nvme1n1"    
+    labels:
+      traefik.enable: true
+      traefik.http.routers.photoprism.rule: "Host(`drive.${DOMAIN}`)"
+      traefik.http.routers.photoprism.tls.certresolver: "certificato"
+      traefik.http.services.photoprism.loadbalancer.server.port: 8080
