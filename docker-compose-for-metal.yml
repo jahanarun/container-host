@@ -483,8 +483,9 @@ services:
       - homepage.icon=nextcloud.png
       - homepage.widget.type=nextcloud
       - homepage.widget.url=https://nextcloud.${DOMAIN}
-      - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
-      - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
+      # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
+      # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
+      - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
       - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
   # omada_exporter:
   #   image: chhaley/omada_exporter
