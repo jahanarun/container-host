@@ -442,7 +442,7 @@ services:
       - homepage.icon=scrutiny.png
       - homepage.widget.type=scrutiny
       - homepage.widget.url=${SCRUTINY_IP_ADDRESS}
-      - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
+      - homepage.widget.fields=["passed", "failed", "unknown"]
 
   # omada_exporter:
   #   image: chhaley/omada_exporter
