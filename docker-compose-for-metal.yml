@@ -285,21 +285,20 @@ services:
       - ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
     labels:
-      traefik.enable: true
-      traefik.http.routers.qbittorrent.rule: "Host(`torrent.${DOMAIN}`)"
-      traefik.http.routers.qbittorrent.tls.certresolver: "certificato"
-      traefik.http.services.qbittorrent.loadbalancer.server.port: 8220
-      homepage.group: "Fetchers"
-      homepage.name: "Qbittorrent"
-      homepage.icon: "qbittorrent.png"
-      homepage.href: "https://torrent.${DOMAIN}/"
-      homepage.description: "Qbittorrent"
-      homepage.widget.type: qbittorrent
-      homepage.widget.username: admin
-      homepage.widget.password: ${QBITTORRENT_PASSWORD}
-      homepage.widget.url: "https://torrent.${DOMAIN}/"
-      homepage.widget.fields: ["leech","download", "seed", "upload"]
-      # homepage.widget.key: "${PLEX_CLAIM}"      
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.tls.certresolver=certificato
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8220
+      - homepage.group=Fetchers
+      - homepage.name=Qbittorrent
+      - homepage.icon=qbittorrent.png
+      - homepage.href=https://torrent.${DOMAIN}/
+      - homepage.description=Qbittorrent
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.username=admin
+      - homepage.widget.password=${QBITTORRENT_PASSWORD}
+      - homepage.widget.url=https://torrent.${DOMAIN}
+      - homepage.widget.fields=["leech","download", "seed", "upload"]
     depends_on:
       - traefik
 
@@ -317,7 +316,7 @@ services:
     networks:
       - transit-net
     dns:
-      - ${DNS_IP_ADDRESS}
+      - ${PIHOLE_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
