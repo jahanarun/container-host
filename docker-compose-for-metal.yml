@@ -159,7 +159,7 @@ services:
       homepage.description: "Music server"
       homepage.widget.type: "plex"
       homepage.widget.url: "https://music.${DOMAIN}/"
-      homepage.widget.key: "${PLEX_CLAIM}"
+      homepage.widget.key: "${PLEX_MUSIC_TOKEN}"
     networks:
       transit-net:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
@@ -200,26 +200,19 @@ services:
       - traefik
 
   speedtest-tracker:
-    container_name: speedtest-tracker
+    image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
     hostname: speedtest-tracker
-    image: henrywhitaker3/speedtest-tracker
-    volumes:
-        - ${DATA_STORAGE}/speedtest-tracker:/config
+    container_name: speedtest-tracker
     environment:
-        - TZ=${TZ}
-        - PGID=33
         - PUID=33
-        - OOKLA_EULA_GDPR=true
+        - PGID=33
+    volumes:
+        - ${DATA_STORAGE}/speedtest-tracker-alexjustesen:/config
     networks:
       transit-net:
         ipv4_address: ${SPEEDTEST_TRACKER_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
-    logging:
-        driver: "json-file"
-        options:
-            max-file: "10"
-            max-size: "200k"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -228,6 +221,36 @@ services:
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
     depends_on:
       - traefik
+
+  # speedtest-tracker:
+  #   container_name: speedtest-tracker
+  #   hostname: speedtest-tracker
+  #   image: henrywhitaker3/speedtest-tracker
+  #   volumes:
+  #       - ${DATA_STORAGE}/speedtest-tracker:/config
+  #   environment:
+  #       - TZ=${TZ}
+  #       - PGID=33
+  #       - PUID=33
+  #       - OOKLA_EULA_GDPR=true
+  #   networks:
+  #     transit-net:
+  #       ipv4_address: ${SPEEDTEST_TRACKER_IP_ADDRESS}
+  #   dns:
+  #     - ${PIHOLE_IP_ADDRESS}
+  #   logging:
+  #       driver: "json-file"
+  #       options:
+  #           max-file: "10"
+  #           max-size: "200k"
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
+  #     - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
+  #     - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
+  #   depends_on:
+  #     - traefik
       
   homepage:
     image: ghcr.io/benphelps/homepage:latest
