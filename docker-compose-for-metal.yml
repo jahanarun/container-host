@@ -221,16 +221,17 @@ services:
     depends_on:
       - traefik
       
-  heimdall:
-    image: lscr.io/linuxserver/heimdall:latest
-    hostname: heimdall
-    container_name: heimdall
+  homepage:
+    image: ghcr.io/benphelps/homepage:latest
+    container_name: homepage
+    hostname: homepage
     environment:
       - TZ=${TZ}
       - PGID=33
       - PUID=33
     volumes:
-      - ${DATA_STORAGE}/heimdall:/config
+      - ${DATA_STORAGE}/homepage:/app/config # Make sure your local config directory exists
+      # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
     networks:
       internal-net:
     restart: unless-stopped
@@ -238,9 +239,23 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.heimdall.rule=Host(`www.${DOMAIN}`)"
       - "traefik.http.routers.heimdall.tls.certresolver=certificato"
-      - "traefik.http.services.heimdall.loadbalancer.server.port=80"
+      - "traefik.http.services.heimdall.loadbalancer.server.port=3000"
     depends_on:
       - traefik
+
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+        - CONTAINERS=1 # Allow access to viewing containers
+        - POST=0 # Disallow any POST operations (effectively read-only)
+    ports:
+        - 2375:2375
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    networks:
+      internal-net:
+    restart: unless-stopped
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -276,6 +291,30 @@ services:
       - LOG_LEVEL=debug
       - TZ=${TZ}
       - PORT=5055 #optional
+    volumes:
+      - ${DATA_STORAGE}/overseerr:/app/config
+    restart: unless-stopped
+    networks:
+      - transit-net
+    dns:
+      - ${DNS_IP_ADDRESS}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
+      - "traefik.http.routers.overseerr.tls.certresolver=certificato"
+      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+    depends_on:
+      - traefik
+
+  omada_exporter:
+    image: chhaley/omada_exporter
+    hostname: omada_exporter
+    container_name: omada_exporter
+    environment:
+      - OMADA_HOST='https://192.168.1.20'
+      - OMADA_USER='exporter'
+      - OMADA_PASS='mypassword'
+      - OMADA_SITE='Default'
     volumes:
       - ${DATA_STORAGE}/overseerr:/app/config
     restart: unless-stopped
