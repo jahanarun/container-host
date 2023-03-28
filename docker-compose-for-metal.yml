@@ -341,7 +341,7 @@ services:
       - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent.tls.certresolver=certificato
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8220
-      - homepage.group=Fetchers
+      - homepage.group=Metal
       - homepage.name=Qbittorrent
       - homepage.icon=qbittorrent.png
       - homepage.href=https://torrent.${DOMAIN}/
@@ -374,7 +374,7 @@ services:
       - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
       - traefik.http.routers.overseerr.tls.certresolver=certificato
       - traefik.http.services.overseerr.loadbalancer.server.port=5055
-      - homepage.group=Media
+      - homepage.group=Metal
       - homepage.name=Overseerr
       - homepage.icon=overseerr.png
       - homepage.href=https://fetch.${DOMAIN}/
@@ -472,6 +472,20 @@ services:
       - homepage.widget.key=${SONARR_API_KEY}
       - homepage.widget.fields=["wanted", "queued", "series"]
 
+  nextcloud-heavymetal-placeholder:
+    image: jhnrn/do-nothing:latest
+    container_name: nextcloud-heavymetal-placeholder
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=HeavyMetal
+      - homepage.name=Nextcloud
+      - homepage.icon=nextcloud.png
+      - homepage.widget.type=nextcloud
+      - homepage.widget.url=https://nextcloud.${DOMAIN}
+      - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
+      - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
+      - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
   # omada_exporter:
   #   image: chhaley/omada_exporter
   #   hostname: omada_exporter
