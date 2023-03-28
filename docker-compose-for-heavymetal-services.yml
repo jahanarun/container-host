@@ -51,7 +51,7 @@ services:
       01-transit_80-net:
         ipv4_address: "10.100.80.56"      
     dns:
-      - ${PIHOLE_IP_ADDRESS}
+      - 1.1.1.1
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
