@@ -170,14 +170,14 @@ services:
       # traefik.http.routers.plex.entrypoints: "websecure"
       traefik.http.routers.plex.tls.certresolver: "certificato"
       traefik.http.services.plex.loadbalancer.server.port: 32400
-      homepage.group: "Media"
-      homepage.name: "Plex Music"
-      homepage.icon: "plex.png"
-      homepage.href: "https://music.${DOMAIN}/"
-      homepage.description: "Music server"
-      homepage.widget.type: "plex"
-      homepage.widget.url: "http://${PLEXMUSIC_IP_ADDRESS}:32400"
-      homepage.widget.key: "${PLEX_MUSIC_TOKEN}"
+      homepage.group: Metal
+      homepage.name: Plex Music
+      homepage.icon: plex.png
+      homepage.href: https://music.${DOMAIN}/
+      homepage.description: Music server
+      homepage.widget.type: plex
+      homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
+      homepage.widget.key: ${PLEX_MUSIC_TOKEN}
     networks:
       transit-net:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
