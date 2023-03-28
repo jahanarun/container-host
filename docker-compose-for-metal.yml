@@ -191,6 +191,7 @@ services:
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM}
       - TZ=${TZ}
+      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
       - CHANGE_CONFIG_DIR_OWNERSHIP=true
       - HOSTNAME=music.${DOMAIN}
     volumes:
@@ -429,6 +430,19 @@ services:
       - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
       - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_2}
       - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}
+
+  scrutiny-heavymetal-placeholder:
+    image: jhnrn/do-nothing:latest
+    container_name: scrutiny-heavymetal-placeholder
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=Server
+      - homepage.name=Disk health
+      - homepage.icon=scrutiny.png
+      - homepage.widget.type=scrutiny
+      - homepage.widget.url=${SCRUTINY_IP_ADDRESS}
+
   # omada_exporter:
   #   image: chhaley/omada_exporter
   #   hostname: omada_exporter

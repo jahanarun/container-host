@@ -11,7 +11,6 @@ networks:
       config:
         - subnet: 10.100.${VLAN_ID}.0/24
           gateway: ${GATEWAY_IP_ADDRESS}
-          ip_range: 10.100.80.32/28        # 10.100.80.32 - 10.100.80.47
 
   internal-net:
     driver: bridge
@@ -49,7 +48,7 @@ services:
     networks:
       internal-net:
       01-transit_80-net:
-        ipv4_address: "10.100.80.56"      
+        ipv4_address: ${TRAEFIK_IP_ADDRESS_2}   
     dns:
       - 1.1.1.1
     environment:
@@ -103,7 +102,7 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       01-transit_80-net:
-        ipv4_address: "10.100.80.22"
+        ipv4_address: ${SONARR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -129,7 +128,7 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       01-transit_80-net:
-        ipv4_address: "10.100.80.23"
+        ipv4_address: ${RADARR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -153,7 +152,7 @@ services:
       - TZ=${TZ}
     networks:
       01-transit_80-net:
-        ipv4_address: "10.100.80.20"
+        ipv4_address: ${FLARESOLVERR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -215,7 +214,7 @@ services:
       - ${PLEX_USER2_VOLUME_MOUNT}
     networks:
       01-transit_80-net:
-        ipv4_address: "10.100.80.21"
+        ipv4_address: ${PLEX_MOVIETVSHOW_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -506,7 +505,8 @@ services:
       - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
       - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
     networks:
-      - internal-net
+      01-transit_80-net:
+        ipv4_address: ${SCRUTINY_IP_ADDRESS}   
     devices:
       - "/dev/sda"
       - "/dev/sdb"
