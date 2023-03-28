@@ -525,6 +525,6 @@ services:
       - "/dev/nvme1n1"    
     labels:
       traefik.enable: true
-      traefik.http.routers.photoprism.rule: "Host(`drive.${DOMAIN}`)"
-      traefik.http.routers.photoprism.tls.certresolver: "certificato"
-      traefik.http.services.photoprism.loadbalancer.server.port: 8080
+      traefik.http.routers.scrutiny.rule: "Host(`drive.${DOMAIN}`)"
+      traefik.http.routers.scrutiny.tls.certresolver: "certificato"
+      traefik.http.services.scrutiny.loadbalancer.server.port: 8080
