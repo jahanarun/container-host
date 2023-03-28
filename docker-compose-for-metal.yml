@@ -146,12 +146,20 @@ services:
     hostname: plex-music
     container_name: plex-music
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.plex.rule=Host(`music.${DOMAIN}`)"
-      # - "traefik.http.routers.plex.tls=true"
-      # - "traefik.http.routers.plex.entrypoints=websecure"
-      - "traefik.http.routers.plex.tls.certresolver=certificato"
-      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+      traefik.enable: true
+      traefik.http.routers.plex.rule: "Host(`music.${DOMAIN}`)"
+      # traefik.http.routers.plex.tls: true
+      # traefik.http.routers.plex.entrypoints: "websecure"
+      traefik.http.routers.plex.tls.certresolver: "certificato"
+      traefik.http.services.plex.loadbalancer.server.port: 32400
+      homepage.group: "Media"
+      homepage.name: "Plex Music"
+      homepage.icon: "plex.png"
+      homepage.href: "https://music.${DOMAIN}/"
+      homepage.description: "Music server"
+      homepage.widget.type: "plex"
+      homepage.widget.url: "https://music.${DOMAIN}/"
+      # homepage.widget.key: "${PLEX_CLAIM}"
     networks:
       transit-net:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
@@ -233,13 +241,14 @@ services:
       - ${DATA_STORAGE}/homepage:/app/config # Make sure your local config directory exists
       # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
     networks:
+      transit-net:
       internal-net:
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.heimdall.rule=Host(`www.${DOMAIN}`)"
-      - "traefik.http.routers.heimdall.tls.certresolver=certificato"
-      - "traefik.http.services.heimdall.loadbalancer.server.port=3000"
+      traefik.enable: true
+      traefik.http.routers.heimdall.rule: "Host(`www.${DOMAIN}`)"
+      traefik.http.routers.heimdall.tls.certresolver: "certificato"
+      traefik.http.services.heimdall.loadbalancer.server.port: 3000
     depends_on:
       - traefik
 
@@ -276,10 +285,21 @@ services:
       - ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)"
-      - "traefik.http.routers.qbittorrent.tls.certresolver=certificato"
-      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8220"
+      traefik.enable: true
+      traefik.http.routers.qbittorrent.rule: "Host(`torrent.${DOMAIN}`)"
+      traefik.http.routers.qbittorrent.tls.certresolver: "certificato"
+      traefik.http.services.qbittorrent.loadbalancer.server.port: 8220
+      homepage.group: "Fetchers"
+      homepage.name: "Qbittorrent"
+      homepage.icon: "qbittorrent.png"
+      homepage.href: "https://torrent.${DOMAIN}/"
+      homepage.description: "Qbittorrent"
+      homepage.widget.type: qbittorrent
+      homepage.widget.username: admin
+      homepage.widget.password: ${QBITTORRENT_PASSWORD}
+      homepage.widget.url: "https://torrent.${DOMAIN}/"
+      homepage.widget.fields: ["leech","download", "seed", "upload"]
+      # homepage.widget.key: "${PLEX_CLAIM}"      
     depends_on:
       - traefik
 
@@ -306,26 +326,26 @@ services:
     depends_on:
       - traefik
 
-  omada_exporter:
-    image: chhaley/omada_exporter
-    hostname: omada_exporter
-    container_name: omada_exporter
-    environment:
-      - OMADA_HOST='https://192.168.1.20'
-      - OMADA_USER='exporter'
-      - OMADA_PASS='mypassword'
-      - OMADA_SITE='Default'
-    volumes:
-      - ${DATA_STORAGE}/overseerr:/app/config
-    restart: unless-stopped
-    networks:
-      - transit-net
-    dns:
-      - ${DNS_IP_ADDRESS}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
-      - "traefik.http.routers.overseerr.tls.certresolver=certificato"
-      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
-    depends_on:
-      - traefik
+  # omada_exporter:
+  #   image: chhaley/omada_exporter
+  #   hostname: omada_exporter
+  #   container_name: omada_exporter
+  #   environment:
+  #     - OMADA_HOST='https://192.168.1.20'
+  #     - OMADA_USER='exporter'
+  #     - OMADA_PASS='mypassword'
+  #     - OMADA_SITE='Default'
+  #   volumes:
+  #     - ${DATA_STORAGE}/overseerr:/app/config
+  #   restart: unless-stopped
+  #   networks:
+  #     - transit-net
+  #   dns:
+  #     - ${DNS_IP_ADDRESS}
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
+  #     - "traefik.http.routers.overseerr.tls.certresolver=certificato"
+  #     - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+  #   depends_on:
+  #     - traefik
