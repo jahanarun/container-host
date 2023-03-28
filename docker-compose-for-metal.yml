@@ -387,6 +387,7 @@ services:
 
   prowlarr-placeholder:
     image: jhnrn/do-nothing:latest
+    container_name: prowlarr-placeholder
     restart: unless-stopped
     network_mode: none
     labels:
@@ -402,6 +403,7 @@ services:
 
   plex-movietvshows-placeholder:
     image: jhnrn/do-nothing:latest
+    container_name: plex-movietvshows-placeholder
     restart: unless-stopped
     network_mode: none
     labels:
@@ -414,8 +416,9 @@ services:
       - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
       - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}
 
-  cloudflare-tunnel-heavymetal-placeholder:
+  cloudflared-tunnel-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
+    container_name: cloudflared-tunnel-heavymetal-placeholder
     restart: unless-stopped
     network_mode: none
     labels:
