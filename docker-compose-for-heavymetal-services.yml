@@ -497,6 +497,12 @@ services:
     image: ghcr.io/analogj/scrutiny:master-omnibus
     cap_add:
       - SYS_RAWIO
+      - SYS_ADMIN
+    environment:
+      - PUID=33                                                                                                 
+      - PGID=33                                                                                                 
+      - TZ=${TZ}
+      - COLLECTOR_API_ENDPOINT=http://localhost:8080 
     ports:
       - "8080:8080" # webapp
       - "8086:8086" # influxDB admin
