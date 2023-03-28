@@ -148,6 +148,14 @@ services:
       - run 
       - --token
       - ${CLOUDFARED_TOKEN}
+    labels:
+      - homepage.group=Network
+      - homepage.name=Cloudflare Metal tunnel
+      - homepage.icon=cloudflare-zero-trust.png
+      - homepage.widget.type=cloudflared
+      - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
+      - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_1}
+      - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}      
     depends_on:
       - traefik
 
@@ -377,6 +385,47 @@ services:
     depends_on:
       - traefik
 
+  prowlarr-placeholder:
+    image: jhnrn/do-nothing:latest
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=Fetchers
+      - homepage.name=Prowlarr
+      - homepage.icon=prowlarr.png
+      - homepage.href=https://prowlarr.${DOMAIN}/
+      - homepage.description=Prowlarr
+      - homepage.widget.type=prowlarr
+      - homepage.widget.key=${PROWLARR_API_KEY}
+      - homepage.widget.url=https://prowlarr.${DOMAIN}
+      - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
+
+  plex-movietvshows-placeholder:
+    image: jhnrn/do-nothing:latest
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=Media
+      - homepage.name=Plex Movies
+      - homepage.icon=plex.png
+      - homepage.href=https://plex.${DOMAIN}/
+      - homepage.description=Plex server for Movies and tvshows
+      - homepage.widget.type=plex
+      - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
+      - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}
+
+  cloudflare-tunnel-heavymetal-placeholder:
+    image: jhnrn/do-nothing:latest
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=Network
+      - homepage.name=Cloudflare Heavy Metal tunnel
+      - homepage.icon=cloudflare-zero-trust.png
+      - homepage.widget.type=cloudflared
+      - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
+      - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_2}
+      - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}
   # omada_exporter:
   #   image: chhaley/omada_exporter
   #   hostname: omada_exporter
