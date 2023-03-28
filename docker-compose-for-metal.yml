@@ -219,6 +219,14 @@ services:
       - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
+      - homepage.group=Network
+      - homepage.name=Speedtest
+      - homepage.icon=speedtest.png
+      - homepage.href=https://speedtracker.${DOMAIN}/
+      - homepage.description=Speedtest
+      - homepage.widget.type=speedtest
+      - homepage.widget.url=https://speedtracker.${DOMAIN}
+      - homepage.widget.fields=["download", "upload", "ping"]
     depends_on:
       - traefik
 
