@@ -57,15 +57,13 @@ services:
     networks:
       transit-net:
         ipv4_address: ${PIHOLE_IP_ADDRESS}
-    dns:
-      - 127.0.0.1        
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy
     healthcheck:
-      test: ping -c 1 ${GATEWAY_IP_ADDRESS} || exit 1
+      test: ping -c 1 bing.com || exit 1
       # test: dig +short @127.0.0.1 pi.hole || exit 1
-      interval: 3s
+      interval: 30s
       retries: 5
     labels:
       - homepage.group=Network
@@ -76,4 +74,4 @@ services:
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${PIHOLE_IP_ADDRESS}
-      - homepage.widget.fields=["queries", "blocked", "gravity"]  
+      - homepage.widget.fields=["queries", "blocked", "gravity"]

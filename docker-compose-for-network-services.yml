@@ -4,8 +4,8 @@ networks:
   transit_zero-net:
     driver: macvlan
     driver_opts:
-      parent: eth0 # soon changes to eth0.1
-      name: macvlan1 # soon changes to macvlan1
+      parent: eth0
+      name: macvlan_zero
     ipam:
       config:
         - subnet: 10.100.0.0/24

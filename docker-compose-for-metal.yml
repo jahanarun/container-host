@@ -4,11 +4,12 @@ networks:
   internal-net:
     internal: true
   transit-net:
-    driver: ipvlan
+    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
+    # driver: ipvlan
     driver_opts:
-      ipvlan_mode: l2
+      # ipvlan_mode: l2
       parent: eth0.${VLAN_ID}
-      name: ipvlan${VLAN_ID}
+      name: macvlan${VLAN_ID}
     ipam:
       config:
         - subnet: 10.100.${VLAN_ID}.0/24
@@ -64,9 +65,9 @@ services:
     depends_on:
       - cloudflared-dnsproxy
     healthcheck:
-      test: ping -c 1 ${GATEWAY_IP_ADDRESS} || exit 1
+      test: ping -c 1 bing.com || exit 1
       # test: dig +short @127.0.0.1 pi.hole || exit 1
-      interval: 3s
+      interval: 30s
       retries: 5
     labels:
       - homepage.group=Network
@@ -77,7 +78,7 @@ services:
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${PIHOLE_IP_ADDRESS}
-      - homepage.widget.fields=["queries", "blocked", "gravity"]     
+      - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   traefik:
     image: traefik:latest
