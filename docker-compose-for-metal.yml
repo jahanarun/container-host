@@ -124,6 +124,12 @@ services:
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - "traefik.docker.network=metal-services_transit-net"
+      - homepage.group=Metal
+      - homepage.name=Traefik
+      - homepage.icon=traefik.png
+      - homepage.widget.type=traefik
+      - homepage.widget.url=https://reverseproxy.${DOMAIN}
+      - homepage.widget.fields=["routers", "services", "middleware"]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
@@ -487,6 +493,36 @@ services:
       # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
       - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
       - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
+
+  proxmox-metal-placeholder:
+    image: jhnrn/do-nothing:latest
+    container_name: proxmox-metal-placeholder
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=Metal
+      - homepage.name=Proxmox
+      - homepage.icon=proxmox.png
+      - homepage.widget.type=proxmox
+      - homepage.widget.url=https://${METAL_SERVICES_IP_ADDRESS}:8006
+      - homepage.widget.username=${METAL_SERVICES_PROXMOX_TOKEN_ID}
+      - homepage.widget.password=${METAL_SERVICES_PROXMOX_TOKEN_SECRET}
+      - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
+
+  proxmox-heavymetal-placeholder:
+    image: jhnrn/do-nothing:latest
+    container_name: proxmox-heavymetal-placeholder
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=HeavyMetal
+      - homepage.name=Proxmox
+      - homepage.icon=proxmox.png
+      - homepage.widget.type=proxmox
+      - homepage.widget.url=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006
+      - homepage.widget.username=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_ID}
+      - homepage.widget.password=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_SECRET}
+      - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]      
   # omada_exporter:
   #   image: chhaley/omada_exporter
   #   hostname: omada_exporter
