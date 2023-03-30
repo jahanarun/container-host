@@ -393,6 +393,29 @@ services:
     depends_on:
       - traefik
 
+  squid:
+    image: ubuntu/squid:latest
+    hostname: squid
+    container_name: squid
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+      - PUID=33
+      - PGID=33
+    volumes:
+      - ${DATA_STORAGE}/squid/logs:/var/log/squid
+      - ${DATA_STORAGE}/squid/data:/var/spool/squid
+      - ${DATA_STORAGE}/squid/squid.conf:/etc/squid/squid.conf
+      - ${DATA_STORAGE}/squid/snippet.conf:/etc/squid/conf.d/snippet.conf
+    restart: unless-stopped
+    # ports:
+        # - 3128:3128
+    networks:
+      transit-net:
+        ipv4_address: ${SQUID_IP_ADDRESS}
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
+
   prowlarr-placeholder:
     image: jhnrn/do-nothing:latest
     container_name: prowlarr-placeholder
