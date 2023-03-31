@@ -400,10 +400,12 @@ services:
     environment:
       - LOG_LEVEL=debug
       - TZ=${TZ}
-      - PUID=33
-      - PGID=33
+      - PUID=13
+      - PGID=13
+      - UID=13
+      - GID=13
     volumes:
-      - ${DATA_STORAGE}/squid/logs:/var/log/squid
+      # - ${DATA_STORAGE}/squid/logs:/var/log/squid # For whatever reason, the container restarts if this line is enabled.
       - ${DATA_STORAGE}/squid/data:/var/spool/squid
       - ${DATA_STORAGE}/squid/squid.conf:/etc/squid/squid.conf
       - ${DATA_STORAGE}/squid/snippet.conf:/etc/squid/conf.d/snippet.conf
