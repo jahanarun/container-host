@@ -138,6 +138,10 @@ services:
     restart: always
     depends_on:
       - pihole
+    healthcheck:
+      test: ping -c 1 bing.com || exit 1
+      interval: 30s
+      retries: 5
 
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
