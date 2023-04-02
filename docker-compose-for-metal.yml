@@ -61,6 +61,8 @@ services:
     networks:
       transit-net:
         ipv4_address: ${PIHOLE_IP_ADDRESS}
+    dns:
+      - 127.0.0.1        
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy
