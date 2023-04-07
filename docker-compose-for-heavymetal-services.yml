@@ -2,11 +2,11 @@ version: "3.5"
 
 networks:
   01-transit_80-net:
-    driver: ipvlan
+    driver: macvlan # Otherwise PiHole and other containers cannot resolve DNS internally due to NAT issue within Docker
+    # driver: ipvlan
     driver_opts:
-      ipvlan_mode: l2
       parent: enp8s0.${VLAN_ID}
-      name: ipvlan${VLAN_ID}
+      name: macvlan${VLAN_ID}
     ipam:
       config:
         - subnet: 10.100.${VLAN_ID}.0/24
