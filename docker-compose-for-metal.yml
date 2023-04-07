@@ -329,7 +329,7 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
       transit-net:
-        ipv4_address: ${DOCKERPROXY_IP_ADDRESS}
+        ipv4_address: ${METAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
 
   qbittorrent:
