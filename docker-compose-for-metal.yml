@@ -379,7 +379,8 @@ services:
       - ${DATA_STORAGE}/overseerr:/app/config
     restart: unless-stopped
     networks:
-      - transit-net
+      transit-net:
+        ipv4_address: ${OVERSEERR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -399,30 +400,30 @@ services:
     depends_on:
       - traefik
 
-  squid:
-    image: ubuntu/squid:latest
-    hostname: squid
-    container_name: squid
-    environment:
-      - LOG_LEVEL=debug
-      - TZ=${TZ}
-      - PUID=13
-      - PGID=13
-      - UID=13
-      - GID=13
-    volumes:
-      # - ${DATA_STORAGE}/squid/logs:/var/log/squid # For whatever reason, the container restarts if this line is enabled.
-      - ${DATA_STORAGE}/squid/data:/var/spool/squid
-      - ${DATA_STORAGE}/squid/squid.conf:/etc/squid/squid.conf
-      - ${DATA_STORAGE}/squid/snippet.conf:/etc/squid/conf.d/snippet.conf
-    restart: unless-stopped
-    # ports:
-        # - 3128:3128
-    networks:
-      transit-net:
-        ipv4_address: ${SQUID_IP_ADDRESS}
-    dns:
-      - ${PIHOLE_IP_ADDRESS}
+  # squid:
+  #   image: ubuntu/squid:latest
+  #   hostname: squid
+  #   container_name: squid
+  #   environment:
+  #     - LOG_LEVEL=debug
+  #     - TZ=${TZ}
+  #     - PUID=13
+  #     - PGID=13
+  #     - UID=13
+  #     - GID=13
+  #   volumes:
+  #     # - ${DATA_STORAGE}/squid/logs:/var/log/squid # For whatever reason, the container restarts if this line is enabled.
+  #     - ${DATA_STORAGE}/squid/data:/var/spool/squid
+  #     - ${DATA_STORAGE}/squid/squid.conf:/etc/squid/squid.conf
+  #     - ${DATA_STORAGE}/squid/snippet.conf:/etc/squid/conf.d/snippet.conf
+  #   restart: unless-stopped
+  #   # ports:
+  #       # - 3128:3128
+  #   networks:
+  #     transit-net:
+  #       ipv4_address: ${SQUID_IP_ADDRESS}
+  #   dns:
+      # - ${PIHOLE_IP_ADDRESS}
 
   prowlarr-placeholder:
     image: jhnrn/do-nothing:latest
