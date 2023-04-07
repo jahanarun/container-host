@@ -328,7 +328,8 @@ services:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
-      internal-net:
+      transit-net:
+        ipv4_address: ${DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
 
   qbittorrent:
