@@ -88,6 +88,14 @@ services:
       - run 
       - --token
       - ${HEAVYMETAL_CLOUDFARED_TOKEN}
+    labels:
+      - homepage.group=HeavyMetal
+      - homepage.name=Cloudflare Heavy Metal tunnel
+      - homepage.icon=cloudflare-zero-trust.png
+      - homepage.widget.type=cloudflared
+      - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
+      - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_2}
+      - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}
     depends_on:
       - traefik
 
@@ -110,10 +118,17 @@ services:
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)"
-      - "traefik.http.routers.sonarr.tls.certresolver=certificato"
-      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
+      - traefik.http.routers.sonarr.tls.certresolver=certificato
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+      - homepage.group=HeavyMetal
+      - homepage.name=Sonarr
+      - homepage.icon=sonarr.png
+      - homepage.widget.type=sonarr
+      - homepage.widget.url=https://tvshows.${DOMAIN}
+      - homepage.widget.key=${SONARR_API_KEY}
+      - homepage.widget.fields=["wanted", "queued", "series"]
     depends_on:
       - traefik
 
@@ -136,10 +151,17 @@ services:
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)"
-      - "traefik.http.routers.radarr.tls.certresolver=certificato"
-      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - traefik.enable=true
+      - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
+      - traefik.http.routers.radarr.tls.certresolver=certificato
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+      - homepage.group=HeavyMetal
+      - homepage.name=Radarr
+      - homepage.icon=radarr.png
+      - homepage.widget.type=radarr
+      - homepage.widget.url=https://movies.${DOMAIN}
+      - homepage.widget.key=${RADARR_API_KEY}
+      - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
     depends_on:
       - traefik
 
@@ -231,10 +253,18 @@ services:
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)"
-      - "traefik.http.routers.plex.tls.certresolver=certificato"
-      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+      - traefik.enable=true
+      - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
+      - traefik.http.routers.plex.tls.certresolver=certificato
+      - traefik.http.services.plex.loadbalancer.server.port=32400
+      - homepage.group=HeavyMetal
+      - homepage.name=Plex Movies
+      - homepage.icon=plex.png
+      - homepage.href=https://plex.${DOMAIN}/
+      - homepage.description=Plex server for Movies and tvshows
+      - homepage.widget.type=plex
+      - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
+      - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}      
     depends_on:
       - traefik
 
@@ -312,36 +342,46 @@ services:
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
-      ofelia.enabled: true
-      ofelia.job-exec.nextcloud_scan.schedule: "@every 1h30m"
-      ofelia.job-exec.nextcloud_scan.user: 33
-      ofelia.job-exec.nextcloud_scan.command: "php occ files:scan --all"
-      ofelia.job-exec.nextcloud_cron.schedule: "@every 5m"
-      ofelia.job-exec.nextcloud_cron.user: 33
-      ofelia.job-exec.nextcloud_cron.command: "php -f /var/www/html/cron.php"
-      traefik.enable: true
-      traefik.http.routers.nextcloud.rule: "Host(`nextcloud.${DOMAIN}`)"
-      traefik.http.routers.nextcloud.tls.certresolver: "certificato"
-      traefik.http.services.nextcloud.loadbalancer.server.port: 80
+      - ofelia.enabled=true
+      - ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m
+      - ofelia.job-exec.nextcloud_scan.user=33
+      - ofelia.job-exec.nextcloud_scan.command=php occ files:scan --all
+      - ofelia.job-exec.nextcloud_cron.schedule=@every 5m
+      - ofelia.job-exec.nextcloud_cron.user=33
+      - ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
+      - traefik.http.routers.nextcloud.tls.certresolver=certificato
+      - traefik.http.services.nextcloud.loadbalancer.server.port=80
       # traefik.http.middlewares.nextcloud-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-limit.buffering.maxResponseBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-limit.buffering.memResponseBodyBytes: 16777216 # 16 GBytes
-      traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.permanent: true
-      traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.regex: "https?://([^/]*)/.well-known/(card|cal)dav"
-      traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.replacement: "https://$${1}/remote.php/dav/"
-      traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.permanent: "true"
-      traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.regex: "https?://([^/]*)/.well-known/webfinger"
-      traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.replacement: "https://$${1}/index.php/.well-known/webfinger/"
-      traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.permanent: "true"
-      traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.regex: "https?://([^/]*)/.well-known/nodeinfo"
-      traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.replacement: "https://$${1}/index.php/.well-known/nodeinfo/"
-      traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.permanent: "true"
-      traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.regex: "https?://([^/]*)(/.well-known[^#]*)"
-      traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement: "https://$${1}/index.php$${2}"
-      traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds: 31536000
-      traefik.http.routers.nextcloud.middlewares: "nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4"
-      traefik.docker.network: "heavymetal-services_01-transit_80-net"
+      - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.permanent=true
+      - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.regex=https?://([^/]*)/.well-known/(card|cal)dav
+      - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.replacement=https://$${1}/remote.php/dav
+      - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.permanent=true
+      - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.regex=https?://([^/]*)/.well-known/webfinger
+      - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.replacement=https://$${1}/index.php/.well-known/webfinger/
+      - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.permanent=true
+      - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.regex=https?://([^/]*)/.well-known/nodeinfo
+      - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.replacement=https://$${1}/index.php/.well-known/nodeinfo/
+      - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.permanent=true
+      - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.regex=https?://([^/]*)(/.well-known[^#]*)
+      - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
+      - traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds=31536000
+      - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
+      - traefik.docker.network=heavymetal-services_01-transit_80-net
+      - homepage.group=HeavyMetal
+      - homepage.name=Nextcloud
+      - homepage.icon=nextcloud.png
+      - homepage.widget.type=nextcloud
+      - homepage.widget.url=https://nextcloud.${DOMAIN}
+      # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
+      # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
+      - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
+      - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
+
     depends_on:
       - traefik
       - nextcloud-db
@@ -519,6 +559,21 @@ services:
       01-transit_80-net:
         ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
+
+  proxmox-heavymetal-placeholder:
+    image: jhnrn/do-nothing:latest
+    container_name: proxmox-heavymetal-placeholder
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=HeavyMetal
+      - homepage.name=Proxmox
+      - homepage.icon=proxmox.png
+      - homepage.widget.type=proxmox
+      - homepage.widget.url=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006
+      - homepage.widget.username=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_ID}
+      - homepage.widget.password=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_SECRET}
+      - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]      
 
   # scrutiny:
   #   container_name: scrutiny

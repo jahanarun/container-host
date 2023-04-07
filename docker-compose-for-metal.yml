@@ -442,91 +442,91 @@ services:
   #     - homepage.widget.url=https://prowlarr.${DOMAIN}
   #     - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
 
-  plex-movietvshows-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: plex-movietvshows-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Plex Movies
-      - homepage.icon=plex.png
-      - homepage.href=https://plex.${DOMAIN}/
-      - homepage.description=Plex server for Movies and tvshows
-      - homepage.widget.type=plex
-      - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
-      - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}
+  # plex-movietvshows-placeholder:
+  #   image: jhnrn/do-nothing:latest
+  #   container_name: plex-movietvshows-placeholder
+  #   restart: unless-stopped
+  #   network_mode: none
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Plex Movies
+  #     - homepage.icon=plex.png
+  #     - homepage.href=https://plex.${DOMAIN}/
+  #     - homepage.description=Plex server for Movies and tvshows
+  #     - homepage.widget.type=plex
+  #     - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
+  #     - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}
 
-  cloudflared-tunnel-heavymetal-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: cloudflared-tunnel-heavymetal-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Cloudflare Heavy Metal tunnel
-      - homepage.icon=cloudflare-zero-trust.png
-      - homepage.widget.type=cloudflared
-      - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
-      - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_2}
-      - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}
+  # cloudflared-tunnel-heavymetal-placeholder:
+  #   image: jhnrn/do-nothing:latest
+  #   container_name: cloudflared-tunnel-heavymetal-placeholder
+  #   restart: unless-stopped
+  #   network_mode: none
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Cloudflare Heavy Metal tunnel
+  #     - homepage.icon=cloudflare-zero-trust.png
+  #     - homepage.widget.type=cloudflared
+  #     - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
+  #     - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_2}
+  #     - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}
 
-  scrutiny-heavymetal-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: scrutiny-heavymetal-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Disk health
-      - homepage.icon=scrutiny.png
-      - homepage.widget.type=scrutiny
-      - homepage.widget.url=https://drive.${DOMAIN}
-      - homepage.widget.fields=["passed", "failed", "unknown"]
+  # scrutiny-heavymetal-placeholder:
+  #   image: jhnrn/do-nothing:latest
+  #   container_name: scrutiny-heavymetal-placeholder
+  #   restart: unless-stopped
+  #   network_mode: none
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Disk health
+  #     - homepage.icon=scrutiny.png
+  #     - homepage.widget.type=scrutiny
+  #     - homepage.widget.url=https://drive.${DOMAIN}
+  #     - homepage.widget.fields=["passed", "failed", "unknown"]
 
-  radarr-heavymetal-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: radarr-heavymetal-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Radarr
-      - homepage.icon=radarr.png
-      - homepage.widget.type=radarr
-      - homepage.widget.url=https://movies.${DOMAIN}
-      - homepage.widget.key=${RADARR_API_KEY}
-      - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
+  # radarr-heavymetal-placeholder:
+  #   image: jhnrn/do-nothing:latest
+  #   container_name: radarr-heavymetal-placeholder
+  #   restart: unless-stopped
+  #   network_mode: none
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Radarr
+  #     - homepage.icon=radarr.png
+  #     - homepage.widget.type=radarr
+  #     - homepage.widget.url=https://movies.${DOMAIN}
+  #     - homepage.widget.key=${RADARR_API_KEY}
+  #     - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
 
-  sonarr-heavymetal-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: sonarr-heavymetal-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Sonarr
-      - homepage.icon=sonarr.png
-      - homepage.widget.type=sonarr
-      - homepage.widget.url=https://tvshows.${DOMAIN}
-      - homepage.widget.key=${SONARR_API_KEY}
-      - homepage.widget.fields=["wanted", "queued", "series"]
+  # sonarr-heavymetal-placeholder:
+  #   image: jhnrn/do-nothing:latest
+  #   container_name: sonarr-heavymetal-placeholder
+  #   restart: unless-stopped
+  #   network_mode: none
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Sonarr
+  #     - homepage.icon=sonarr.png
+  #     - homepage.widget.type=sonarr
+  #     - homepage.widget.url=https://tvshows.${DOMAIN}
+  #     - homepage.widget.key=${SONARR_API_KEY}
+  #     - homepage.widget.fields=["wanted", "queued", "series"]
 
-  nextcloud-heavymetal-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: nextcloud-heavymetal-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Nextcloud
-      - homepage.icon=nextcloud.png
-      - homepage.widget.type=nextcloud
-      - homepage.widget.url=https://nextcloud.${DOMAIN}
-      # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
-      # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
-      - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
-      - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
+  # nextcloud-heavymetal-placeholder:
+  #   image: jhnrn/do-nothing:latest
+  #   container_name: nextcloud-heavymetal-placeholder
+  #   restart: unless-stopped
+  #   network_mode: none
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Nextcloud
+  #     - homepage.icon=nextcloud.png
+  #     - homepage.widget.type=nextcloud
+  #     - homepage.widget.url=https://nextcloud.${DOMAIN}
+  #     # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
+  #     # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
+  #     - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
+  #     - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
 
   proxmox-metal-placeholder:
     image: jhnrn/do-nothing:latest
@@ -543,20 +543,20 @@ services:
       - homepage.widget.password=${METAL_SERVICES_PROXMOX_TOKEN_SECRET}
       - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
 
-  proxmox-heavymetal-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: proxmox-heavymetal-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Proxmox
-      - homepage.icon=proxmox.png
-      - homepage.widget.type=proxmox
-      - homepage.widget.url=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006
-      - homepage.widget.username=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_ID}
-      - homepage.widget.password=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_SECRET}
-      - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]      
+  # proxmox-heavymetal-placeholder:
+  #   image: jhnrn/do-nothing:latest
+  #   container_name: proxmox-heavymetal-placeholder
+  #   restart: unless-stopped
+  #   network_mode: none
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Proxmox
+  #     - homepage.icon=proxmox.png
+  #     - homepage.widget.type=proxmox
+  #     - homepage.widget.url=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006
+  #     - homepage.widget.username=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_ID}
+  #     - homepage.widget.password=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_SECRET}
+  #     - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]      
   # omada_exporter:
   #   image: chhaley/omada_exporter
   #   hostname: omada_exporter
