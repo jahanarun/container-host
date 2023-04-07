@@ -152,7 +152,7 @@ services:
     restart: always
     networks:
       transit-net:
-        ipv4_address: ${METAL_CLOUDFLARED_DNSPROXY_IPADDR}
+        ipv4_address: ${METAL_CLOUDFLARED_TUNNEL_IPADDR}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     command:

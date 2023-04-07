@@ -79,7 +79,7 @@ services:
     restart: always
     networks:
       01-transit_80-net:
-        ipv4_address: ${HEAVYMETAL_CLOUDFLARED_DNSPROXY_IPADDR}
+        ipv4_address: ${HEAVYMETAL_CLOUDFLARED_TUNNEL_IPADDR}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     command:
