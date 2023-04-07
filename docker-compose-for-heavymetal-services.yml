@@ -204,6 +204,7 @@ services:
       - ${DATA_STORAGE}/prowlarr:/config
     networks:
       01-transit_80-net:
+        ipv4_address: ${PROWLARR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -338,6 +339,7 @@ services:
       - PHP_UPLOAD_LIMIT=20G
     networks:
       01-transit_80-net:
+        ipv4_address: ${NEXTCLOUD_IP_ADDRESS}
       internal-net:
     dns:
       - ${PIHOLE_IP_ADDRESS}
