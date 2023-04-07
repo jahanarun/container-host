@@ -575,6 +575,27 @@ services:
       - homepage.widget.password=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_SECRET}
       - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]      
 
+  glances:
+    image: nicolargo/glances:dev
+    container_name: glances
+    restart: unless-stopped
+    pid: host
+    privileged: true
+    networks:
+      01-transit_80-net:
+        ipv4_address: ${GLANCES_IP_ADDRESS}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
+    environment:
+      - GLANCES_OPT=-C /glances/conf/glances.conf -w
+      - TZ=${TZ}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.glances.rule=Host(`glances.${DOMAIN}`)
+      - traefik.http.routers.glances.tls.certresolver=certificato
+      - traefik.http.services.glances.loadbalancer.server.port=61208
+
   # scrutiny:
   #   container_name: scrutiny
   #   image: ghcr.io/analogj/scrutiny:master-omnibus
