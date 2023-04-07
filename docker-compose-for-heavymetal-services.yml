@@ -613,7 +613,13 @@ services:
   #     - "/dev/nvme2n1"
   #     - "/dev/nvme1n1"    
   #   labels:
-  #     traefik.enable: true
-  #     traefik.http.routers.scrutiny.rule: "Host(`drive.${DOMAIN}`)"
-  #     traefik.http.routers.scrutiny.tls.certresolver: "certificato"
-  #     traefik.http.services.scrutiny.loadbalancer.server.port: 8080
+  #     - traefik.enable=true
+  #     - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
+  #     - traefik.http.routers.scrutiny.tls.certresolver=certificato
+  #     - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Disk health
+  #     - homepage.icon=scrutiny.png
+  #     - homepage.widget.type=scrutiny
+  #     - homepage.widget.url=https://drive.${DOMAIN}
+  #     - homepage.widget.fields=["passed", "failed", "unknown"]
