@@ -68,7 +68,10 @@ services:
       - /etc/localtime:/etc/localtime:ro  
       - ${DATA_STORAGE}/certs:/letsencrypt
     restart: always
-
+    healthcheck: # This is to announce to the network (router and switch) that this ip address is sitting here
+      test: ping -c 1 bing.com || exit 1
+      interval: 30s
+      retries: 5
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
     container_name: "cloudflared-tunnel"
