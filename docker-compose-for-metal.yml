@@ -305,7 +305,7 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
     networks:
       transit-net:
-      internal-net:
+        ipv4_address: ${HOMEPAGE_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
