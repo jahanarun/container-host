@@ -598,51 +598,52 @@ services:
       - traefik.http.routers.glances.tls.certresolver=certificato
       - traefik.http.services.glances.loadbalancer.server.port=61208
 
-  # scrutiny:
-  #   container_name: scrutiny
-  #   image: ghcr.io/analogj/scrutiny:master-omnibus
-  #   cap_add:
-  #     - SYS_RAWIO
-  #     - SYS_ADMIN
-  #   environment:
-  #     - PUID=33                                                                                                 
-  #     - PGID=33                                                                                                 
-  #     - TZ=${TZ}
-  #     - COLLECTOR_API_ENDPOINT=http://localhost:8080 
-  #   ports:
-  #     - "8080:8080" # webapp
-  #     - "8086:8086" # influxDB admin
-  #   volumes:
-  #     - /run/udev:/run/udev:ro
-  #     - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
-  #     - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
-  #   networks:
-  #     01-transit_80-net:
-  #       ipv4_address: ${SCRUTINY_IP_ADDRESS}   
-  #   devices:
-  #     - "/dev/sda"
-  #     - "/dev/sdb"
-  #     - "/dev/sdc"
-  #     - "/dev/sdd"
-  #     - "/dev/sde"
-  #     - "/dev/sdf"
-  #     - "/dev/sdg"
-  #     - "/dev/sdh"
-  #     - "/dev/sdi"
-  #     - "/dev/sdj"
-  #     - "/dev/sdk"
-  #     - "/dev/sdl"
-  #     - "/dev/sdm"
-  #     - "/dev/nvme2n1"
-  #     - "/dev/nvme1n1"    
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
-  #     - traefik.http.routers.scrutiny.tls.certresolver=certificato
-  #     - traefik.http.services.scrutiny.loadbalancer.server.port=8080
-  #     - homepage.group=HeavyMetal
-  #     - homepage.name=Disk health
-  #     - homepage.icon=scrutiny.png
-  #     - homepage.widget.type=scrutiny
-  #     - homepage.widget.url=https://drive.${DOMAIN}
-  #     - homepage.widget.fields=["passed", "failed", "unknown"]
+  scrutiny:
+    container_name: scrutiny
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
+    environment:
+      - PUID=33                                                                                                 
+      - PGID=33                                                                                                 
+      - TZ=${TZ}
+      - COLLECTOR_API_ENDPOINT=http://localhost:8080 
+    # ports:
+    #   - "8080:8080" # webapp
+    #   - "8086:8086" # influxDB admin
+    volumes:
+      - /run/udev:/run/udev:ro
+      - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
+      - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
+    networks:
+      01-transit_80-net:
+        ipv4_address: ${SCRUTINY_IP_ADDRESS}   
+    devices:
+      - "/dev/sda"
+      - "/dev/sdb"
+      - "/dev/sdc"
+      - "/dev/sdd"
+      - "/dev/sde"
+      - "/dev/sdf"
+      - "/dev/sdg"
+      - "/dev/sdh"
+      - "/dev/sdi"
+      - "/dev/sdj"
+      - "/dev/sdk"
+      - "/dev/sdl"
+      - "/dev/sdm"
+      - "/dev/sdn"
+      - "/dev/nvme2n1"
+      - "/dev/nvme1n1"    
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
+      - traefik.http.routers.scrutiny.tls.certresolver=certificato
+      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+      - homepage.group=HeavyMetal
+      - homepage.name=Disk health
+      - homepage.icon=scrutiny.png
+      - homepage.widget.type=scrutiny
+      - homepage.widget.url=https://drive.${DOMAIN}
+      - homepage.widget.fields=["passed", "failed", "unknown"]
