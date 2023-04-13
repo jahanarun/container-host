@@ -89,8 +89,9 @@ services:
       - --token
       - ${HEAVYMETAL_CLOUDFARED_TOKEN}
     labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Cloudflare Heavy Metal tunnel
+      - homepage.group=Network
+      - homepage.weight=1000
+      - homepage.name=Cloudflare HeavyMetal tunnel
       - homepage.icon=cloudflare-zero-trust.png
       - homepage.widget.type=cloudflared
       - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
@@ -259,6 +260,7 @@ services:
       - traefik.http.routers.plex.tls.certresolver=certificato
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - homepage.group=HeavyMetal
+      - homepage.weight=50
       - homepage.name=Plex Movies
       - homepage.icon=plex.png
       - homepage.href=https://plex.${DOMAIN}/
@@ -569,6 +571,7 @@ services:
     network_mode: none
     labels:
       - homepage.group=HeavyMetal
+      - homepage.weight = 1000
       - homepage.name=Proxmox
       - homepage.icon=proxmox.png
       - homepage.widget.type=proxmox
