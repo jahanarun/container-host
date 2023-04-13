@@ -572,7 +572,7 @@ services:
     labels:
       - homepage.group=Hardware
       - homepage.weight=2
-      - homepage.name=Proxmox
+      - homepage.name=Proxmox (heavymetal)
       - homepage.icon=proxmox.png
       - homepage.widget.type=proxmox
       - homepage.widget.url=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006

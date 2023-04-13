@@ -451,7 +451,7 @@ services:
     labels:
       - homepage.group=Hardware
       - homepage.weight=1
-      - homepage.name=Proxmox
+      - homepage.name=Proxmox (metal)
       - homepage.icon=proxmox.png
       - homepage.widget.type=proxmox
       - homepage.widget.url=https://${METAL_SERVICES_IP_ADDRESS}:8006
