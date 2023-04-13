@@ -90,7 +90,7 @@ services:
       - ${HEAVYMETAL_CLOUDFARED_TOKEN}
     labels:
       - homepage.group=Network
-      - homepage.weight=1000
+      - homepage.weight=2
       - homepage.name=Cloudflare HeavyMetal tunnel
       - homepage.icon=cloudflare-zero-trust.png
       - homepage.widget.type=cloudflared
@@ -260,7 +260,7 @@ services:
       - traefik.http.routers.plex.tls.certresolver=certificato
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - homepage.group=HeavyMetal
-      - homepage.weight=50
+      - homepage.weight=1
       - homepage.name=Plex Movies
       - homepage.icon=plex.png
       - homepage.href=https://plex.${DOMAIN}/
@@ -570,8 +570,8 @@ services:
     restart: unless-stopped
     network_mode: none
     labels:
-      - homepage.group=HeavyMetal
-      - homepage.weight = 1000
+      - homepage.group=Hardware
+      - homepage.weight=2
       - homepage.name=Proxmox
       - homepage.icon=proxmox.png
       - homepage.widget.type=proxmox
@@ -644,8 +644,9 @@ services:
       - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
       - traefik.http.routers.scrutiny.tls.certresolver=certificato
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
-      - homepage.group=HeavyMetal
-      - homepage.name=Disk health
+      - homepage.group=Hardware
+      - homepage.weight=3
+      - homepage.name=Disk health (heavymetal)
       - homepage.icon=scrutiny.png
       - homepage.widget.type=scrutiny
       - homepage.widget.url=https://drive.${DOMAIN}

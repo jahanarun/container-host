@@ -73,7 +73,7 @@ services:
       retries: 5
     labels:
       - homepage.group=Network
-      - homepage.weight=2000
+      - homepage.weight=1
       - homepage.name=Pihole-${VLAN_NAME}
       - homepage.icon=pihole.png
       - homepage.href=http://${PIHOLE_IP_ADDRESS}/admin
@@ -164,7 +164,7 @@ services:
       - ${CLOUDFARED_TOKEN}
     labels:
       - homepage.group=Network
-      - homepage.weight=1000
+      - homepage.weight=2
       - homepage.name=Cloudflare Metal tunnel
       - homepage.icon=cloudflare-zero-trust.png
       - homepage.widget.type=cloudflared
@@ -186,7 +186,7 @@ services:
       traefik.http.routers.plex.tls.certresolver: "certificato"
       traefik.http.services.plex.loadbalancer.server.port: 32400
       homepage.group: Metal
-      homepage.weight: 50
+      homepage.weight: 1
       homepage.name: Plex Music
       homepage.icon: plex.png
       homepage.href: https://music.${DOMAIN}/
@@ -448,8 +448,8 @@ services:
     restart: unless-stopped
     network_mode: none
     labels:
-      - homepage.group=Metal
-      - homepage.weight=1000
+      - homepage.group=Hardware
+      - homepage.weight=1
       - homepage.name=Proxmox
       - homepage.icon=proxmox.png
       - homepage.widget.type=proxmox
