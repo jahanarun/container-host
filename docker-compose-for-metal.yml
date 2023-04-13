@@ -255,6 +255,7 @@ services:
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
       - homepage.group=Network
+      - homepage.weight=1000
       - homepage.name=Speedtest
       - homepage.icon=speedtest-tracker.png
       - homepage.href=https://speedtracker.${DOMAIN}/
