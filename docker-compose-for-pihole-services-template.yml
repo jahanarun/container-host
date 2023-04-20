@@ -22,7 +22,7 @@ services:
       TUNNEL_METRICS: "0.0.0.0:49312"
       TUNNEL_DNS_ADDRESS: "0.0.0.0"
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
-      TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/dns-query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
+      TUNNEL_DNS_UPSTREAM: "https://8.8.8.8/query,https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     networks:
       transit-net:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_IPADDR}
