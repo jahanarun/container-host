@@ -1,10 +1,10 @@
-name: cloudflared-linux - Build linux docker image for cloudflared
+name: cloudflared - Build linux docker image for cloudflared
 
 on: workflow_dispatch
 
 defaults:
   run:
-    working-directory: cloudflared-linux
+    working-directory: cloudflared
 
 jobs:
 
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATE_STAMP: $(date +"%Y%m%d")
-      IMAGE_NAME: cloudflared-linux
+      IMAGE_NAME: cloudflared
     steps:
     - uses: actions/checkout@v2
 

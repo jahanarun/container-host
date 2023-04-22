@@ -1,16 +1,22 @@
-# escape=`
-ARG BASE
-FROM mcr.microsoft.com/windows/servercore:$BASE
+FROM cloudflare/cloudflared AS source
 
-ENV DOCKER_CLI_EXPERIMENTAL enabled
+FROM alpine
 
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
-USER ContainerAdministrator
+ARG user=nonroot
+ARG home=/home/$user
+RUN addgroup -S nonroot
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home $home \
+    --ingroup nonroot \
+    $user
 
-WORKDIR c:/cloudflared
+COPY --from=source --chown=nonroot /usr/local/bin/cloudflared /usr/local/bin/
+RUN apk update && apk add --no-cache curl bind-tools
 
-RUN Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile cloudflared.exe -UseBasicParsing; 
+USER nonroot
 
-ENTRYPOINT ["cloudflared.exe"]
+ENTRYPOINT ["cloudflared", "--no-autoupdate"]
 
-CMD [ "help" ]
+CMD ["version"]
