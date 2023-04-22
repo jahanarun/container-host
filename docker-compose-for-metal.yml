@@ -483,3 +483,13 @@ services:
   #     - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
   #   depends_on:
   #     - traefik
+
+  autoheal:
+    image: jhnrn/docker-autoheal:latest
+    container_name: "autoheal"
+    restart: always
+    environment:
+      TZ: ${TZ}    
+      AUTOHEAL_CONTAINER_LABEL: autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
