@@ -687,7 +687,7 @@ services:
       - MYSQL_USER=nextcloud-private-user
       - MYSQL_HOST=nextcloud-private-db
       - NEXTCLOUD_TRUSTED_DOMAINS=private.${DOMAIN}
-      - REDIS_HOST=redis
+      - REDIS_HOST=redis-nextcloud-private
       - NEXTCLOUD_HOSTNAME=nextcloud-private
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
@@ -748,4 +748,15 @@ services:
     depends_on:
       - traefik
       - nextcloud-private-db
-      - redis
+      - redis-nextcloud-private
+
+  redis-nextcloud-private:
+    image: redis:6
+    container_name: "redis-nextcloud-private"
+    restart: unless-stopped
+    volumes:
+      - ${NEXTCLOUD_PRIVATE_DATA}/redis:/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - internal-net
