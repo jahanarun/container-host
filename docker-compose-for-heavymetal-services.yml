@@ -282,12 +282,12 @@ services:
     networks:
       - internal-net
 
-  nextcloud-redis:
+  redis:
     image: redis:6
-    container_name: "nextcloud-redis"
+    container_name: "redis"
     restart: unless-stopped
     volumes:
-      - ${NEXTCLOUD_DATA}/redis:/data
+      - ${DATA_STORAGE}/redis:/data
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
@@ -328,7 +328,7 @@ services:
       - MYSQL_USER=nextcloud-user
       - MYSQL_HOST=nextcloud-db
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
-      - REDIS_HOST=nextcloud-redis
+      - REDIS_HOST=redis
       - NEXTCLOUD_HOSTNAME=${NEXTCLOUD_HOSTNAME}
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
@@ -389,7 +389,7 @@ services:
     depends_on:
       - traefik
       - nextcloud-db
-      - nextcloud-redis
+      - redis
 
   photoprism:
     image: photoprism/photoprism:latest
