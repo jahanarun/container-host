@@ -307,7 +307,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
-      - MYSQL_DATABASE=nextcloud
+      - MYSQL_DATABASE=nextcloud-private
       - MYSQL_USER=nextcloud-user
 
   nextcloud:
@@ -324,7 +324,7 @@ services:
       - ${NEXTCLOUD_DATA}/php/conf.d:/usr/local/etc/php/conf.d
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
-      - MYSQL_DATABASE=nextcloud
+      - MYSQL_DATABASE=nextcloud-private
       - MYSQL_USER=nextcloud-user
       - MYSQL_HOST=nextcloud-db
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
