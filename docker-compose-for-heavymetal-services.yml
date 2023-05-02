@@ -679,8 +679,6 @@ services:
     volumes:
       - ${NEXTCLOUD_PRIVATE_DATA}/html:/var/www/html
       - ${NEXTCLOUD_PRIVATE_DATA}/data:/var/www/html/data
-      - ${NEXTCLOUD_PRIVATE_DATA}/tmp/app:/tmp
-      - ${NEXTCLOUD_PRIVATE_DATA}/php/conf.d:/usr/local/etc/php/conf.d
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
