@@ -685,7 +685,7 @@ services:
       - MYSQL_USER=nextcloud-private-user
       - MYSQL_HOST=nextcloud-private-db
       - NEXTCLOUD_TRUSTED_DOMAINS=private.${DOMAIN}
-      - REDIS_HOST=redis-nextcloud-private
+      - REDIS_HOST=redis
       - NEXTCLOUD_HOSTNAME=nextcloud-private
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
@@ -740,21 +740,10 @@ services:
       - homepage.widget.url=https://private.${DOMAIN}
       # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
       # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
-      - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
+      - homepage.widget.key=${NEXTCLOUD_PRIVATE_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
       - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
 
     depends_on:
       - traefik
       - nextcloud-private-db
-      - redis-nextcloud-private
-
-  redis-nextcloud-private:
-    image: redis:6
-    container_name: "redis-nextcloud-private"
-    restart: unless-stopped
-    volumes:
-      - ${NEXTCLOUD_PRIVATE_DATA}/redis:/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    networks:
-      - internal-net
+      - redis
