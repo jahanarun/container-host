@@ -64,6 +64,8 @@ services:
         ipv4_address: ${TRAEFIK_THINGS_IP_ADDRESS}
     dns:
       - 1.1.1.1
+    cap_add:
+      - NET_ADMIN
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
