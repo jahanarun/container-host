@@ -5,12 +5,23 @@ networks:
     driver: macvlan # Otherwise PiHole and other containers cannot resolve DNS internally due to NAT issue within Docker
     # driver: ipvlan
     driver_opts:
-      parent: enp8s0.${VLAN_ID}
-      name: macvlan${VLAN_ID}
+      parent: enp8s0.${METAL_VLAN_ID}
+      name: macvlan${METAL_VLAN_ID}
     ipam:
       config:
-        - subnet: 10.100.${VLAN_ID}.0/24
-          gateway: ${GATEWAY_IP_ADDRESS}
+        - subnet: 10.100.${METAL_VLAN_ID}.0/24
+          gateway: ${METAL_GATEWAY_IP_ADDRESS}
+
+  02-transit_things-net:
+    driver: macvlan # Otherwise PiHole and other containers cannot resolve DNS internally due to NAT issue within Docker
+    # driver: ipvlan
+    driver_opts:
+      parent: enp8s0.${THINGS_VLAN_ID}
+      name: macvlan${THINGS_VLAN_ID}
+    ipam:
+      config:
+        - subnet: 10.100.${THINGS_VLAN_ID}.0/24
+          gateway: ${THINGS_GATEWAY_IP_ADDRESS}
 
   internal-net:
     driver: bridge
@@ -25,8 +36,8 @@ services:
       - "--log.level=INFO"
       - "--accesslog=false"
       - "--api.dashboard=true"
-      # - "--providers.file.directory=/FileProvider/"
-      # - "--providers.file.watch=true"
+      - "--providers.file.directory=/FileProvider/"
+      - "--providers.file.watch=true"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -48,7 +59,9 @@ services:
     networks:
       internal-net:
       01-transit_80-net:
-        ipv4_address: ${TRAEFIK_IP_ADDRESS_2}   
+        ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
+      02-transit_things-net:
+        ipv4_address: ${TRAEFIK_THINGS_IP_ADDRESS}
     dns:
       - 1.1.1.1
     environment:
@@ -66,12 +79,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
-      - ${DATA_STORAGE}/certs:/letsencrypt
+      - ${DATA_STORAGE}/traefik/certs:/letsencrypt
+      - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
     restart: always
     healthcheck: # This is to announce to the network (router and switch) that this ip address is sitting here
       test: ping -c 1 bing.com || exit 1
       interval: 30s
       retries: 5
+
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
     container_name: "cloudflared-tunnel"
