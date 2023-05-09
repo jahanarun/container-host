@@ -68,11 +68,6 @@ services:
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy
-    healthcheck:
-      test: ping -c 1 bing.com || exit 1
-      # test: dig +short @127.0.0.1 pi.hole || exit 1
-      interval: 30s
-      retries: 5
     labels:
       - homepage.group=Network
       - homepage.weight=1
