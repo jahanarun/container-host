@@ -30,6 +30,13 @@ services:
     networks:
       transit-net:
         ipv4_address: ${CLOUDFLARED_DNSPROXY_IPADDR}
+    healthcheck:
+      test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
+      interval: 30s
+      timeout: 1s
+      retries: 2
+    labels:
+      - autoheal=true
 
   pihole:
     container_name: pihole-${VLAN_NAME}
