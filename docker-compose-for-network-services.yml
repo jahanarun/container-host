@@ -11,6 +11,11 @@ networks:
         - subnet: 10.100.0.0/24
           gateway: ${TRANSIT0_GATEWAY_IP_ADDRESS}
           ip_range: 10.100.0.0/29        # 10.100.0.48 - 10.100.0.51
+  things-services_transit-net:
+    external: true
+  quantum-services_transit-net:
+    external: true
+
 services:
   http-server:
     image: jhnrn/http-server-linux:latest
@@ -53,3 +58,16 @@ services:
       - "traefik.http.routers.omada.rule=Host(`omada.${DOMAIN}`)"
       - "traefik.http.routers.omada.tls.certresolver=certificato"
       - "traefik.http.services.omada.loadbalancer.server.port=8043"
+
+  mdns:
+    image: jhnrn/avahi
+    hostname: mdns
+    container_name: mdns
+    environment:
+      - REFLECTOR_ENABLE_REFLECTOR=yes
+    restart: unless-stopped
+    networks:
+      things-services_transit-net:
+        ipv4_address: ${AVAHI_THINGS_IP_ADDRESS}
+      quantum-services_transit-net:
+        ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
