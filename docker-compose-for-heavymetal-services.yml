@@ -12,17 +12,6 @@ networks:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
           gateway: ${METAL_GATEWAY_IP_ADDRESS}
 
-  02-transit_things-net:
-    driver: macvlan # Otherwise PiHole and other containers cannot resolve DNS internally due to NAT issue within Docker
-    # driver: ipvlan
-    driver_opts:
-      parent: enp8s0.${THINGS_VLAN_ID}
-      name: macvlan${THINGS_VLAN_ID}
-    ipam:
-      config:
-        - subnet: 10.100.${THINGS_VLAN_ID}.0/24
-          gateway: ${THINGS_GATEWAY_IP_ADDRESS}
-
   internal-net:
     driver: bridge
     internal: true
@@ -76,8 +65,6 @@ services:
       internal-net:
       01-transit_80-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
-      02-transit_things-net:
-        ipv4_address: ${TRAEFIK_THINGS_IP_ADDRESS}
     dns:
       - 1.1.1.1
     environment:

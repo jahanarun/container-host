@@ -15,6 +15,9 @@ networks:
         - subnet: 10.100.${VLAN_ID}.0/24
           gateway: ${GATEWAY_IP_ADDRESS}
 
+  things-services_transit-net:
+    external: true
+
 services:
   cloudflared-dnsproxy:
     image: jhnrn/cloudflared:latest
@@ -121,7 +124,9 @@ services:
     networks:
       internal-net:
       transit-net:
-        ipv4_address: ${TRAEFIK_IP_ADDRESS}      
+        ipv4_address: ${TRAEFIK_IP_ADDRESS}
+      things-services_transit-net:
+        ipv4_address: ${TRAEFIK_THINGS_IP_ADDRESS}
     dns:
       - 1.1.1.1
     environment:
