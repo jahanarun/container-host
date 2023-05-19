@@ -28,6 +28,21 @@ networks:
     internal: true
 
 services:
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+        - CONTAINERS=1 # Allow access to viewing containers
+        - POST=0 # Disallow any POST operations (effectively read-only)
+    # ports:
+    #     - 2375:2375
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    networks:
+      01-transit_80-net:
+        ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
+    restart: unless-stopped
+
   traefik:
     image: traefik:latest
     hostname: traefik
@@ -36,6 +51,7 @@ services:
       - "--log.level=INFO"
       - "--accesslog=false"
       - "--api.dashboard=true"
+      - "--providers.docker.endpoint=tcp://dockerproxy:2375"
       - "--providers.file.directory=/FileProvider/"
       - "--providers.file.watch=true"
       - "--api.insecure=true"
@@ -82,6 +98,8 @@ services:
       - ${DATA_STORAGE}/traefik/certs:/letsencrypt
       - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
     restart: always
+    depends_on:
+      - dockerproxy
     healthcheck: # This is to announce to the network (router and switch) that this ip address is sitting here
       test: ping -c 1 bing.com || exit 1
       interval: 30s
@@ -572,21 +590,6 @@ services:
       - "3306"
     networks:
       - internal-net
-
-  dockerproxy:
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
-    container_name: dockerproxy
-    environment:
-        - CONTAINERS=1 # Allow access to viewing containers
-        - POST=0 # Disallow any POST operations (effectively read-only)
-    # ports:
-    #     - 2375:2375
-    volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
-    networks:
-      01-transit_80-net:
-        ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
-    restart: unless-stopped
 
   proxmox-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
