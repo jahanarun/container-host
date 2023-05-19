@@ -538,6 +538,7 @@ services:
       SSH_PORT: "22"
     volumes:
       - ${GOGS_DATA}/data:/data
+      - ${GOGS_DATA}/backup:/backup
     networks:
       internal-net:
     dns:
