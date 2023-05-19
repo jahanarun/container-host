@@ -99,8 +99,8 @@ services:
       - "--log.level=INFO"
       - "--accesslog=false"
       - "--api.dashboard=true"
-      # - "--providers.file.directory=/FileProvider/"
-      # - "--providers.file.watch=true"
+      - "--providers.file.directory=/FileProvider/"
+      - "--providers.file.watch=true"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -145,7 +145,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
-      - ${DATA_STORAGE}/certs:/letsencrypt
+      - ${DATA_STORAGE}/traefik/certs:/letsencrypt
+      - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
     restart: always
     depends_on:
       - pihole
