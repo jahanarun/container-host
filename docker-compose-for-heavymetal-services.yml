@@ -537,8 +537,8 @@ services:
       RUN_CROND: true
       SSH_PORT: "22"
     volumes:
-      - ${GOGS_DATA}/data:/data
-      - ${GOGS_DATA}/backup:/backup
+      - ${DATA_STORAGE}/gogs/data:/data
+      - ${DATA_STORAGE}/gogs/backup:/backup
     networks:
       internal-net:
     dns:
@@ -567,7 +567,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${GOGS_DATABASE_ROOT_PASSWORD}
       MYSQL_USER: "gogs"
     volumes:
-      - ${GOGS_DATA}/db:/var/lib/mysql
+      - ${DATA_STORAGE}/gogs/db:/var/lib/mysql
     expose:
       - "3306"
     networks:
