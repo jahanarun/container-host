@@ -111,6 +111,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web-secure.address=:443"
+      - "--entrypoints.ssh.address=:22"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
@@ -195,8 +196,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.plex.rule: "Host(`music.${DOMAIN}`)"
-      # traefik.http.routers.plex.tls: true
-      # traefik.http.routers.plex.entrypoints: "websecure"
+      traefik.http.routers.plex.entrypoints: web,web-secure
       traefik.http.routers.plex.tls.certresolver: "certificato"
       traefik.http.services.plex.loadbalancer.server.port: 32400
       homepage.group: Metal
@@ -244,6 +244,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
       - "traefik.http.routers.librespeed.tls.certresolver=certificato"
+      - traefik.http.routers.librespeed.entrypoints=web,web-secure
       - "traefik.http.services.librespeed.loadbalancer.server.port=80"
     depends_on:
       - traefik
@@ -268,6 +269,7 @@ services:
       - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
+      - traefik.http.routers.speedtest-tracker.entrypoints=web,web-secure
       - homepage.group=Network
       - homepage.weight=1000
       - homepage.name=Speedtest
@@ -329,9 +331,10 @@ services:
     restart: unless-stopped
     labels:
       traefik.enable: true
-      traefik.http.routers.heimdall.rule: "Host(`www.${DOMAIN}`)"
-      traefik.http.routers.heimdall.tls.certresolver: "certificato"
-      traefik.http.services.heimdall.loadbalancer.server.port: 3000
+      traefik.http.routers.homepage.rule: "Host(`www.${DOMAIN}`)"
+      traefik.http.routers.homepage.tls.certresolver: "certificato"
+      traefik.http.services.homepage.loadbalancer.server.port: 3000
+      traefik.http.routers.homepage.entrypoints: web,web-secure
     depends_on:
       - traefik
 
@@ -372,6 +375,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent.tls.certresolver=certificato
+      - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8220
       - homepage.group=Metal
       - homepage.name=Qbittorrent
@@ -406,6 +410,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
       - traefik.http.routers.overseerr.tls.certresolver=certificato
+      - traefik.http.routers.overseerr.entrypoints=web,web-secure
       - traefik.http.services.overseerr.loadbalancer.server.port=5055
       - homepage.group=Metal
       - homepage.name=Overseerr
