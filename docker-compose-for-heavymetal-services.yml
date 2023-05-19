@@ -137,6 +137,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
       - traefik.http.routers.sonarr.tls.certresolver=certificato
+      - traefik.http.routers.sonarr.entrypoints=web,web-secure
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
       - homepage.group=HeavyMetal
       - homepage.name=Sonarr
@@ -170,6 +171,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
       - traefik.http.routers.radarr.tls.certresolver=certificato
+      - traefik.http.routers.radarr.entrypoints=web,web-secure
       - traefik.http.services.radarr.loadbalancer.server.port=7878
       - homepage.group=HeavyMetal
       - homepage.name=Radarr
@@ -201,6 +203,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
       - "traefik.http.routers.flaresolverr.tls.certresolver=certificato"
+      - "traefik.http.routers.flaresolverr.entrypoints=web,web-secure"
       - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
     depends_on:
       - traefik
@@ -227,6 +230,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr.tls.certresolver=certificato
+      - traefik.http.routers.prowlarr.entrypoints=web,web-secure
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
       - homepage.group=HeavyMetal
       - homepage.name=Prowlarr
@@ -273,6 +277,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
       - traefik.http.routers.plex.tls.certresolver=certificato
+      - traefik.http.routers.plex.entrypoints=web,web-secure
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - homepage.group=HeavyMetal
       - homepage.weight=1
@@ -371,6 +376,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
       - traefik.http.routers.nextcloud.tls.certresolver=certificato
+      - traefik.http.routers.nextcloud.entrypoints=web,web-secure
       - traefik.http.services.nextcloud.loadbalancer.server.port=80
       # traefik.http.middlewares.nextcloud-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
@@ -483,6 +489,7 @@ services:
       traefik.enable: true
       traefik.http.routers.photoprism.rule: "Host(`photoprism.${DOMAIN}`)"
       traefik.http.routers.photoprism.tls.certresolver: "certificato"
+      traefik.http.routers.photoprism.entrypoints: "web,web-secure"
       traefik.http.services.photoprism.loadbalancer.server.port: 2342
     depends_on:
       - traefik
@@ -539,6 +546,7 @@ services:
       traefik.enable: true
       traefik.http.routers.gogs.rule: "Host(`git.${DOMAIN}`)"
       traefik.http.routers.gogs.tls.certresolver: "certificato"
+      traefik.http.routers.gogs.entrypoints: "web,web-secure"
       traefik.http.services.gogs.loadbalancer.server.port: 3000
       traefik.tcp.routers.gogs-ssh.rule: HostSNI(`*`)
       traefik.tcp.routers.gogs-ssh.entrypoints: ssh
@@ -614,6 +622,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.glances.rule=Host(`glances.${DOMAIN}`)
       - traefik.http.routers.glances.tls.certresolver=certificato
+      - traefik.http.routers.glances.entrypoints=web,web-secure
       - traefik.http.services.glances.loadbalancer.server.port=61208
 
   scrutiny:
@@ -658,6 +667,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
       - traefik.http.routers.scrutiny.tls.certresolver=certificato
+      - traefik.http.routers.scrutiny.entrypoints=web,web-secure
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
       - homepage.group=Hardware
       - homepage.weight=3
@@ -726,9 +736,10 @@ services:
       - ofelia.job-exec.nextcloud_cron.user=33
       - ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php
       - traefik.enable=true
-      - traefik.http.routers.private.rule=Host(`private.${DOMAIN}`)
-      - traefik.http.routers.private.tls.certresolver=certificato
-      - traefik.http.services.private.loadbalancer.server.port=80
+      - traefik.http.routers.nextcloud-private.rule=Host(`private.${DOMAIN}`)
+      - traefik.http.routers.nextcloud-private.tls.certresolver=certificato
+      - traefik.http.routers.nextcloud-private.entrypoints=web,web-secure
+      - traefik.http.services.nextcloud-private.loadbalancer.server.port=80
       # traefik.http.middlewares.nextcloud-private-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-private-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-private-limit.buffering.maxResponseBodyBytes: 16777216 # 16 GBytes
