@@ -298,7 +298,7 @@ services:
 
   imaginary:
     image: nextcloud/aio-imaginary:latest
-    command: -concurrency 50 -enable-url-source -log-level debug
+    command: -concurrency 50 -enable-url-source -log-level all
     container_name: "imaginary"
     restart: unless-stopped
     environment:
