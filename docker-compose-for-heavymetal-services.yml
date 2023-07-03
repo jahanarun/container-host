@@ -482,7 +482,7 @@ services:
       ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "~/Import:/photoprism/import"
       ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
-      - ${PHOTOPRISM_DATA}/storage:/photoprism/storage
+      - ${DATA_STORAGE}/photoprism/storage:/photoprism/storage
     networks:
       internal-net:
     dns:
@@ -512,7 +512,7 @@ services:
     command: mysqld --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - ${PHOTOPRISM_DATA}/db:/var/lib/mysql # Important, don't remove
+      - ${DATA_STORAGE}/photoprism/db:/var/lib/mysql # Important, don't remove
     environment:
       MYSQL_ROOT_PASSWORD: ${PHOTOPRISM_ROOT_DATABASE_PASSWORD}
       MYSQL_DATABASE: photoprism
