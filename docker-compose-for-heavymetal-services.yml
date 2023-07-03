@@ -303,6 +303,7 @@ services:
     restart: unless-stopped
     environment:
        PORT: 9000
+       MALLOC_ARENA_MAX: 2
     ports:
       - "9000:9000"
     networks:
