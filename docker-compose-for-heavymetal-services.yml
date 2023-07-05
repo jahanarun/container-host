@@ -959,3 +959,43 @@ services:
       traefik.http.services.photoview-camera.loadbalancer.server.port: 80
     networks:
       internal-net:
+
+  photoview-album-db:
+    image: mariadb:10.5
+    container_name: photoview-album-db
+    hostname: photoview-album-db
+    restart: always
+    environment:
+      - MYSQL_DATABASE=photoview
+      - MYSQL_USER=photoview
+      - MYSQL_PASSWORD=${PHOTOVIEW_DATABASE_PASSWORD}
+      - MYSQL_RANDOM_ROOT_PASSWORD=1
+    volumes:
+      - ${APPDATA}/photoview-album/db:/var/lib/mysql
+    networks:
+      internal-net:
+
+  photoview-album:
+    image: viktorstrate/photoview:2
+    container_name: photoview-album
+    hostname: photoview-album
+    restart: always
+    depends_on:
+      - photoview-album-db
+    environment:
+      - PHOTOVIEW_DATABASE_DRIVER=mysql
+      - PHOTOVIEW_MYSQL_URL=photoview:${PHOTOVIEW_DATABASE_PASSWORD}@tcp(photoview-album-db)/photoview
+      - PHOTOVIEW_LISTEN_IP=photoview
+      - PHOTOVIEW_LISTEN_PORT=80
+      - PHOTOVIEW_MEDIA_CACHE=/app/cache
+    volumes:
+      - ${APPDATA}/photoview-album/cache:/app/cache
+      - ${ALBUM_PHOTOS}:/photos/album:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.photoview-album.rule: "Host(`album.${DOMAIN}`)"
+      traefik.http.routers.photoview-album.tls.certresolver: "certificato"
+      traefik.http.routers.photoview-album.entrypoints: "web,web-secure"
+      traefik.http.services.photoview-album.loadbalancer.server.port: 80
+    networks:
+      internal-net:
