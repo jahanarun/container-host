@@ -871,10 +871,10 @@ services:
   #     internal-net:
 
 
-  photoview-db:
+  photoview-private-db:
     image: mariadb:10.5
-    container_name: photoview-db
-    hostname: photoview-db
+    container_name: photoview-private-db
+    hostname: photoview-private-db
     restart: always
     environment:
       - MYSQL_DATABASE=photoview
@@ -882,41 +882,33 @@ services:
       - MYSQL_PASSWORD=${PHOTOVIEW_DATABASE_PASSWORD}
       - MYSQL_RANDOM_ROOT_PASSWORD=1
     volumes:
-      - ${APPDATA}/photoview/db:/var/lib/mysql
+      - ${APPDATA}/photoview-private/db:/var/lib/mysql
     networks:
       internal-net:
 
-  photoview:
+  photoview-private:
     image: viktorstrate/photoview:2
-    container_name: photoview
-    hostname: photoview
+    container_name: photoview-private
+    hostname: photoview-private
     restart: always
     depends_on:
-      - photoview-db
+      - photoview-private-db
     environment:
       - PHOTOVIEW_DATABASE_DRIVER=mysql
-      - PHOTOVIEW_MYSQL_URL=photoview:${PHOTOVIEW_DATABASE_PASSWORD}@tcp(photoview-db)/photoview
-      - PHOTOVIEW_LISTEN_IP=photoview
+      - PHOTOVIEW_MYSQL_URL=photoview:${PHOTOVIEW_DATABASE_PASSWORD}@tcp(photoview-private-db)/photoview
+      - PHOTOVIEW_LISTEN_IP=photoview-private
       - PHOTOVIEW_LISTEN_PORT=80
       - PHOTOVIEW_MEDIA_CACHE=/app/cache
-      
       # Optional: If you are using Samba/CIFS-Share and experience problems with "directory not found"
       # Enable the following Godebug
       # - GODEBUG=asyncpreemptoff=1
-      
       
       # Optional: To enable map related features, you need to create a mapbox token.
       # A token can be generated for free here https://account.mapbox.com/access-tokens/
       # It's a good idea to limit the scope of the token to your own domain, to prevent others from using it.
       # - MAPBOX_TOKEN=<YOUR TOKEN HERE>
-
     volumes:
-      - ${APPDATA}/photoview/cache:/app/cache
-
-      # Change This: to the directory where your photos are located on your server.
-      # If the photos are located at `/home/user/photos`, then change this value
-      # to the following: `/home/user/photos:/photos:ro`.
-      # You can mount multiple paths, if your photos are spread across multiple directories.
+      - ${APPDATA}/photoview-private/cache:/app/cache
       - ${PRIVATE_USER_GALLERY}:/photos:ro
     labels:
       traefik.enable: true
