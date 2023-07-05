@@ -987,7 +987,7 @@ services:
       - PHOTOVIEW_MEDIA_CACHE=/app/cache
     volumes:
       - ${APPDATA}/photoview-album/cache:/app/cache
-      - ${ALBUM_PHOTOS}:/photos/album:ro
+      - ${ALBUM_PHOTOS}:/photos:ro
     labels:
       traefik.enable: true
       traefik.http.routers.photoview-album.rule: "Host(`album.${DOMAIN}`)"
