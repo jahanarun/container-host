@@ -419,107 +419,107 @@ services:
       - nextcloud-db
       - redis
 
-  photoprism:
-    image: photoprism/photoprism:latest
-    container_name: photoprism
-    hostname: photoprism
-    restart: unless-stopped
-    security_opt:
-      - seccomp:unconfined
-      - apparmor:unconfined
-    environment:
-      PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD} # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL} # Public server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_ORIGINALS_LIMIT: 5000 # File size limit for originals in MB (increase for high-res video)
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip" # Improves transfer speed and bandwidth utilization (none or gzip)
-      PHOTOPRISM_DEBUG: "false" # Run in debug mode (shows additional log messages)
-      PHOTOPRISM_PUBLIC: "false" # No authentication required (disables password protection)
-      PHOTOPRISM_READONLY: "false" # Don't modify originals directory (reduced functionality)
-      PHOTOPRISM_EXPERIMENTAL: "false" # Enables experimental features
-      PHOTOPRISM_DISABLE_CHOWN: "true" # Disables storage permission updates on startup
-      PHOTOPRISM_DISABLE_WEBDAV: "false" # Disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false" # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false" # Disables all features depending on TensorFlow
-      PHOTOPRISM_DISABLE_FACES: "false" # Disables facial recognition
-      PHOTOPRISM_DISABLE_CLASSIFICATION: "false" # Disables image classification
-      PHOTOPRISM_DARKTABLE_PRESETS: "false" # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_DETECT_NSFW: "false" # Flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "true" # Allow uploads that MAY be offensive
-      # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
-      PHOTOPRISM_DATABASE_DRIVER: "mysql" # Use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
-      PHOTOPRISM_DATABASE_SERVER: "photoprism-mariadb:3306" # MariaDB or MySQL database server (hostname:port)
-      PHOTOPRISM_DATABASE_NAME: "photoprism" # MariaDB or MySQL database schema name
-      PHOTOPRISM_DATABASE_USER: "photoprism" # MariaDB or MySQL database user name
-      PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD} # MariaDB or MySQL database user password
-      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
-      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: ""
-      PHOTOPRISM_SITE_AUTHOR: ""
-      PHOTOPRISM_THUMB_FILTER: "blackman"      # resample filter, best to worst: blackman, lanczos, cubic, linear
-      PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
-      PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
-      # PHOTOPRISM_THUMB_SIZE: 4096           # retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
-      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 7680)
-      PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
-      PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
-      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
-      ## Hardware video transcoding config (optional):
-      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
-      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
-      # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
-      # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # Enable TensorFlow AVX2 & Intel Graphics support
-      HOME: "/photoprism"
-    ## Hardware devices for video transcoding and machine learning (optional):
-    # devices:
-    #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
-    #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
-    #  - "/dev/dri/card0:/dev/dri/card0"
-    working_dir: "/photoprism"
-    volumes:
-      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
-      - ${PHOTOPRISM_USER1_VOLUME_MOUNT}
-      - ${PHOTOPRISM_USER2_VOLUME_MOUNT}
-      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
-      # - "~/Import:/photoprism/import"
-      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
-      - ${DATA_STORAGE}/photoprism/storage:/photoprism/storage
-    networks:
-      internal-net:
-    dns:
-      - ${PIHOLE_IP_ADDRESS}
-    labels:
-      ofelia.enabled: true
-      ofelia.job-exec.photoprism_index.schedule: "@every 1h"
-      ofelia.job-exec.photoprism_index.command: "photoprism index --cleanup"
-      traefik.enable: true
-      traefik.http.routers.photoprism.rule: "Host(`photoprism.${DOMAIN}`)"
-      traefik.http.routers.photoprism.tls.certresolver: "certificato"
-      traefik.http.routers.photoprism.entrypoints: "web,web-secure"
-      traefik.http.services.photoprism.loadbalancer.server.port: 2342
-    depends_on:
-      - traefik
-      - photoprism-mariadb
+  # photoprism:
+  #   image: photoprism/photoprism:latest
+  #   container_name: photoprism
+  #   hostname: photoprism
+  #   restart: unless-stopped
+  #   security_opt:
+  #     - seccomp:unconfined
+  #     - apparmor:unconfined
+  #   environment:
+  #     PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD} # PLEASE CHANGE: Your initial admin password (min 4 characters)
+  #     PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL} # Public server URL incl http:// or https:// and /path, :port is optional
+  #     PHOTOPRISM_ORIGINALS_LIMIT: 5000 # File size limit for originals in MB (increase for high-res video)
+  #     PHOTOPRISM_HTTP_COMPRESSION: "gzip" # Improves transfer speed and bandwidth utilization (none or gzip)
+  #     PHOTOPRISM_DEBUG: "false" # Run in debug mode (shows additional log messages)
+  #     PHOTOPRISM_PUBLIC: "false" # No authentication required (disables password protection)
+  #     PHOTOPRISM_READONLY: "false" # Don't modify originals directory (reduced functionality)
+  #     PHOTOPRISM_EXPERIMENTAL: "false" # Enables experimental features
+  #     PHOTOPRISM_DISABLE_CHOWN: "true" # Disables storage permission updates on startup
+  #     PHOTOPRISM_DISABLE_WEBDAV: "false" # Disables built-in WebDAV server
+  #     PHOTOPRISM_DISABLE_SETTINGS: "false" # Disables Settings in Web UI
+  #     PHOTOPRISM_DISABLE_TENSORFLOW: "false" # Disables all features depending on TensorFlow
+  #     PHOTOPRISM_DISABLE_FACES: "false" # Disables facial recognition
+  #     PHOTOPRISM_DISABLE_CLASSIFICATION: "false" # Disables image classification
+  #     PHOTOPRISM_DARKTABLE_PRESETS: "false" # Enables Darktable presets and disables concurrent RAW conversion
+  #     PHOTOPRISM_DETECT_NSFW: "false" # Flag photos as private that MAY be offensive (requires TensorFlow)
+  #     PHOTOPRISM_UPLOAD_NSFW: "true" # Allow uploads that MAY be offensive
+  #     # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
+  #     PHOTOPRISM_DATABASE_DRIVER: "mysql" # Use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
+  #     PHOTOPRISM_DATABASE_SERVER: "photoprism-mariadb:3306" # MariaDB or MySQL database server (hostname:port)
+  #     PHOTOPRISM_DATABASE_NAME: "photoprism" # MariaDB or MySQL database schema name
+  #     PHOTOPRISM_DATABASE_USER: "photoprism" # MariaDB or MySQL database user name
+  #     PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD} # MariaDB or MySQL database user password
+  #     PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+  #     PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
+  #     PHOTOPRISM_SITE_DESCRIPTION: ""
+  #     PHOTOPRISM_SITE_AUTHOR: ""
+  #     PHOTOPRISM_THUMB_FILTER: "blackman"      # resample filter, best to worst: blackman, lanczos, cubic, linear
+  #     PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
+  #     PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+  #     # PHOTOPRISM_THUMB_SIZE: 4096           # retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+  #     PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 7680)
+  #     PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
+  #     PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
+  #     ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
+  #     # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
+  #     ## Hardware video transcoding config (optional):
+  #     # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
+  #     # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
+  #     # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
+  #     # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
+  #     # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # Enable TensorFlow AVX2 & Intel Graphics support
+  #     HOME: "/photoprism"
+  #   ## Hardware devices for video transcoding and machine learning (optional):
+  #   # devices:
+  #   #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
+  #   #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
+  #   #  - "/dev/dri/card0:/dev/dri/card0"
+  #   working_dir: "/photoprism"
+  #   volumes:
+  #     ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
+  #     - ${PHOTOPRISM_USER1_VOLUME_MOUNT}
+  #     - ${PHOTOPRISM_USER2_VOLUME_MOUNT}
+  #     ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
+  #     # - "~/Import:/photoprism/import"
+  #     ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
+  #     - ${DATA_STORAGE}/photoprism/storage:/photoprism/storage
+  #   networks:
+  #     internal-net:
+  #   dns:
+  #     - ${PIHOLE_IP_ADDRESS}
+  #   labels:
+  #     ofelia.enabled: true
+  #     ofelia.job-exec.photoprism_index.schedule: "@every 1h"
+  #     ofelia.job-exec.photoprism_index.command: "photoprism index --cleanup"
+  #     traefik.enable: true
+  #     traefik.http.routers.photoprism.rule: "Host(`photoprism.${DOMAIN}`)"
+  #     traefik.http.routers.photoprism.tls.certresolver: "certificato"
+  #     traefik.http.routers.photoprism.entrypoints: "web,web-secure"
+  #     traefik.http.services.photoprism.loadbalancer.server.port: 2342
+  #   depends_on:
+  #     - traefik
+  #     - photoprism-mariadb
 
-  photoprism-mariadb:
-    restart: unless-stopped
-    container_name: "photoprism-db"
-    image: mariadb:10.6
-    security_opt:
-      - seccomp:unconfined
-      - apparmor:unconfined
-    networks:
-      - internal-net
-    command: mysqld --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
-    volumes:
-      - ${DATA_STORAGE}/photoprism/db:/var/lib/mysql # Important, don't remove
-    environment:
-      MYSQL_ROOT_PASSWORD: ${PHOTOPRISM_ROOT_DATABASE_PASSWORD}
-      MYSQL_DATABASE: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
+  # photoprism-mariadb:
+  #   restart: unless-stopped
+  #   container_name: "photoprism-db"
+  #   image: mariadb:10.6
+  #   security_opt:
+  #     - seccomp:unconfined
+  #     - apparmor:unconfined
+  #   networks:
+  #     - internal-net
+  #   command: mysqld --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+  #   ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
+  #   volumes:
+  #     - ${DATA_STORAGE}/photoprism/db:/var/lib/mysql # Important, don't remove
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${PHOTOPRISM_ROOT_DATABASE_PASSWORD}
+  #     MYSQL_DATABASE: photoprism
+  #     MYSQL_USER: photoprism
+  #     MYSQL_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
 
   ## Ofelia Job Runner (recommended for running background jobs)
   ## see https://github.com/mcuadros/ofelia
