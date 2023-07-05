@@ -961,7 +961,7 @@ services:
       internal-net:
 
   photoview-album-db:
-    image: mariadb:10.5
+    image: mariadb:10.6
     container_name: photoview-album-db
     hostname: photoview-album-db
     restart: always
