@@ -912,7 +912,56 @@ services:
       - ${PRIVATE_USER_GALLERY}:/photos:ro
     labels:
       traefik.enable: true
-      traefik.http.routers.photoview.rule: "Host(`private-viewer.${DOMAIN}`)"
+      traefik.http.routers.photoview-private.rule: "Host(`private-viewer.${DOMAIN}`)"
+      traefik.http.routers.photoview-private.tls.certresolver: "certificato"
+      traefik.http.routers.photoview-private.entrypoints: "web,web-secure"
+      traefik.http.services.photoview-private.loadbalancer.server.port: 80
+    networks:
+      internal-net:
+
+  photoview-db:
+    image: mariadb:10.5
+    container_name: photoview-db
+    hostname: photoview-db
+    restart: always
+    environment:
+      - MYSQL_DATABASE=photoview
+      - MYSQL_USER=photoview
+      - MYSQL_PASSWORD=${PHOTOVIEW_DATABASE_PASSWORD}
+      - MYSQL_RANDOM_ROOT_PASSWORD=1
+    volumes:
+      - ${APPDATA}/photoview/db:/var/lib/mysql
+    networks:
+      internal-net:
+
+  photoview:
+    image: viktorstrate/photoview:2
+    container_name: photoview
+    hostname: photoview
+    restart: always
+    depends_on:
+      - photoview-db
+    environment:
+      - PHOTOVIEW_DATABASE_DRIVER=mysql
+      - PHOTOVIEW_MYSQL_URL=photoview:${PHOTOVIEW_DATABASE_PASSWORD}@tcp(photoview-db)/photoview
+      - PHOTOVIEW_LISTEN_IP=photoview
+      - PHOTOVIEW_LISTEN_PORT=80
+      - PHOTOVIEW_MEDIA_CACHE=/app/cache
+      # Optional: If you are using Samba/CIFS-Share and experience problems with "directory not found"
+      # Enable the following Godebug
+      # - GODEBUG=asyncpreemptoff=1
+      
+      # Optional: To enable map related features, you need to create a mapbox token.
+      # A token can be generated for free here https://account.mapbox.com/access-tokens/
+      # It's a good idea to limit the scope of the token to your own domain, to prevent others from using it.
+      # - MAPBOX_TOKEN=<YOUR TOKEN HERE>
+    volumes:
+      - ${APPDATA}/photoview/cache:/app/cache
+      - ${USER1_PHOTOS}:/photos/${USER1}:ro
+      - ${USER2_PHOTOS}:/photos/${USER2}:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.photoview.rule: "Host(`photos.${DOMAIN}`)"
       traefik.http.routers.photoview.tls.certresolver: "certificato"
       traefik.http.routers.photoview.entrypoints: "web,web-secure"
       traefik.http.services.photoview.loadbalancer.server.port: 80
