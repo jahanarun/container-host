@@ -79,7 +79,7 @@ services:
       quantum-services_transit-net:
         ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
 
-  cloudflared-dnsproxy-things:
+  cloudflared-dnsproxy-${THINGS_VLAN_NAME}:
     image: jhnrn/cloudflared:latest
     container_name: "cloudflared-dnsproxy-${THINGS_VLAN_NAME}"
     command: proxy-dns
@@ -102,7 +102,7 @@ services:
     labels:
       - autoheal=true
 
-  pihole-things:
+  pihole-${THINGS_VLAN_NAME}:
     container_name: pihole-${THINGS_VLAN_NAME}
     hostname: pihole-${THINGS_VLAN_NAME}
     image: pihole/pihole:dev
@@ -130,7 +130,7 @@ services:
       - 127.0.0.1        
     restart: unless-stopped
     depends_on:
-      - cloudflared-dnsproxy-things
+      - cloudflared-dnsproxy-${THINGS_VLAN_NAME}
     labels:
       - homepage.group=Network
       - homepage.weight=1
