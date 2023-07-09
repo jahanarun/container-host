@@ -28,7 +28,7 @@ networks:
     ipam:
       config:
         - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
-          gateway: ${GATEWAY_IP_ADDRESS}
+          gateway: ${QUANTUM_GATEWAY_IP_ADDRESS}
 
 services:
   http-server:
