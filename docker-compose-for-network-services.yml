@@ -130,7 +130,7 @@ services:
       - 127.0.0.1        
     restart: unless-stopped
     depends_on:
-      - cloudflared-dnsproxy-THINGS
+      - cloudflared-dnsproxy-things
     labels:
       - homepage.group=Network
       - homepage.weight=1
