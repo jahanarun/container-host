@@ -79,6 +79,29 @@ services:
       quantum-services_transit-net:
         ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
 
+  cloudflared-dnsproxy-things:
+    image: jhnrn/cloudflared:latest
+    container_name: "cloudflared-dnsproxy-${THINGS_VLAN_NAME}"
+    command: proxy-dns
+    restart: always
+    environment:
+      TZ: ${TZ}    
+      TUNNEL_METRICS: "0.0.0.0:49312"
+      TUNNEL_DNS_ADDRESS: "0.0.0.0"
+      TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
+      TUNNEL_DNS_UPSTREAM: ${TUNNEL_DNS_UPSTREAM}
+    networks:
+      transit-net:
+        ipv4_address: ${THINGS_CLOUDFLARED_DNSPROXY_IPADDR}
+    healthcheck:
+      # test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} bing.com AAAA || exit 1
+      test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
+      interval: 30s
+      timeout: 5s
+      retries: 2
+    labels:
+      - autoheal=true
+
   pihole-things:
     container_name: pihole-${THINGS_VLAN_NAME}
     hostname: pihole-${THINGS_VLAN_NAME}
@@ -86,6 +109,8 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
+      DNS1: ${THINGS_CLOUDFLARED_DNSPROXY_IPADDR}#${TUNNEL_DNS_PORT}
+      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
       # but do not expose pi-hole to the internet!
@@ -104,6 +129,8 @@ services:
     dns:
       - 127.0.0.1        
     restart: unless-stopped
+    depends_on:
+      - cloudflared-dnsproxy-THINGS
     labels:
       - homepage.group=Network
       - homepage.weight=1
