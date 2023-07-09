@@ -15,7 +15,7 @@ networks:
         - subnet: 10.100.${VLAN_ID}.0/24
           gateway: ${GATEWAY_IP_ADDRESS}
 
-  things-services_transit-net:
+  network-services_things-net:
     external: true
 
 services:
@@ -126,7 +126,7 @@ services:
       internal-net:
       transit-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}
-      things-services_transit-net:
+      network-services_things-net:
         ipv4_address: ${TRAEFIK_THINGS_IP_ADDRESS}
     dns:
       - 1.1.1.1
