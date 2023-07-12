@@ -313,7 +313,7 @@ services:
   #     - traefik
       
   homepage:
-    image: ghcr.io/benphelps/homepage:nightly
+    image: ghcr.io/benphelps/homepage:main
     container_name: homepage
     hostname: homepage
     environment:
