@@ -11,6 +11,11 @@ networks:
       config:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
           gateway: ${METAL_GATEWAY_IP_ADDRESS}
+          ip_range: 10.100.${METAL_VLAN_ID}.0/27 # 0 - 31
+          aux_addresses:
+            reserved: 10.100.${METAL_VLAN_ID}.1
+            gateway: 10.100.${METAL_VLAN_ID}.2
+            dns: 10.100.${METAL_VLAN_ID}.3
 
   internal-net:
     driver: bridge
@@ -135,7 +140,6 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       01-transit_80-net:
-        ipv4_address: ${SONARR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
