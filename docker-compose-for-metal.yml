@@ -15,9 +15,9 @@ networks:
         - subnet: 10.100.${VLAN_ID}.0/24
           gateway: 10.100.${VLAN_ID}.2
           ip_range: 10.100.${VLAN_ID}.150/27 # 128 - 159
-          aux_addresses:
-            reserved: 10.100.${VLAN_ID}.1
-            dns: 10.100.${VLAN_ID}.3
+          # aux_addresses:
+          #   reserved: 10.100.${VLAN_ID}.1
+          #   dns: 10.100.${VLAN_ID}.3
 
   network-services_things-net:
     external: true
