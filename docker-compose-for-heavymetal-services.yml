@@ -33,7 +33,6 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
       01-transit_80-net:
-        ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
 
   traefik:
@@ -103,7 +102,6 @@ services:
     restart: always
     networks:
       01-transit_80-net:
-        ipv4_address: ${HEAVYMETAL_CLOUDFLARED_TUNNEL_IPADDR}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     command:
