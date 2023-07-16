@@ -14,7 +14,7 @@ networks:
       config:
         - subnet: 10.100.${VLAN_ID}.0/24
           gateway: 10.100.${VLAN_ID}.2
-          ip_range: 10.100.${VLAN_ID}.150/27 # 12896 - 159
+          ip_range: 10.100.${VLAN_ID}.150/27 # 128 - 159
           aux_addresses:
             reserved: 10.100.${VLAN_ID}.1
             dns: 10.100.${VLAN_ID}.3
@@ -283,35 +283,6 @@ services:
     depends_on:
       - traefik
 
-  # speedtest-tracker:
-  #   container_name: speedtest-tracker
-  #   hostname: speedtest-tracker
-  #   image: henrywhitaker3/speedtest-tracker
-  #   volumes:
-  #       - ${DATA_STORAGE}/speedtest-tracker:/config
-  #   environment:
-  #       - TZ=${TZ}
-  #       - PGID=33
-  #       - PUID=33
-  #       - OOKLA_EULA_GDPR=true
-  #   networks:
-  #     transit-net:
-  #   dns:
-  #     - ${PIHOLE_IP_ADDRESS}
-  #   logging:
-  #       driver: "json-file"
-  #       options:
-  #           max-file: "10"
-  #           max-size: "200k"
-  #   restart: unless-stopped
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
-  #     - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
-  #     - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
-  #   depends_on:
-  #     - traefik
-      
   homepage:
     image: ghcr.io/benphelps/homepage:main
     container_name: homepage
@@ -422,44 +393,6 @@ services:
     depends_on:
       - traefik
 
-  # squid:
-  #   image: ubuntu/squid:latest
-  #   hostname: squid
-  #   container_name: squid
-  #   environment:
-  #     - LOG_LEVEL=debug
-  #     - TZ=${TZ}
-  #     - PUID=13
-  #     - PGID=13
-  #     - UID=13
-  #     - GID=13
-  #   volumes:
-  #     # - ${DATA_STORAGE}/squid/logs:/var/log/squid # For whatever reason, the container restarts if this line is enabled.
-  #     - ${DATA_STORAGE}/squid/data:/var/spool/squid
-  #     - ${DATA_STORAGE}/squid/squid.conf:/etc/squid/squid.conf
-  #     - ${DATA_STORAGE}/squid/snippet.conf:/etc/squid/conf.d/snippet.conf
-  #   restart: unless-stopped
-  #   # ports:
-  #       # - 3128:3128
-  #   networks:
-  #     transit-net:
-  #       ipv4_address: ${SQUID_IP_ADDRESS}
-  #   dns:
-      # - ${PIHOLE_IP_ADDRESS}
-
-  # scrutiny-heavymetal-placeholder:
-  #   image: jhnrn/do-nothing:latest
-  #   container_name: scrutiny-heavymetal-placeholder
-  #   restart: unless-stopped
-  #   network_mode: none
-  #   labels:
-  #     - homepage.group=HeavyMetal
-  #     - homepage.name=Disk health
-  #     - homepage.icon=scrutiny.png
-  #     - homepage.widget.type=scrutiny
-  #     - homepage.widget.url=https://drive.${DOMAIN}
-  #     - homepage.widget.fields=["passed", "failed", "unknown"]
-
   proxmox-metal-placeholder:
     image: jhnrn/do-nothing:latest
     container_name: proxmox-metal-placeholder
@@ -475,31 +408,6 @@ services:
       - homepage.widget.username=${METAL_SERVICES_PROXMOX_TOKEN_ID}
       - homepage.widget.password=${METAL_SERVICES_PROXMOX_TOKEN_SECRET}
       - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
-
- 
-  # omada_exporter:
-  #   image: chhaley/omada_exporter
-  #   hostname: omada_exporter
-  #   container_name: omada_exporter
-  #   environment:
-  #     - OMADA_HOST='https://192.168.1.20'
-  #     - OMADA_USER='exporter'
-  #     - OMADA_PASS='mypassword'
-  #     - OMADA_SITE='Default'
-  #   volumes:
-  #     - ${DATA_STORAGE}/overseerr:/app/config
-  #   restart: unless-stopped
-  #   networks:
-  #     - transit-net
-  #   dns:
-  #     - ${DNS_IP_ADDRESS}
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)"
-  #     - "traefik.http.routers.overseerr.tls.certresolver=certificato"
-  #     - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
-  #   depends_on:
-  #     - traefik
 
   autoheal:
     image: jhnrn/docker-autoheal:latest
