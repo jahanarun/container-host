@@ -58,7 +58,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: ${CLOUDFLARED_DNSPROXY_IPADDR}#${TUNNEL_DNS_PORT}
+      DNS1: cloudflared-dnsproxy#${TUNNEL_DNS_PORT}
       DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
