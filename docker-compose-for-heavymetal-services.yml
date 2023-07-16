@@ -10,8 +10,8 @@ networks:
     ipam:
       config:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
-          gateway: ${METAL_GATEWAY_IP_ADDRESS}
-          ip_range: 10.100.${METAL_VLAN_ID}.0/27 # 0 - 31
+          gateway: 10.100.${METAL_VLAN_ID}.2
+          ip_range: 10.100.${METAL_VLAN_ID}.100/27 # 96 - 127
           aux_addresses:
             reserved: 10.100.${METAL_VLAN_ID}.1
             dns: 10.100.${METAL_VLAN_ID}.3
@@ -172,7 +172,6 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       01-transit_80-net:
-        ipv4_address: ${RADARR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -204,7 +203,6 @@ services:
       - TZ=${TZ}
     networks:
       01-transit_80-net:
-        ipv4_address: ${FLARESOLVERR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -231,7 +229,6 @@ services:
       - ${DATA_STORAGE}/prowlarr:/config
     networks:
       01-transit_80-net:
-        ipv4_address: ${PROWLARR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
@@ -371,7 +368,6 @@ services:
       - PHP_UPLOAD_LIMIT=20G
     networks:
       01-transit_80-net:
-        ipv4_address: ${NEXTCLOUD_IP_ADDRESS}
       internal-net:
     dns:
       - ${PIHOLE_IP_ADDRESS}
@@ -604,7 +600,6 @@ services:
     privileged: true
     networks:
       01-transit_80-net:
-        ipv4_address: ${GLANCES_IP_ADDRESS}
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
@@ -638,7 +633,6 @@ services:
       - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
     networks:
       01-transit_80-net:
-        ipv4_address: ${SCRUTINY_IP_ADDRESS}   
     devices:
       - "/dev/sda"
       - "/dev/sdb"
@@ -716,7 +710,6 @@ services:
       - PHP_UPLOAD_LIMIT=20G
     networks:
       01-transit_80-net:
-        ipv4_address: ${NEXTCLOUD_PRIVATE_IP_ADDRESS}
       internal-net:
     dns:
       - ${PIHOLE_IP_ADDRESS}
