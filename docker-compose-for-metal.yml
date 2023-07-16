@@ -191,230 +191,230 @@ services:
     depends_on:
       - traefik
 
-  # plex-music:
-  #   image: linuxserver/plex:latest
-  #   hostname: plex-music
-  #   container_name: plex-music
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.http.routers.plex.rule: "Host(`music.${DOMAIN}`)"
-  #     traefik.http.routers.plex.entrypoints: web,web-secure
-  #     traefik.http.routers.plex.tls.certresolver: "certificato"
-  #     traefik.http.services.plex.loadbalancer.server.port: 32400
-  #     homepage.group: Metal
-  #     homepage.weight: 1
-  #     homepage.name: Plex Music
-  #     homepage.icon: plex.png
-  #     homepage.href: https://music.${DOMAIN}/
-  #     homepage.description: Music server
-  #     homepage.widget.type: plex
-  #     homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
-  #     homepage.widget.key: ${PLEX_MUSIC_TOKEN}
-  #   networks:
-  #     transit-net:
-  #       ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
-  #   dns:
-  #     - ${PIHOLE_IP_ADDRESS}
-  #   environment:
-  #     - PLEX_UID=33
-  #     - PLEX_GID=33
-  #     - PUID=33
-  #     - PGID=33
-  #     - VERSION=docker
-  #     - PLEX_CLAIM=${PLEX_CLAIM}
-  #     - TZ=${TZ}
-  #     - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
-  #     - CHANGE_CONFIG_DIR_OWNERSHIP=true
-  #     - HOSTNAME=music.${DOMAIN}
-  #   volumes:
-  #     - ${DATA_STORAGE}/plex/config:/config
-  #     - ${MUSIC}:/media/music
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - traefik
+  plex-music:
+    image: linuxserver/plex:latest
+    hostname: plex-music
+    container_name: plex-music
+    labels:
+      traefik.enable: true
+      traefik.http.routers.plex.rule: "Host(`music.${DOMAIN}`)"
+      traefik.http.routers.plex.entrypoints: web,web-secure
+      traefik.http.routers.plex.tls.certresolver: "certificato"
+      traefik.http.services.plex.loadbalancer.server.port: 32400
+      homepage.group: Metal
+      homepage.weight: 1
+      homepage.name: Plex Music
+      homepage.icon: plex.png
+      homepage.href: https://music.${DOMAIN}/
+      homepage.description: Music server
+      homepage.widget.type: plex
+      homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
+      homepage.widget.key: ${PLEX_MUSIC_TOKEN}
+    networks:
+      transit-net:
+        ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
+    environment:
+      - PLEX_UID=33
+      - PLEX_GID=33
+      - PUID=33
+      - PGID=33
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - TZ=${TZ}
+      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+      - CHANGE_CONFIG_DIR_OWNERSHIP=true
+      - HOSTNAME=music.${DOMAIN}
+    volumes:
+      - ${DATA_STORAGE}/plex/config:/config
+      - ${MUSIC}:/media/music
+    restart: unless-stopped
+    depends_on:
+      - traefik
 
-  # librespeed:
-  #   image: adolfintel/speedtest
-  #   hostname: librespeed
-  #   container_name: librespeed
-  #   restart: unless-stopped
-  #   environment:
-  #     - MODE=standalone
-  #   networks:
-  #     - internal-net
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
-  #     - "traefik.http.routers.librespeed.tls.certresolver=certificato"
-  #     - traefik.http.routers.librespeed.entrypoints=web,web-secure
-  #     - "traefik.http.services.librespeed.loadbalancer.server.port=80"
-  #   depends_on:
-  #     - traefik
+  librespeed:
+    image: adolfintel/speedtest
+    hostname: librespeed
+    container_name: librespeed
+    restart: unless-stopped
+    environment:
+      - MODE=standalone
+    networks:
+      - internal-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
+      - "traefik.http.routers.librespeed.tls.certresolver=certificato"
+      - traefik.http.routers.librespeed.entrypoints=web,web-secure
+      - "traefik.http.services.librespeed.loadbalancer.server.port=80"
+    depends_on:
+      - traefik
 
-  # speedtest-tracker:
-  #   image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
-  #   hostname: speedtest-tracker
-  #   container_name: speedtest-tracker
-  #   environment:
-  #       - PUID=33
-  #       - PGID=33
-  #   volumes:
-  #       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen:/config
-  #   networks:
-  #     transit-net:
-  #   dns:
-  #     - ${PIHOLE_IP_ADDRESS}
-  #   restart: unless-stopped
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
-  #     - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
-  #     - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
-  #     - traefik.http.routers.speedtest-tracker.entrypoints=web,web-secure
-  #     - homepage.group=Network
-  #     - homepage.weight=1000
-  #     - homepage.name=Speedtest
-  #     - homepage.icon=speedtest-tracker.png
-  #     - homepage.href=https://speedtracker.${DOMAIN}/
-  #     - homepage.description=Speedtest
-  #     - homepage.widget.type=speedtest
-  #     - homepage.widget.url=https://speedtracker.${DOMAIN}
-  #     - homepage.widget.fields=["download", "upload", "ping"]
-  #   depends_on:
-  #     - traefik
+  speedtest-tracker:
+    image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
+    hostname: speedtest-tracker
+    container_name: speedtest-tracker
+    environment:
+        - PUID=33
+        - PGID=33
+    volumes:
+        - ${DATA_STORAGE}/speedtest-tracker-alexjustesen:/config
+    networks:
+      transit-net:
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
+      - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
+      - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
+      - traefik.http.routers.speedtest-tracker.entrypoints=web,web-secure
+      - homepage.group=Network
+      - homepage.weight=1000
+      - homepage.name=Speedtest
+      - homepage.icon=speedtest-tracker.png
+      - homepage.href=https://speedtracker.${DOMAIN}/
+      - homepage.description=Speedtest
+      - homepage.widget.type=speedtest
+      - homepage.widget.url=https://speedtracker.${DOMAIN}
+      - homepage.widget.fields=["download", "upload", "ping"]
+    depends_on:
+      - traefik
 
-  # homepage:
-  #   image: ghcr.io/benphelps/homepage:main
-  #   container_name: homepage
-  #   hostname: homepage
-  #   environment:
-  #     - TZ=${TZ}
-  #     - PGID=33
-  #     - PUID=33
-  #   volumes:
-  #     - ${DATA_STORAGE}/homepage:/app/config # Make sure your local config directory exists
-  #     # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
-  #   networks:
-  #     transit-net:
-  #   dns:
-  #     - ${PIHOLE_IP_ADDRESS}
-  #   restart: unless-stopped
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.http.routers.homepage.rule: "Host(`www.${DOMAIN}`)"
-  #     traefik.http.routers.homepage.tls.certresolver: "certificato"
-  #     traefik.http.services.homepage.loadbalancer.server.port: 3000
-  #     traefik.http.routers.homepage.entrypoints: web,web-secure
-  #   depends_on:
-  #     - traefik
+  homepage:
+    image: ghcr.io/benphelps/homepage:main
+    container_name: homepage
+    hostname: homepage
+    environment:
+      - TZ=${TZ}
+      - PGID=33
+      - PUID=33
+    volumes:
+      - ${DATA_STORAGE}/homepage:/app/config # Make sure your local config directory exists
+      # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
+    networks:
+      transit-net:
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.homepage.rule: "Host(`www.${DOMAIN}`)"
+      traefik.http.routers.homepage.tls.certresolver: "certificato"
+      traefik.http.services.homepage.loadbalancer.server.port: 3000
+      traefik.http.routers.homepage.entrypoints: web,web-secure
+    depends_on:
+      - traefik
 
-  # dockerproxy:
-  #   image: ghcr.io/tecnativa/docker-socket-proxy:latest
-  #   container_name: dockerproxy
-  #   environment:
-  #       - CONTAINERS=1 # Allow access to viewing containers
-  #       - POST=0 # Disallow any POST operations (effectively read-only)
-  #   ports:
-  #       - 2375:2375
-  #   volumes:
-  #       - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
-  #   networks:
-  #     transit-net:
-  #       ipv4_address: ${METAL_DOCKERPROXY_IP_ADDRESS}
-  #   restart: unless-stopped
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+        - CONTAINERS=1 # Allow access to viewing containers
+        - POST=0 # Disallow any POST operations (effectively read-only)
+    ports:
+        - 2375:2375
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    networks:
+      transit-net:
+        ipv4_address: ${METAL_DOCKERPROXY_IP_ADDRESS}
+    restart: unless-stopped
 
-  # qbittorrent:
-  #   image: lscr.io/linuxserver/qbittorrent:latest
-  #   hostname: qbittorrent
-  #   container_name: qbittorrent
-  #   environment:
-  #     - PUID=33
-  #     - PGID=33
-  #     - TZ=${TZ}
-  #     - WEBUI_PORT=8220
-  #   volumes:
-  #     - ${DATA_STORAGE}/qbittorrent:/config
-  #     - ${TORRENTS}:/downloads #optional
-  #   networks:
-  #     transit-net:
-  #       ipv4_address: ${QBITTORRENT_IP_ADDRESS}
-  #   dns:
-  #     - ${PIHOLE_IP_ADDRESS}
-  #   restart: unless-stopped
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
-  #     - traefik.http.routers.qbittorrent.tls.certresolver=certificato
-  #     - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
-  #     - traefik.http.services.qbittorrent.loadbalancer.server.port=8220
-  #     - homepage.group=Metal
-  #     - homepage.name=Qbittorrent
-  #     - homepage.icon=qbittorrent.png
-  #     - homepage.href=https://torrent.${DOMAIN}/
-  #     - homepage.description=Qbittorrent
-  #     - homepage.widget.type=qbittorrent
-  #     - homepage.widget.username=admin
-  #     - homepage.widget.password=${QBITTORRENT_PASSWORD}
-  #     - homepage.widget.url=https://torrent.${DOMAIN}
-  #     - homepage.widget.fields=["leech","download", "seed", "upload"]
-  #   depends_on:
-  #     - traefik
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    hostname: qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=33
+      - PGID=33
+      - TZ=${TZ}
+      - WEBUI_PORT=8220
+    volumes:
+      - ${DATA_STORAGE}/qbittorrent:/config
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      transit-net:
+        ipv4_address: ${QBITTORRENT_IP_ADDRESS}
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.tls.certresolver=certificato
+      - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8220
+      - homepage.group=Metal
+      - homepage.name=Qbittorrent
+      - homepage.icon=qbittorrent.png
+      - homepage.href=https://torrent.${DOMAIN}/
+      - homepage.description=Qbittorrent
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.username=admin
+      - homepage.widget.password=${QBITTORRENT_PASSWORD}
+      - homepage.widget.url=https://torrent.${DOMAIN}
+      - homepage.widget.fields=["leech","download", "seed", "upload"]
+    depends_on:
+      - traefik
 
-  # overseerr:
-  #   image: sctx/overseerr:latest
-  #   hostname: overseerr
-  #   container_name: overseerr
-  #   environment:
-  #     - LOG_LEVEL=debug
-  #     - TZ=${TZ}
-  #     - PORT=5055 #optional
-  #   volumes:
-  #     - ${DATA_STORAGE}/overseerr:/app/config
-  #   restart: unless-stopped
-  #   networks:
-  #     transit-net:
-  #   dns:
-  #     - ${PIHOLE_IP_ADDRESS}
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
-  #     - traefik.http.routers.overseerr.tls.certresolver=certificato
-  #     - traefik.http.routers.overseerr.entrypoints=web,web-secure
-  #     - traefik.http.services.overseerr.loadbalancer.server.port=5055
-  #     - homepage.group=Metal
-  #     - homepage.name=Overseerr
-  #     - homepage.icon=overseerr.png
-  #     - homepage.href=https://fetch.${DOMAIN}/
-  #     - homepage.description=Overseerr
-  #     - homepage.widget.type=overseerr
-  #     - homepage.widget.key=${OVERSEERR_API_KEY}
-  #     - homepage.widget.url=https://fetch.${DOMAIN}
-  #     - homepage.widget.fields=["pending", "approved", "available", "processing"]
-  #   depends_on:
-  #     - traefik
+  overseerr:
+    image: sctx/overseerr:latest
+    hostname: overseerr
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+      - PORT=5055 #optional
+    volumes:
+      - ${DATA_STORAGE}/overseerr:/app/config
+    restart: unless-stopped
+    networks:
+      transit-net:
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
+      - traefik.http.routers.overseerr.tls.certresolver=certificato
+      - traefik.http.routers.overseerr.entrypoints=web,web-secure
+      - traefik.http.services.overseerr.loadbalancer.server.port=5055
+      - homepage.group=Metal
+      - homepage.name=Overseerr
+      - homepage.icon=overseerr.png
+      - homepage.href=https://fetch.${DOMAIN}/
+      - homepage.description=Overseerr
+      - homepage.widget.type=overseerr
+      - homepage.widget.key=${OVERSEERR_API_KEY}
+      - homepage.widget.url=https://fetch.${DOMAIN}
+      - homepage.widget.fields=["pending", "approved", "available", "processing"]
+    depends_on:
+      - traefik
 
-  # proxmox-metal-placeholder:
-  #   image: jhnrn/do-nothing:latest
-  #   container_name: proxmox-metal-placeholder
-  #   restart: unless-stopped
-  #   network_mode: none
-  #   labels:
-  #     - homepage.group=Hardware
-  #     - homepage.weight=1
-  #     - homepage.name=Proxmox (metal)
-  #     - homepage.icon=proxmox.png
-  #     - homepage.widget.type=proxmox
-  #     - homepage.widget.url=https://${METAL_SERVICES_IP_ADDRESS}:8006
-  #     - homepage.widget.username=${METAL_SERVICES_PROXMOX_TOKEN_ID}
-  #     - homepage.widget.password=${METAL_SERVICES_PROXMOX_TOKEN_SECRET}
-  #     - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
+  proxmox-metal-placeholder:
+    image: jhnrn/do-nothing:latest
+    container_name: proxmox-metal-placeholder
+    restart: unless-stopped
+    network_mode: none
+    labels:
+      - homepage.group=Hardware
+      - homepage.weight=1
+      - homepage.name=Proxmox (metal)
+      - homepage.icon=proxmox.png
+      - homepage.widget.type=proxmox
+      - homepage.widget.url=https://${METAL_SERVICES_IP_ADDRESS}:8006
+      - homepage.widget.username=${METAL_SERVICES_PROXMOX_TOKEN_ID}
+      - homepage.widget.password=${METAL_SERVICES_PROXMOX_TOKEN_SECRET}
+      - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
 
-  # autoheal:
-  #   image: jhnrn/docker-autoheal:latest
-  #   container_name: "autoheal"
-  #   restart: always
-  #   environment:
-  #     TZ: ${TZ}    
-  #     AUTOHEAL_CONTAINER_LABEL: autoheal
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
+  autoheal:
+    image: jhnrn/docker-autoheal:latest
+    container_name: "autoheal"
+    restart: always
+    environment:
+      TZ: ${TZ}    
+      AUTOHEAL_CONTAINER_LABEL: autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
