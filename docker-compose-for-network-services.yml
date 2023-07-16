@@ -19,7 +19,8 @@ networks:
     ipam:
       config:
         - subnet: 10.100.${THINGS_VLAN_ID}.0/24
-          gateway: ${THINGS_GATEWAY_IP_ADDRESS}
+          gateway: 10.100.${THINGS_VLAN_ID}.2
+          ip_range: 10.100.${THINGS_VLAN_ID}.50/30 # 48 - 51
   quantum-net:
     driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
     driver_opts:
@@ -28,7 +29,8 @@ networks:
     ipam:
       config:
         - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
-          gateway: ${QUANTUM_GATEWAY_IP_ADDRESS}
+          gateway: 10.100.${QUANTUM_VLAN_ID}.2
+          ip_range: 10.100.${QUANTUM_VLAN_ID}.50/30 # 48 - 51
 
 services:
   http-server:
@@ -96,10 +98,9 @@ services:
       TUNNEL_METRICS: "0.0.0.0:49312"
       TUNNEL_DNS_ADDRESS: "0.0.0.0"
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
-      TUNNEL_DNS_UPSTREAM: ${TUNNEL_DNS_UPSTREAM}
+      TUNNEL_DNS_UPSTREAM: ${THINGS_DNS_UPSTREAM}
     networks:
       things-net:
-        ipv4_address: ${THINGS_CLOUDFLARED_DNSPROXY_IPADDR}
     healthcheck:
       # test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} bing.com AAAA || exit 1
       test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
@@ -116,7 +117,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: ${THINGS_CLOUDFLARED_DNSPROXY_IPADDR}#${TUNNEL_DNS_PORT}
+      DNS1: cloudflared-dnsproxy-things#${TUNNEL_DNS_PORT}
       DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
@@ -160,10 +161,9 @@ services:
       TUNNEL_METRICS: "0.0.0.0:49312"
       TUNNEL_DNS_ADDRESS: "0.0.0.0"
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
-      TUNNEL_DNS_UPSTREAM: ${TUNNEL_DNS_UPSTREAM}
+      TUNNEL_DNS_UPSTREAM: ${QUANTUM_DNS_UPSTREAM}
     networks:
       quantum-net:
-        ipv4_address: ${QUANTUM_CLOUDFLARED_DNSPROXY_IPADDR}
     healthcheck:
       # test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} bing.com AAAA || exit 1
       test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
@@ -180,7 +180,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: ${QUANTUM_CLOUDFLARED_DNSPROXY_IPADDR}#${TUNNEL_DNS_PORT}
+      DNS1: cloudflared-dnsproxy-quantum#${TUNNEL_DNS_PORT}
       DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
