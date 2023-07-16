@@ -173,6 +173,20 @@ services:
     labels:
       - autoheal=true
 
+  nextdns:
+    container_name: nextdns
+    image: "jedayoshi/nextdns:latest"
+    restart: "always"
+    # ports:
+    #   - "5053:53/tcp"
+    #   - "5053:53/udp"
+    environment:
+      NEXTDNS_PROFILE: ${NEXTDNS_PROFILE}
+      NEXTDNS_CACHE_SIZE: "10m"
+      NEXTDNS_REPORT_CLIENT_INFO: "true"
+    networks:
+      quantum-net:
+
   pihole-quantum:
     container_name: pihole-${QUANTUM_VLAN_NAME}
     hostname: pihole-${QUANTUM_VLAN_NAME}
@@ -180,7 +194,8 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: cloudflared-dnsproxy-quantum#${TUNNEL_DNS_PORT}
+      # DNS1: cloudflared-dnsproxy-quantum#${TUNNEL_DNS_PORT}
+      DNS1: nextdns#53
       DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
@@ -198,7 +213,7 @@ services:
       quantum-net:
         ipv4_address: ${QUANTUM_PIHOLE_IP_ADDRESS}
     dns:
-      - 127.0.0.1        
+      - 127.0.0.1
     restart: unless-stopped
     depends_on:
       - cloudflared-dnsproxy-quantum
