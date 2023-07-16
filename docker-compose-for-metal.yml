@@ -13,7 +13,11 @@ networks:
     ipam:
       config:
         - subnet: 10.100.${VLAN_ID}.0/24
-          gateway: ${GATEWAY_IP_ADDRESS}
+          gateway: 10.100.${VLAN_ID}.2
+          ip_range: 10.100.${VLAN_ID}.150/27 # 12896 - 159
+          aux_addresses:
+            reserved: 10.100.${VLAN_ID}.1
+            dns: 10.100.${VLAN_ID}.3
 
   network-services_things-net:
     external: true
@@ -32,7 +36,6 @@ services:
       TUNNEL_DNS_UPSTREAM: ${TUNNEL_DNS_UPSTREAM}
     networks:
       transit-net:
-        ipv4_address: ${CLOUDFLARED_DNSPROXY_IPADDR}
     healthcheck:
       # test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} bing.com AAAA || exit 1
       test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
@@ -168,7 +171,6 @@ services:
     restart: always
     networks:
       transit-net:
-        ipv4_address: ${METAL_CLOUDFLARED_TUNNEL_IPADDR}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     command:
@@ -260,7 +262,6 @@ services:
         - ${DATA_STORAGE}/speedtest-tracker-alexjustesen:/config
     networks:
       transit-net:
-        ipv4_address: ${SPEEDTEST_TRACKER_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
@@ -295,7 +296,6 @@ services:
   #       - OOKLA_EULA_GDPR=true
   #   networks:
   #     transit-net:
-  #       ipv4_address: ${SPEEDTEST_TRACKER_IP_ADDRESS}
   #   dns:
   #     - ${PIHOLE_IP_ADDRESS}
   #   logging:
@@ -325,7 +325,6 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
     networks:
       transit-net:
-        ipv4_address: ${HOMEPAGE_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     restart: unless-stopped
@@ -403,7 +402,6 @@ services:
     restart: unless-stopped
     networks:
       transit-net:
-        ipv4_address: ${OVERSEERR_IP_ADDRESS}
     dns:
       - ${PIHOLE_IP_ADDRESS}
     labels:
