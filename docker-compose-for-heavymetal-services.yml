@@ -12,9 +12,9 @@ networks:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
           gateway: 10.100.${METAL_VLAN_ID}.2
           ip_range: 10.100.${METAL_VLAN_ID}.100/27 # 96 - 127
-          aux_addresses:
-            reserved: 10.100.${METAL_VLAN_ID}.1
-            dns: 10.100.${METAL_VLAN_ID}.3
+          # aux_addresses:
+          #   reserved: 10.100.${METAL_VLAN_ID}.1
+          #   dns: 10.100.${METAL_VLAN_ID}.3
 
   internal-net:
     driver: bridge
