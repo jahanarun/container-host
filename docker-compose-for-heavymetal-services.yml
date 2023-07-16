@@ -14,7 +14,6 @@ networks:
           ip_range: 10.100.${METAL_VLAN_ID}.0/27 # 0 - 31
           aux_addresses:
             reserved: 10.100.${METAL_VLAN_ID}.1
-            gateway: 10.100.${METAL_VLAN_ID}.2
             dns: 10.100.${METAL_VLAN_ID}.3
 
   internal-net:
