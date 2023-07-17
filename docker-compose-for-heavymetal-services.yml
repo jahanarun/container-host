@@ -249,7 +249,7 @@ services:
       - traefik
       - flaresolverr
 
-  plex:
+  plex-movietvshow:
     image: linuxserver/plex:latest
     container_name: plex-movietvshow
     hostname: plex-movietvshow
@@ -265,8 +265,11 @@ services:
       - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
       - CHANGE_CONFIG_DIR_OWNERSHIP=true
       - HOSTNAME=plex.${DOMAIN}
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - ${DATA_STORAGE}/plex/config:/config
+      - ${DATA_STORAGE}/plex/transcode:/transcode
       - ${TVSHOWS}:/media/Series
       - ${MOVIES}:/media/Movies
       - ${MUSIC}:/media/Music
