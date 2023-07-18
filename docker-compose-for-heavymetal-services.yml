@@ -265,8 +265,13 @@ services:
       - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
       - CHANGE_CONFIG_DIR_OWNERSHIP=true
       - HOSTNAME=plex.${DOMAIN}
+      - ROC_ENABLE_PRE_VEGA=1
+    group_add:
+      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     devices:
-      - /dev/dri:/dev/dri
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     volumes:
       - ${DATA_STORAGE}/plex/config:/config
       - ${DATA_STORAGE}/plex/transcode:/transcode
