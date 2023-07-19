@@ -192,7 +192,7 @@ services:
       - traefik
 
   plex-music:
-    image: linuxserver/plex:latest
+    image: plexinc/pms-docker:plexpass
     hostname: plex-music
     container_name: plex-music
     labels:

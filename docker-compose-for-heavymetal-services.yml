@@ -250,7 +250,7 @@ services:
       - flaresolverr
 
   plex-movietvshow:
-    image: linuxserver/plex:latest
+    image: plexinc/pms-docker:plexpass
     container_name: plex-movietvshow
     hostname: plex-movietvshow
     restart: unless-stopped
