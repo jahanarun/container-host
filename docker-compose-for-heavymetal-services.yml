@@ -453,14 +453,11 @@ services:
       - ${PIHOLE_IP_ADDRESS}
     labels:
       traefik.enable: true
-      traefik.http.routers.gogs.rule: "Host(`gogs.${DOMAIN}`)"
+      traefik.http.routers.gogs.rule: "Host(`git.${DOMAIN}`) || Host(`gogs.${DOMAIN}`)"
       traefik.http.routers.gogs.tls.certresolver: "certificato"
       traefik.http.routers.gogs.entrypoints: "web,web-secure"
       traefik.http.services.gogs.loadbalancer.server.port: 3000
       traefik.tcp.routers.gogs-ssh.rule: HostSNI(`*`)
-      # traefik.tcp.routers.gogs-ssh.rule: HostSNI(`git.${DOMAIN}`)
-      # traefik.tcp.routers.gogs-ssh.tls: true
-      # traefik.tcp.routers.gogs-ssh.tls.certresolver: "certificato"
       traefik.tcp.routers.gogs-ssh.entrypoints: ssh
       traefik.tcp.routers.gogs-ssh.service: gogs-ssh
       traefik.tcp.services.gogs-ssh.loadbalancer.server.port: 22      
