@@ -95,7 +95,7 @@ services:
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${PIHOLE_IP_ADDRESS}
-      - homepage.widget.fields=["queries", "blocked", "gravity"]
+      # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   traefik:
     image: traefik:latest
@@ -148,9 +148,10 @@ services:
       - homepage.group=Metal
       - homepage.name=Traefik
       - homepage.icon=traefik.png
+      - homepage.href=https://reverseproxy.${DOMAIN}
       - homepage.widget.type=traefik
       - homepage.widget.url=https://reverseproxy.${DOMAIN}
-      - homepage.widget.fields=["routers", "services", "middleware"]
+      # - homepage.widget.fields=["routers", "services", "middleware"]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
@@ -279,7 +280,7 @@ services:
       - homepage.description=Speedtest
       - homepage.widget.type=speedtest
       - homepage.widget.url=https://speedtracker.${DOMAIN}
-      - homepage.widget.fields=["download", "upload", "ping"]
+      # - homepage.widget.fields=["download", "upload", "ping"]
     depends_on:
       - traefik
 
@@ -356,7 +357,7 @@ services:
       - homepage.widget.username=admin
       - homepage.widget.password=${QBITTORRENT_PASSWORD}
       - homepage.widget.url=https://torrent.${DOMAIN}
-      - homepage.widget.fields=["leech","download", "seed", "upload"]
+      # - homepage.widget.fields=["leech","download", "seed", "upload"]
     depends_on:
       - traefik
 
@@ -389,7 +390,7 @@ services:
       - homepage.widget.type=overseerr
       - homepage.widget.key=${OVERSEERR_API_KEY}
       - homepage.widget.url=https://fetch.${DOMAIN}
-      - homepage.widget.fields=["pending", "approved", "available", "processing"]
+      # - homepage.widget.fields=["pending", "approved", "available", "processing"]
     depends_on:
       - traefik
 
@@ -403,11 +404,12 @@ services:
       - homepage.weight=1
       - homepage.name=Proxmox (metal)
       - homepage.icon=proxmox.png
+      - homepage.href=https://${METAL_SERVICES_IP_ADDRESS}:8006
       - homepage.widget.type=proxmox
       - homepage.widget.url=https://${METAL_SERVICES_IP_ADDRESS}:8006
       - homepage.widget.username=${METAL_SERVICES_PROXMOX_TOKEN_ID}
       - homepage.widget.password=${METAL_SERVICES_PROXMOX_TOKEN_SECRET}
-      - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
+      # - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
 
   autoheal:
     image: jhnrn/docker-autoheal:latest

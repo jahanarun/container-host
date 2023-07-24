@@ -149,10 +149,11 @@ services:
       - homepage.group=HeavyMetal
       - homepage.name=Sonarr
       - homepage.icon=sonarr.png
+      - homepage.href=https://tvshows.${DOMAIN}/
       - homepage.widget.type=sonarr
       - homepage.widget.url=https://tvshows.${DOMAIN}
       - homepage.widget.key=${SONARR_API_KEY}
-      - homepage.widget.fields=["wanted", "queued", "series"]
+      # - homepage.widget.fields=["wanted", "queued", "series"]
     depends_on:
       - traefik
 
@@ -182,10 +183,11 @@ services:
       - homepage.group=HeavyMetal
       - homepage.name=Radarr
       - homepage.icon=radarr.png
+      - homepage.href=https://movies.${DOMAIN}/
       - homepage.widget.type=radarr
       - homepage.widget.url=https://movies.${DOMAIN}
       - homepage.widget.key=${RADARR_API_KEY}
-      - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
+      # - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
     depends_on:
       - traefik
 
@@ -244,7 +246,7 @@ services:
       - homepage.widget.type=prowlarr
       - homepage.widget.key=${PROWLARR_API_KEY}
       - homepage.widget.url=https://prowlarr.${DOMAIN}
-      - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
+      # - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
     depends_on:
       - traefik
       - flaresolverr
@@ -413,12 +415,13 @@ services:
       - homepage.group=HeavyMetal
       - homepage.name=Nextcloud
       - homepage.icon=nextcloud.png
+      - homepage.href=https://nextcloud.${DOMAIN}/
       - homepage.widget.type=nextcloud
       - homepage.widget.url=https://nextcloud.${DOMAIN}
       # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
       # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
       - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
-      - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
+      # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
 
     depends_on:
       - traefik
@@ -491,11 +494,12 @@ services:
       - homepage.weight=2
       - homepage.name=Proxmox (heavymetal)
       - homepage.icon=proxmox.png
+      - homepage.href=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006
       - homepage.widget.type=proxmox
       - homepage.widget.url=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006
       - homepage.widget.username=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_ID}
       - homepage.widget.password=${HEAVYMETAL_SERVICES_PROXMOX_TOKEN_SECRET}
-      - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]      
+      # - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]      
 
   glances:
     image: nicolargo/glances:dev
@@ -565,9 +569,10 @@ services:
       - homepage.weight=3
       - homepage.name=Disk health (heavymetal)
       - homepage.icon=scrutiny.png
+      - homepage.href=https://drive.${DOMAIN}
       - homepage.widget.type=scrutiny
       - homepage.widget.url=https://drive.${DOMAIN}
-      - homepage.widget.fields=["passed", "failed", "unknown"]
+      # - homepage.widget.fields=["passed", "failed", "unknown"]
 
   nextcloud-private-db:
     image: mariadb
@@ -653,12 +658,13 @@ services:
       - homepage.group=HeavyMetal
       - homepage.name=Nextcloud-private
       - homepage.icon=nextcloud.png
+      - homepage.href=https://private.${DOMAIN}
       - homepage.widget.type=nextcloud
       - homepage.widget.url=https://private.${DOMAIN}
       # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
       # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
       - homepage.widget.key=${NEXTCLOUD_PRIVATE_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
-      - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
+      # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
 
     depends_on:
       - traefik
