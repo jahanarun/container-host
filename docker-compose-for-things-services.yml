@@ -1,0 +1,38 @@
+version: "3.9"
+
+networks:
+
+  things-net:
+    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
+    driver_opts:
+      parent: enp8s0.${THINGS_VLAN_ID}
+      name: macvlan${THINGS_VLAN_ID}
+    ipam:
+      config:
+        - subnet: 10.100.${THINGS_VLAN_ID}.0/24
+          gateway: 10.100.${THINGS_VLAN_ID}.2
+          ip_range: 10.100.${THINGS_VLAN_ID}.70/30 # 68 - 71
+
+services:
+
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:2023.6"
+    volumes:
+      - ${DATA_STORAGE}/homeassistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    devices:
+    #   - /dev/ttyACMO  # (optional) Add serial devices to the container
+      - /dev/serial/by-id/usb-ITEAD_SONOFF_Zigbee_3.0_USB_Dongle_Plus_V2_20220816103006-if00
+    privileged: true
+    restart: unless-stopped
+    networks:
+      things-net:
+    dns:
+      - ${PIHOLE_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homeassistant.rule=Host(`home.${DOMAIN}`)
+      - traefik.http.routers.homeassistant.tls.certresolver=certificato
+      - traefik.http.routers.homeassistant.entrypoints=web,web-secure
+      - traefik.http.services.homeassistant.loadbalancer.server.port=8123
