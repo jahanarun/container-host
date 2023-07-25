@@ -806,6 +806,7 @@ services:
 
   homeassistant:
     container_name: homeassistant
+    hostname: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:2023.6"
     volumes:
       - ${DATA_STORAGE}/homeassistant/config:/config
