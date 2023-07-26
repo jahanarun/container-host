@@ -240,7 +240,7 @@ services:
     #   - NET_RAW # Used for accessing privileged socket operations
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=false
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=false --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
       TS_ROUTES: ${TAILSCALE_ROUTES}
     volumes:
       - ${DATA_STORAGE}/tailscale:/var/lib
