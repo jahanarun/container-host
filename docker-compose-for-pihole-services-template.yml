@@ -74,7 +74,7 @@ services:
       - homepage.group=Network
       - homepage.weight=1
       - homepage.name=Pihole-${VLAN_NAME}
-      - homepage.icon=pihole.png
+      - homepage.icon=pi-hole.png
       - homepage.href=http://${PIHOLE_IP_ADDRESS}/admin
       - homepage.description=Pihole for ${VLAN_NAME}
       - homepage.widget.type=pihole
