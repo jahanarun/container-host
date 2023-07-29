@@ -402,23 +402,6 @@ services:
     depends_on:
       - traefik
 
-  proxmox-metal-placeholder:
-    image: jhnrn/do-nothing:latest
-    container_name: proxmox-metal-placeholder
-    restart: unless-stopped
-    network_mode: none
-    labels:
-      - homepage.group=Hardware
-      - homepage.weight=1
-      - homepage.name=Proxmox (metal)
-      - homepage.icon=proxmox.png
-      - homepage.href=https://${METAL_SERVICES_IP_ADDRESS}:8006
-      - homepage.widget.type=proxmox
-      - homepage.widget.url=https://${METAL_SERVICES_IP_ADDRESS}:8006
-      - homepage.widget.username=${METAL_SERVICES_PROXMOX_TOKEN_ID}
-      - homepage.widget.password=${METAL_SERVICES_PROXMOX_TOKEN_SECRET}
-      # - homepage.widget.fields=["vms", "lxc", "resources.cpu", "resources.mem"]
-
   autoheal:
     image: jhnrn/docker-autoheal:latest
     container_name: "autoheal"
