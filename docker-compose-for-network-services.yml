@@ -232,7 +232,7 @@ services:
     restart: unless-stopped
     depends_on:
       - dns-upstream-quantum
-      - nextdns
+      - nextdns-upstream
     labels:
       - homepage.group=Network
       - homepage.weight=1
