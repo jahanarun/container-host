@@ -88,7 +88,7 @@ services:
       quantum-net:
         ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
 
-  cloudflared-dnsproxy-things:
+  dns-upstream-things:
     image: jhnrn/cloudflared:latest
     container_name: "cloudflared-dnsproxy-${THINGS_VLAN_NAME}"
     command: proxy-dns
@@ -117,12 +117,20 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: cloudflared-dnsproxy-things#${TUNNEL_DNS_PORT}
-      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
+      PIHOLE_DNS_: dns-upstream-things#${TUNNEL_DNS_PORT}
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
       # but do not expose pi-hole to the internet!
-      DNSMASQ_LISTENING: all
+      DNSMASQ_LISTENING: local
+      DNS_BOGUS_PRIV: true
+      DNS_FQDN_REQUIRED: true
+      DHCP_ACTIVE: true
+      DHCP_START: 10.100.${THINGS_VLAN_ID}.201
+      DHCP_END: 10.100.${THINGS_VLAN_ID}.251
+      DHCP_ROUTER: 10.100.${THINGS_VLAN_ID}.2
+      PIHOLE_DOMAIN: ${DOMAIN}
+      DHCP_LEASETIME: 24
+      WEBTHEME: default-auto
     # Volumes store your data between container upgrades
     volumes:
       - ${DATA_STORAGE}/pihole/${THINGS_VLAN_NAME}/pihole:/etc/pihole
@@ -138,7 +146,7 @@ services:
       - 127.0.0.1        
     restart: unless-stopped
     depends_on:
-      - cloudflared-dnsproxy-things
+      - dns-upstream-things
     labels:
       - homepage.group=Network
       - homepage.weight=1
@@ -151,7 +159,7 @@ services:
       - homepage.widget.url=http://${THINGS_PIHOLE_IP_ADDRESS}
       - homepage.widget.fields=["queries", "blocked", "gravity"]
 
-  cloudflared-dnsproxy-quantum:
+  dns-upstream-quantum:
     image: jhnrn/cloudflared:latest
     container_name: "cloudflared-dnsproxy-${QUANTUM_VLAN_NAME}"
     command: proxy-dns
@@ -173,7 +181,7 @@ services:
     labels:
       - autoheal=true
 
-  nextdns:
+  nextdns-upstream:
     container_name: nextdns
     image: "jedayoshi/nextdns:latest"
     restart: "always"
@@ -194,15 +202,20 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      # DNS1: cloudflared-dnsproxy-quantum#${TUNNEL_DNS_PORT}
-      DNS1: nextdns#53
-      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
+      PIHOLE_DNS_: nextdns#53 #dns-upstream-quantum#${TUNNEL_DNS_PORT};127.0.0.1#5053;8.8.8.8;8.8.4.4;upstream0;upstream1
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
       # but do not expose pi-hole to the internet!
-      DNSMASQ_LISTENING: all
+      DNSMASQ_LISTENING: local #all
       DNS_BOGUS_PRIV: true
       DNS_FQDN_REQUIRED: true
+      DHCP_ACTIVE: true
+      DHCP_START: 10.100.${QUANTUM_VLAN_ID}.201
+      DHCP_END: 10.100.${QUANTUM_VLAN_ID}.251
+      DHCP_ROUTER: 10.100.${QUANTUM_VLAN_ID}.2
+      PIHOLE_DOMAIN: ${DOMAIN}
+      DHCP_LEASETIME: 24
+      WEBTHEME: default-auto
     # Volumes store your data between container upgrades
     volumes:
       - ${DATA_STORAGE}/pihole/${QUANTUM_VLAN_NAME}/pihole:/etc/pihole
@@ -218,7 +231,7 @@ services:
       - 127.0.0.1
     restart: unless-stopped
     depends_on:
-      - cloudflared-dnsproxy-quantum
+      - dns-upstream-quantum
       - nextdns
     labels:
       - homepage.group=Network

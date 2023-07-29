@@ -23,9 +23,9 @@ networks:
     external: true
 
 services:
-  cloudflared-dnsproxy:
+  dns-upstream:
     image: jhnrn/cloudflared:latest
-    container_name: "cloudflared-dnsproxy-${VLAN_NAME}"
+    container_name: "dns-upstream-${VLAN_NAME}"
     command: proxy-dns
     restart: always
     environment:
@@ -58,14 +58,20 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      DNS1: cloudflared-dnsproxy#${TUNNEL_DNS_PORT}
-      DNS2: no # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
+      PIHOLE_DNS_: dns-upstream#${TUNNEL_DNS_PORT}
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
       # but do not expose pi-hole to the internet!
-      DNSMASQ_LISTENING: all
+      DNSMASQ_LISTENING: local
       DNS_BOGUS_PRIV: true
       DNS_FQDN_REQUIRED: true
+      DHCP_ACTIVE: true
+      DHCP_START: 10.100.${VLAN_ID}.201
+      DHCP_END: 10.100.${VLAN_ID}.251
+      DHCP_ROUTER: 10.100.${VLAN_ID}.2
+      PIHOLE_DOMAIN: ${DOMAIN}
+      DHCP_LEASETIME: 24
+      WEBTHEME: default-auto
     # Volumes store your data between container upgrades
     volumes:
       - ${DATA_STORAGE}/pihole/${VLAN_NAME}/pihole:/etc/pihole
@@ -81,7 +87,7 @@ services:
       - 127.0.0.1        
     restart: unless-stopped
     depends_on:
-      - cloudflared-dnsproxy
+      - dns-upstream
     healthcheck:
       test: ping -c 1 bing.com || exit 1
       # test: dig +short @127.0.0.1 pi.hole || exit 1
