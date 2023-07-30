@@ -205,6 +205,14 @@ services:
      timeout: "10s"
      retries: 1
      start_period: "5s"
+    labels:
+      - autoheal=true
+      - homepage.group=Network
+      - homepage.description=NextDNS
+      - homepage.widget.type=nextdns
+      - homepage.widget.key=${NEXTDNS_APIKEY}
+      - homepage.widget.url=https://my.nextdns.com
+      - homepage.widget.profile=${NEXTDNS_PROFILE_ID}
 
   pihole-quantum:
     container_name: pihole-${QUANTUM_VLAN_NAME}
