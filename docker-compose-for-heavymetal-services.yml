@@ -95,6 +95,13 @@ services:
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - "traefik.docker.network=heavymetal-services_01-transit_80-net"
+      - homepage.group=HeavyMetal
+      - homepage.name=Traefik
+      - homepage.description=for HeavyMetal
+      - homepage.icon=traefik.png
+      - homepage.href=https://reverse1.${DOMAIN}
+      - homepage.widget.type=traefik
+      - homepage.widget.url=https://reverse1.${DOMAIN}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
@@ -126,7 +133,8 @@ services:
     labels:
       - homepage.group=Network
       - homepage.weight=2
-      - homepage.name=Cloudflare HeavyMetal tunnel
+      - homepage.name=Cloudflared tunnel
+      - homepage.description=for HeavyMetal
       - homepage.icon=cloudflare-zero-trust.png
       - homepage.widget.type=cloudflared
       - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
@@ -160,6 +168,7 @@ services:
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
       - homepage.group=HeavyMetal
       - homepage.name=Sonarr
+      - homepage.description=for tvshows
       - homepage.icon=sonarr.png
       - homepage.href=https://tvshows.${DOMAIN}/
       - homepage.widget.type=sonarr
@@ -194,6 +203,7 @@ services:
       - traefik.http.services.radarr.loadbalancer.server.port=7878
       - homepage.group=HeavyMetal
       - homepage.name=Radarr
+      - homepage.description=for movies
       - homepage.icon=radarr.png
       - homepage.href=https://movies.${DOMAIN}/
       - homepage.widget.type=radarr
@@ -307,10 +317,10 @@ services:
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - homepage.group=HeavyMetal
       - homepage.weight=1
-      - homepage.name=Plex Movies
+      - homepage.name=Plex
       - homepage.icon=plex.png
       - homepage.href=https://plex.${DOMAIN}/
-      - homepage.description=Plex server for Movies and tvshows
+      - homepage.description=for movies and tvshows
       - homepage.widget.type=plex
       - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
       - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}      
@@ -426,6 +436,7 @@ services:
       - traefik.docker.network=heavymetal-services_01-transit_80-net
       - homepage.group=HeavyMetal
       - homepage.name=Nextcloud
+      - homepage.description=for Home
       - homepage.icon=nextcloud.png
       - homepage.href=https://nextcloud.${DOMAIN}/
       - homepage.widget.type=nextcloud
@@ -504,7 +515,8 @@ services:
     labels:
       - homepage.group=Hardware
       - homepage.weight=2
-      - homepage.name=Proxmox (heavymetal)
+      - homepage.name=Proxmox
+      - homepage.description=for HeavyMetal
       - homepage.icon=proxmox.png
       - homepage.href=https://${HEAVYMETAL_SERVICES_IP_ADDRESS}:8006
       - homepage.widget.type=proxmox
@@ -579,7 +591,8 @@ services:
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
       - homepage.group=Hardware
       - homepage.weight=3
-      - homepage.name=Disk health (heavymetal)
+      - homepage.name=Disk health
+      - homepage.description=for HeavyMetal
       - homepage.icon=scrutiny.png
       - homepage.href=https://drive.${DOMAIN}
       - homepage.widget.type=scrutiny
@@ -668,7 +681,8 @@ services:
       - traefik.http.routers.private.middlewares=nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
       - traefik.docker.network=heavymetal-services_01-transit_80-net
       - homepage.group=HeavyMetal
-      - homepage.name=Nextcloud-private
+      - homepage.name=Nextcloud
+      - homepage.description=for private
       - homepage.icon=nextcloud.png
       - homepage.href=https://private.${DOMAIN}
       - homepage.widget.type=nextcloud

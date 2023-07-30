@@ -150,10 +150,10 @@ services:
     labels:
       - homepage.group=Network
       - homepage.weight=1
-      - homepage.name=Pihole-${THINGS_VLAN_NAME}
+      - homepage.name=Pihole
       - homepage.icon=pi-hole.png
       - homepage.href=http://${THINGS_PIHOLE_IP_ADDRESS}/admin
-      - homepage.description=Pihole for ${THINGS_VLAN_NAME}
+      - homepage.description=for ${THINGS_VLAN_NAME}
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${THINGS_PIHOLE_IP_ADDRESS}
@@ -256,10 +256,10 @@ services:
     labels:
       - homepage.group=Network
       - homepage.weight=1
-      - homepage.name=Pihole-${QUANTUM_VLAN_NAME}
+      - homepage.name=Pihole
       - homepage.icon=pi-hole.png
       - homepage.href=http://${QUANTUM_PIHOLE_IP_ADDRESS}/admin
-      - homepage.description=Pihole for ${QUANTUM_VLAN_NAME}
+      - homepage.description=for ${QUANTUM_VLAN_NAME}
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${QUANTUM_PIHOLE_IP_ADDRESS}

@@ -96,10 +96,10 @@ services:
     labels:
       - homepage.group=Network
       - homepage.weight=1
-      - homepage.name=Pihole-${VLAN_NAME}
+      - homepage.name=Pihole
       - homepage.icon=pi-hole.png
       - homepage.href=http://${PIHOLE_IP_ADDRESS}/admin
-      - homepage.description=Pihole for ${VLAN_NAME}
+      - homepage.description=for ${VLAN_NAME}
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${PIHOLE_IP_ADDRESS}
@@ -155,6 +155,7 @@ services:
       - "traefik.docker.network=metal-services_transit-net"
       - homepage.group=Metal
       - homepage.name=Traefik
+      - homepage.description=for Metal
       - homepage.icon=traefik.png
       - homepage.href=https://reverseproxy.${DOMAIN}
       - homepage.widget.type=traefik
@@ -191,7 +192,8 @@ services:
     labels:
       - homepage.group=Network
       - homepage.weight=2
-      - homepage.name=Cloudflare Metal tunnel
+      - homepage.name=Cloudflared tunnel
+      - homepage.description=for Metal
       - homepage.icon=cloudflare-zero-trust.png
       - homepage.widget.type=cloudflared
       - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
@@ -212,10 +214,10 @@ services:
       traefik.http.services.plex.loadbalancer.server.port: 32400
       homepage.group: Metal
       homepage.weight: 1
-      homepage.name: Plex Music
+      homepage.name: Plex
       homepage.icon: plex.png
       homepage.href: https://music.${DOMAIN}/
-      homepage.description: Music server
+      homepage.description: for music
       homepage.widget.type: plex
       homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
       homepage.widget.key: ${PLEX_MUSIC_TOKEN}
