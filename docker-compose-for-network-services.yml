@@ -208,10 +208,11 @@ services:
     labels:
       - autoheal=true
       - homepage.group=Network
+      - homepage.icon=nextdns.png
       - homepage.description=NextDNS
+      - homepage.href=https://my.nextdns.com
       - homepage.widget.type=nextdns
       - homepage.widget.key=${NEXTDNS_APIKEY}
-      - homepage.widget.url=https://my.nextdns.com
       - homepage.widget.profile=${NEXTDNS_PROFILE_ID}
 
   pihole-quantum:
