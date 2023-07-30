@@ -835,4 +835,4 @@ services:
       - homepage.widget.type=homeassistant
       - homepage.widget.url=https://home.${DOMAIN}
       - homepage.widget.key=${HOMEASSISTANT_TOKEN}
-      - homepage.widget.custom.state=switch.sonoff_10018a0fde
+      - homepage.widget.custom=${HOMEASSISTANT_CUSTOM}
