@@ -183,7 +183,7 @@ services:
 
   nextdns-upstream:
     container_name: nextdns
-    image: "jedayoshi/nextdns:latest"
+    image: "jhnrn/nextdns-cli:latest"
     restart: "always"
     # ports:
     #   - "5053:53/tcp"
@@ -194,6 +194,17 @@ services:
       NEXTDNS_REPORT_CLIENT_INFO: "true"
     networks:
       quantum-net:
+    # Warning: This WILL use your DNS query quota. Since its TTL is 300s,
+    # each check will be 1 query against your quota every 5 minutes. Enable carefully.
+    healthcheck:
+     test: [
+       "CMD", "sh", "-c",
+       "dig +time=10 @127.0.0.1 -p $$(echo $${NEXTDNS_LISTEN:-:53} | rev | cut -d: -f1 | rev) probe-test.dns.nextdns.io"
+     ]
+     interval: "30s"
+     timeout: "10s"
+     retries: 1
+     start_period: "5s"
 
   pihole-quantum:
     container_name: pihole-${QUANTUM_VLAN_NAME}
