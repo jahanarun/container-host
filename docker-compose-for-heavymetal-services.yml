@@ -827,3 +827,12 @@ services:
       - traefik.http.routers.homeassistant.tls.certresolver=certificato
       - traefik.http.routers.homeassistant.entrypoints=web,web-secure
       - traefik.http.services.homeassistant.loadbalancer.server.port=8123
+      - homepage.group=HomeAssistant
+      - homepage.name=Home Assistant
+      - homepage.icon=home-assistant
+      - homepage.type=homeassistant
+      - homepage.href=https://home.${DOMAIN}
+      - homepage.widget.type=homeassistant
+      - homepage.widget.url=https://home.${DOMAIN}
+      - homepage.widget.key=${HOMEASSISTANT_TOKEN}
+      - homepage.widget.custom.state=switch.sonoff_10018a0fde
