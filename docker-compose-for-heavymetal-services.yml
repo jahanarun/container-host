@@ -861,6 +861,7 @@ services:
       01-transit_80-net:
     labels:
       - homepage.group=Monitoring
+      - homepage.description=Docker log monitoring
       - homepage.name=Dozzle
       - homepage.icon=dozzle.png
       - homepage.href=https://dockerlogs.${DOMAIN}
