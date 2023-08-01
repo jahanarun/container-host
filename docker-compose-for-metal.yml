@@ -94,7 +94,7 @@ services:
       interval: 30s
       retries: 5
     labels:
-      - homepage.group=Network
+      - homepage.group=DNS
       - homepage.weight=1
       - homepage.name=Pihole
       - homepage.icon=pi-hole.png

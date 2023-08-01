@@ -71,7 +71,7 @@ services:
     depends_on:
       - cloudflared-dnsproxy
     labels:
-      - homepage.group=Network
+      - homepage.group=DNS
       - homepage.weight=1
       - homepage.name=Pihole-${VLAN_NAME}
       - homepage.icon=pi-hole.png

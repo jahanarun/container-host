@@ -148,7 +148,7 @@ services:
     depends_on:
       - dns-upstream-things
     labels:
-      - homepage.group=Network
+      - homepage.group=DNS
       - homepage.weight=1
       - homepage.name=Pihole
       - homepage.icon=pi-hole.png
@@ -207,7 +207,7 @@ services:
      start_period: "5s"
     labels:
       - autoheal=true
-      # - homepage.group=Network
+      # - homepage.group=DNS
       # - homepage.icon=nextdns.png
       # - homepage.description=NextDNS
       # - homepage.href=https://my.nextdns.com
@@ -254,7 +254,7 @@ services:
       - dns-upstream-quantum
       - nextdns-upstream
     labels:
-      - homepage.group=Network
+      - homepage.group=DNS
       - homepage.weight=1
       - homepage.name=Pihole
       - homepage.icon=pi-hole.png
