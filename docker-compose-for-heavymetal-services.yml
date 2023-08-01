@@ -832,7 +832,7 @@ services:
     restart: unless-stopped
     networks:
       02-transit_20-net:
-        ipv4_address: ${HASS_IP_ADDRESS}
+        ipv4_address: ${HOMEASSISTANT_IP_ADDRESS}
     dns:
       - ${THINGS_PIHOLE_IP_ADDRESS}
     labels:
