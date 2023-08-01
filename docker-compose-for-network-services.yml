@@ -157,7 +157,7 @@ services:
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${THINGS_PIHOLE_IP_ADDRESS}
-      - homepage.widget.fields=["queries", "blocked", "gravity"]
+      # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   dns-upstream-quantum:
     image: jhnrn/cloudflared:latest
@@ -263,7 +263,7 @@ services:
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
       - homepage.widget.url=http://${QUANTUM_PIHOLE_IP_ADDRESS}
-      - homepage.widget.fields=["queries", "blocked", "gravity"]
+      # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   tailscale-quantum:
     container_name: tailscale
