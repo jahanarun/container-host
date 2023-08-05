@@ -96,7 +96,7 @@ services:
     labels:
       - homepage.group=DNS
       - homepage.weight=1
-      - homepage.name=Pihole
+      - homepage.name=Pihole-metal
       - homepage.icon=pi-hole.png
       - homepage.href=http://${PIHOLE_IP_ADDRESS}/admin
       - homepage.description=for ${VLAN_NAME}

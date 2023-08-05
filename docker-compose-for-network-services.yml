@@ -150,7 +150,7 @@ services:
     labels:
       - homepage.group=DNS
       - homepage.weight=1
-      - homepage.name=Pihole
+      - homepage.name=Pihole-things
       - homepage.icon=pi-hole.png
       - homepage.href=http://${THINGS_PIHOLE_IP_ADDRESS}/admin
       - homepage.description=for ${THINGS_VLAN_NAME}
@@ -256,7 +256,7 @@ services:
     labels:
       - homepage.group=DNS
       - homepage.weight=1
-      - homepage.name=Pihole
+      - homepage.name=Pihole-quantum
       - homepage.icon=pi-hole.png
       - homepage.href=http://${QUANTUM_PIHOLE_IP_ADDRESS}/admin
       - homepage.description=for ${QUANTUM_VLAN_NAME}
