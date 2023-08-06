@@ -8,7 +8,7 @@ networks:
     # driver: ipvlan
     driver_opts:
       # ipvlan_mode: l2
-      parent: eth0.${VLAN_ID}
+      parent: ${NETWORK_DEVICE}.${VLAN_ID}
       name: macvlan${VLAN_ID}
     ipam:
       config:

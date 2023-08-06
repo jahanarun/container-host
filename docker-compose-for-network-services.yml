@@ -4,7 +4,7 @@ networks:
   transit_zero-net:
     driver: macvlan
     driver_opts:
-      parent: eth0
+      parent: ${NETWORK_DEVICE}
       name: macvlan_zero
     ipam:
       config:
@@ -14,7 +14,7 @@ networks:
   things-net:
     driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
     driver_opts:
-      parent: eth0.${THINGS_VLAN_ID}
+      parent: ${NETWORK_DEVICE}.${THINGS_VLAN_ID}
       name: macvlan${THINGS_VLAN_ID}
     ipam:
       config:
@@ -24,7 +24,7 @@ networks:
   quantum-net:
     driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
     driver_opts:
-      parent: eth0.${QUANTUM_VLAN_ID}
+      parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
       name: macvlan${QUANTUM_VLAN_ID}
     ipam:
       config:
