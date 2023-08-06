@@ -265,23 +265,23 @@ services:
       - homepage.widget.url=http://${QUANTUM_PIHOLE_IP_ADDRESS}
       # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
-  # tailscale-quantum:
-  #   container_name: tailscale
-  #   hostname: tailscale-quantum
-  #   image: tailscale/tailscale:stable
-  #   restart: "always"
-  #   # cap_add:
-  #   #   - NET_ADMIN # Used for configuring a network
-  #   #   - NET_RAW # Used for accessing privileged socket operations
-  #   environment:
-  #     TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-  #     TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=false --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
-  #     TS_ROUTES: ${TAILSCALE_ROUTES}
-  #   volumes:
-  #     - ${DATA_STORAGE}/tailscale:/var/lib
-  #   networks:
-  #     quantum-net:
-  #   dns:
-  #     ${QUANTUM_PIHOLE_IP_ADDRESS}
-  #   depends_on:
-  #     - pihole-quantum
+  tailscale-quantum:
+    container_name: tailscale
+    hostname: tailscale-quantum
+    image: tailscale/tailscale:stable
+    restart: "always"
+    # cap_add:
+    #   - NET_ADMIN # Used for configuring a network
+    #   - NET_RAW # Used for accessing privileged socket operations
+    environment:
+      TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=false --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
+      TS_ROUTES: ${TAILSCALE_ROUTES}
+    volumes:
+      - ${DATA_STORAGE}/tailscale:/var/lib
+    networks:
+      quantum-net:
+    dns:
+      ${QUANTUM_PIHOLE_IP_ADDRESS}
+    depends_on:
+      - pihole-quantum
