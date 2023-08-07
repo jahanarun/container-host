@@ -132,7 +132,7 @@ services:
       - ${HEAVYMETAL_CLOUDFARED_TOKEN}
     labels:
       - homepage.group=Network
-      - homepage.weight=2
+      - homepage.weight=2000
       - homepage.name=Cloudflared tunnel
       - homepage.description=for HeavyMetal
       - homepage.icon=cloudflare-zero-trust.png
@@ -316,7 +316,7 @@ services:
       - traefik.http.routers.plex.entrypoints=web,web-secure
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - homepage.group=HeavyMetal
-      - homepage.weight=1
+      - homepage.weight=1000
       - homepage.name=Plex
       - homepage.icon=plex.png
       - homepage.href=https://plex.${DOMAIN}/
@@ -514,7 +514,7 @@ services:
     network_mode: none
     labels:
       - homepage.group=Hardware
-      - homepage.weight=2
+      - homepage.weight=2000
       - homepage.name=Proxmox
       - homepage.description=for HeavyMetal
       - homepage.icon=proxmox.png
@@ -590,7 +590,7 @@ services:
       - traefik.http.routers.scrutiny.entrypoints=web,web-secure
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
       - homepage.group=Hardware
-      - homepage.weight=3
+      - homepage.weight=3000
       - homepage.name=Disk health
       - homepage.description=for HeavyMetal
       - homepage.icon=scrutiny.png

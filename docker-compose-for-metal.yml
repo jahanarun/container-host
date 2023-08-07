@@ -95,7 +95,7 @@ services:
       retries: 5
     labels:
       - homepage.group=DNS
-      - homepage.weight=1
+      - homepage.weight=1000
       - homepage.name=Pihole-metal
       - homepage.icon=pi-hole.png
       - homepage.href=http://${PIHOLE_IP_ADDRESS}/admin
@@ -191,7 +191,7 @@ services:
       - ${CLOUDFARED_TOKEN}
     labels:
       - homepage.group=Network
-      - homepage.weight=2
+      - homepage.weight=2000
       - homepage.name=Cloudflared tunnel
       - homepage.description=for Metal
       - homepage.icon=cloudflare-zero-trust.png
@@ -213,7 +213,7 @@ services:
       traefik.http.routers.plex.tls.certresolver: "certificato"
       traefik.http.services.plex.loadbalancer.server.port: 32400
       homepage.group: Metal
-      homepage.weight: 1
+      homepage.weight: 1000
       homepage.name: Plex
       homepage.icon: plex.png
       homepage.href: https://music.${DOMAIN}/
@@ -283,7 +283,7 @@ services:
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
       - traefik.http.routers.speedtest-tracker.entrypoints=web,web-secure
       - homepage.group=Network
-      - homepage.weight=1000
+      - homepage.weight=10000
       - homepage.name=Speedtest
       - homepage.icon=speedtest-tracker.png
       - homepage.href=https://speedtracker.${DOMAIN}/
