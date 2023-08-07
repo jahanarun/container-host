@@ -541,7 +541,7 @@ services:
       - TZ=${TZ}
     labels:
       - traefik.enable=true
-      - traefik.http.routers.glances.rule=Host(`glances.${DOMAIN}`)
+      - traefik.http.routers.glances.rule=Host(`glaceshm.${DOMAIN}`)
       - traefik.http.routers.glances.tls.certresolver=certificato
       - traefik.http.routers.glances.entrypoints=web,web-secure
       - traefik.http.services.glances.loadbalancer.server.port=61208

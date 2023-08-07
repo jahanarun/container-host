@@ -413,3 +413,24 @@ services:
       AUTOHEAL_CONTAINER_LABEL: autoheal
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  glances:
+    image: nicolargo/glances:dev
+    container_name: glances
+    restart: unless-stopped
+    pid: host
+    privileged: true
+    networks:
+      transit-net:
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
+    environment:
+      - GLANCES_OPT=-C /glances/conf/glances.conf -w
+      - TZ=${TZ}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.glances.rule=Host(`glacesmb.${DOMAIN}`)
+      - traefik.http.routers.glances.tls.certresolver=certificato
+      - traefik.http.routers.glances.entrypoints=web,web-secure
+      - traefik.http.services.glances.loadbalancer.server.port=61208
