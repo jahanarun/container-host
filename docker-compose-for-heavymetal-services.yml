@@ -97,6 +97,7 @@ services:
       - "traefik.docker.network=heavymetal-services_01-transit_80-net"
       - homepage.group=HeavyMetal
       - homepage.name=Traefik
+      - homepage.weight=1000
       - homepage.description=for HeavyMetal
       - homepage.icon=traefik.png
       - homepage.href=https://reverse1.${DOMAIN}
@@ -167,6 +168,7 @@ services:
       - traefik.http.routers.sonarr.entrypoints=web,web-secure
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
       - homepage.group=HeavyMetal
+      - homepage.weight=6000
       - homepage.name=Sonarr
       - homepage.description=for tvshows
       - homepage.icon=sonarr.png
@@ -203,6 +205,7 @@ services:
       - traefik.http.services.radarr.loadbalancer.server.port=7878
       - homepage.group=HeavyMetal
       - homepage.name=Radarr
+      - homepage.weight=7000
       - homepage.description=for movies
       - homepage.icon=radarr.png
       - homepage.href=https://movies.${DOMAIN}/
@@ -261,6 +264,7 @@ services:
       - traefik.http.routers.prowlarr.entrypoints=web,web-secure
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
       - homepage.group=HeavyMetal
+      - homepage.weight=5000
       - homepage.name=Prowlarr
       - homepage.icon=prowlarr.png
       - homepage.href=https://prowlarr.${DOMAIN}/
@@ -316,7 +320,7 @@ services:
       - traefik.http.routers.plex.entrypoints=web,web-secure
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - homepage.group=HeavyMetal
-      - homepage.weight=1000
+      - homepage.weight=2000
       - homepage.name=Plex
       - homepage.icon=plex.png
       - homepage.href=https://plex.${DOMAIN}/
@@ -435,6 +439,7 @@ services:
       - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
       - traefik.docker.network=heavymetal-services_01-transit_80-net
       - homepage.group=HeavyMetal
+      - homepage.weight=3000
       - homepage.name=Nextcloud
       - homepage.description=for Home
       - homepage.icon=nextcloud.png
@@ -682,6 +687,7 @@ services:
       - traefik.docker.network=heavymetal-services_01-transit_80-net
       - homepage.group=HeavyMetal
       - homepage.name=Nextcloud
+      - homepage.weight=4000
       - homepage.description=for private
       - homepage.icon=nextcloud.png
       - homepage.href=https://private.${DOMAIN}
