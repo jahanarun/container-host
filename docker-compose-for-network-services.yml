@@ -253,7 +253,7 @@ services:
       # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   tailscale-quantum:
-    container_name: tailscale
+    container_name: tailscale-quantum
     hostname: tailscale-quantum
     image: tailscale/tailscale:stable
     restart: "always"

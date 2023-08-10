@@ -453,7 +453,7 @@ services:
     networks:
       transit-net:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${PIHOLE_IP_ADDRESS}
     volumes:
       - ${DATA_STORAGE}/netdata-metalbox/config:/etc/netdata
       - ${DATA_STORAGE}/netdata-metalbox/lib:/var/lib/netdata
