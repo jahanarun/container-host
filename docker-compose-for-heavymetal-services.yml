@@ -876,3 +876,41 @@ services:
       - traefik.http.routers.dozzle.tls.certresolver=certificato
       - traefik.http.routers.dozzle.entrypoints=web,web-secure
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
+
+  netdata-heavymetal:
+    image: netdata/netdata:edge
+    container_name: netdata-heavymetal
+    hostname: netdata-heavymetal
+    pid: host
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    networks:
+      01-transit_80-net:
+    dns:
+      - ${METAL_PIHOLE_IP_ADDRESS}
+    volumes:
+      - ${DATA_STORAGE}/netdata-heavymetal/config:/etc/netdata
+      - ${DATA_STORAGE}/netdata-heavymetal/lib:/var/lib/netdata
+      - ${DATA_STORAGE}/netdata-heavymetal/cache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
+      - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
+      - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
+    deploy:
+      mode: global
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.netdatahm.rule=Host(`netdatahm.${DOMAIN}`)
+      - traefik.http.routers.netdatahm.tls.certresolver=certificato
+      - traefik.http.routers.netdatahm.entrypoints=web,web-secure
+      - traefik.http.services.netdatahm.loadbalancer.server.port=19999

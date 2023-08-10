@@ -437,3 +437,41 @@ services:
       - traefik.http.routers.glances.tls.certresolver=certificato
       - traefik.http.routers.glances.entrypoints=web,web-secure
       - traefik.http.services.glances.loadbalancer.server.port=61208
+
+  netdata-metalbox:
+    image: netdata/netdata:edge
+    container_name: netdata-metalbox
+    hostname: netdata-metalbox
+    pid: host
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    networks:
+      transit-net:
+    dns:
+      - ${METAL_PIHOLE_IP_ADDRESS}
+    volumes:
+      - ${DATA_STORAGE}/netdata-metalbox/config:/etc/netdata
+      - ${DATA_STORAGE}/netdata-metalbox/lib:/var/lib/netdata
+      - ${DATA_STORAGE}/netdata-metalbox/cache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
+      - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
+      - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
+    deploy:
+      mode: global
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.netdatamb.rule=Host(`netdatamb.${DOMAIN}`)
+      - traefik.http.routers.netdatamb.tls.certresolver=certificato
+      - traefik.http.routers.netdatamb.entrypoints=web,web-secure
+      - traefik.http.services.netdatamb.loadbalancer.server.port=19999
