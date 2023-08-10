@@ -44,7 +44,12 @@ services:
     container_name: omada-controller
     image: mbentley/omada-controller:5.9
     restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
     stop_grace_period: 60s
+    network_mode: host
     environment:
       - PUID=508
       - PGID=508
@@ -66,14 +71,6 @@ services:
     volumes:
       - ${DATA_STORAGE}/omada/data:/opt/tplink/EAPController/data
       - ${DATA_STORAGE}/omada/logs:/opt/tplink/EAPController/logs
-    networks:
-      transit_zero-net:
-        ipv4_address: ${OMADA_IP_ADDRESS} 
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.omada.rule=Host(`omada.${DOMAIN}`)"
-      - "traefik.http.routers.omada.tls.certresolver=certificato"
-      - "traefik.http.services.omada.loadbalancer.server.port=8043"
 
   mdns:
     image: jhnrn/avahi

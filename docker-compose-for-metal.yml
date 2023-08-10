@@ -416,6 +416,7 @@ services:
       AUTOHEAL_CONTAINER_LABEL: autoheal
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: none
 
   glances:
     image: nicolargo/glances:dev
