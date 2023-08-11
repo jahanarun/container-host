@@ -141,7 +141,6 @@ services:
       01-transit_80-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}
       network-services_things-net:
-        ipv4_address: ${TRAEFIK_THINGS_IP_ADDRESS}
     dns:
       - 1.1.1.1
     environment:
@@ -531,3 +530,27 @@ services:
       - traefik.http.routers.whoogle.tls.certresolver=certificato
       - traefik.http.routers.whoogle.entrypoints=web,web-secure
       - traefik.http.services.whoogle.loadbalancer.server.port=5000
+
+  homeassistant:
+    container_name: homeassistant
+    hostname: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:2023.6"
+    volumes:
+      - ${DATA_STORAGE}/homeassistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    devices:
+    #   - /dev/ttyACMO  # (optional) Add serial devices to the container
+      - ${ZIGBEE_DEVICE}
+    privileged: true
+    restart: unless-stopped
+    networks:
+      network-services_things-net:
+        ipv4_address: ${HOMEASSISTANT_IP_ADDRESS}
+    dns:
+      - ${THINGS_PIHOLE_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homeassistant.rule=Host(`home.${DOMAIN}`)
+      - traefik.http.routers.homeassistant.tls.certresolver=certificato
+      - traefik.http.routers.homeassistant.entrypoints=web,web-secure
+      - traefik.http.services.homeassistant.loadbalancer.server.port=8123
