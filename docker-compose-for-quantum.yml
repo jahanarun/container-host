@@ -1,16 +1,7 @@
 version: "3.5"
 
 networks:
-  things-net:
-    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
-    driver_opts:
-      parent: ${NETWORK_DEVICE}.${THINGS_VLAN_ID}
-      name: macvlan${THINGS_VLAN_ID}
-    ipam:
-      config:
-        - subnet: 10.100.${THINGS_VLAN_ID}.0/24
-          gateway: 10.100.${THINGS_VLAN_ID}.2
-          ip_range: 10.100.${THINGS_VLAN_ID}.50/30 # 48 - 51
+
   quantum-net:
     driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
     driver_opts:
@@ -23,130 +14,8 @@ networks:
           ip_range: 10.100.${QUANTUM_VLAN_ID}.50/30 # 48 - 51
 
 services:
-  http-server:
-    image: jhnrn/http-server-linux:latest
-    container_name: "http-server"
-    restart: always
-    ports:
-      - "3000:3000"
 
-  omada-controller:
-    container_name: omada-controller
-    image: mbentley/omada-controller:5.9
-    restart: unless-stopped
-    ulimits:
-      nofile:
-        soft: 4096
-        hard: 8192
-    stop_grace_period: 60s
-    network_mode: host
-    environment:
-      - PUID=508
-      - PGID=508
-      - MANAGE_HTTP_PORT=8088
-      - MANAGE_HTTPS_PORT=8043
-      - PORTAL_HTTP_PORT=8088
-      - PORTAL_HTTPS_PORT=8843
-      - PORT_APP_DISCOVERY=27001
-      - PORT_ADOPT_V1=29812
-      - PORT_UPGRADE_V1=29813
-      - PORT_MANAGER_V1=29811
-      - PORT_MANAGER_V2=29814
-      - PORT_DISCOVERY=29810
-      - SHOW_SERVER_LOGS=true
-      - SHOW_MONGODB_LOGS=false
-      - SSL_CERT_NAME=tls.crt
-      - SSL_KEY_NAME=tls.key
-      - TZ=${TZ}
-    volumes:
-      - ${DATA_STORAGE}/omada/data:/opt/tplink/EAPController/data
-      - ${DATA_STORAGE}/omada/logs:/opt/tplink/EAPController/logs
-
-  mdns:
-    image: jhnrn/avahi
-    hostname: mdns
-    container_name: mdns
-    environment:
-      - REFLECTOR_ENABLE_REFLECTOR=yes
-    restart: unless-stopped
-    networks:
-      things-net:
-        ipv4_address: ${AVAHI_THINGS_IP_ADDRESS}
-      quantum-net:
-        ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
-
-  dns-upstream-things:
-    image: jhnrn/cloudflared:latest
-    container_name: "cloudflared-dnsproxy-${THINGS_VLAN_NAME}"
-    command: proxy-dns
-    restart: always
-    environment:
-      TZ: ${TZ}    
-      TUNNEL_METRICS: "0.0.0.0:49312"
-      TUNNEL_DNS_ADDRESS: "0.0.0.0"
-      TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
-      TUNNEL_DNS_UPSTREAM: ${THINGS_DNS_UPSTREAM}
-    networks:
-      things-net:
-    healthcheck:
-      # test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} bing.com AAAA || exit 1
-      test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
-      interval: 30s
-      timeout: 5s
-      retries: 2
-    labels:
-      - autoheal=true
-
-  pihole-things:
-    container_name: pihole-${THINGS_VLAN_NAME}
-    hostname: pihole-${THINGS_VLAN_NAME}
-    image: pihole/pihole:dev
-    environment:
-      TZ: ${TZ}
-      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: dns-upstream-things#${TUNNEL_DNS_PORT}
-      # Listen on all interfaces and permit all origins
-      # This allows Pihole to work in this setup and when answering across VLANS,
-      # but do not expose pi-hole to the internet!
-      DNSMASQ_LISTENING: local
-      DNS_BOGUS_PRIV: true
-      DNS_FQDN_REQUIRED: true
-      DHCP_ACTIVE: true
-      DHCP_START: 10.100.${THINGS_VLAN_ID}.201
-      DHCP_END: 10.100.${THINGS_VLAN_ID}.251
-      DHCP_ROUTER: 10.100.${THINGS_VLAN_ID}.2
-      PIHOLE_DOMAIN: ${DOMAIN}
-      DHCP_LEASETIME: 24
-      WEBTHEME: default-auto
-    # Volumes store your data between container upgrades
-    volumes:
-      - ${DATA_STORAGE}/pihole/${THINGS_VLAN_NAME}/pihole:/etc/pihole
-      - ${DATA_STORAGE}/pihole/${THINGS_VLAN_NAME}/dnsmasq.d:/etc/dnsmasq.d
-      - ${DATA_STORAGE}/pihole/global/custom.list:/etc/pihole/custom.list
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
-    cap_add:
-      - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
-    networks:
-      things-net:
-        ipv4_address: ${THINGS_PIHOLE_IP_ADDRESS}
-    dns:
-      - 127.0.0.1        
-    restart: unless-stopped
-    depends_on:
-      - dns-upstream-things
-    labels:
-      - homepage.group=DNS
-      - homepage.weight=1
-      - homepage.name=Pihole-things
-      - homepage.icon=pi-hole.png
-      - homepage.href=http://${THINGS_PIHOLE_IP_ADDRESS}/admin
-      - homepage.description=for ${THINGS_VLAN_NAME}
-      - homepage.widget.type=pihole
-      - homepage.widget.key=${PIHOLE_TOKEN}
-      - homepage.widget.url=http://${THINGS_PIHOLE_IP_ADDRESS}
-      # - homepage.widget.fields=["queries", "blocked", "gravity"]
-
-  dns-upstream-quantum:
+  dns-upstream:
     image: jhnrn/cloudflared:latest
     container_name: "cloudflared-dnsproxy-${QUANTUM_VLAN_NAME}"
     command: proxy-dns
@@ -169,7 +38,7 @@ services:
       - autoheal=true
 
   nextdns-upstream:
-    container_name: nextdns
+    container_name: nextdns-upstream
     image: "jhnrn/nextdns-cli:latest"
     restart: "always"
     # ports:
@@ -202,14 +71,14 @@ services:
       # - homepage.widget.key=${NEXTDNS_APIKEY}
       # - homepage.widget.profile=${NEXTDNS_PROFILE_ID}
 
-  pihole-quantum:
+  pihole:
     container_name: pihole-${QUANTUM_VLAN_NAME}
     hostname: pihole-${QUANTUM_VLAN_NAME}
     image: pihole/pihole:dev
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: nextdns#53 #dns-upstream-quantum#${TUNNEL_DNS_PORT};127.0.0.1#5053;8.8.8.8;8.8.4.4;upstream0;upstream1
+      PIHOLE_DNS_: nextdns#53 #dns-upstream#${TUNNEL_DNS_PORT};127.0.0.1#5053;8.8.8.8;8.8.4.4;upstream0;upstream1
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
       # but do not expose pi-hole to the internet!
@@ -238,7 +107,7 @@ services:
       - 127.0.0.1
     restart: unless-stopped
     depends_on:
-      - dns-upstream-quantum
+      - dns-upstream
       - nextdns-upstream
     labels:
       - homepage.group=DNS
@@ -252,7 +121,7 @@ services:
       - homepage.widget.url=http://${QUANTUM_PIHOLE_IP_ADDRESS}
       # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
-  tailscale-quantum:
+  tailscale:
     container_name: tailscale-quantum
     hostname: tailscale-quantum
     image: tailscale/tailscale:stable
@@ -271,4 +140,4 @@ services:
     dns:
       ${QUANTUM_PIHOLE_IP_ADDRESS}
     depends_on:
-      - pihole-quantum
+      - pihole

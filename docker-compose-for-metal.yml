@@ -107,76 +107,6 @@ services:
       - homepage.widget.url=http://${METAL_PIHOLE_IP_ADDRESS}
       # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
-  traefik:
-    image: traefik:latest
-    hostname: traefik
-    container_name: traefik
-    command:
-      - "--log.level=INFO"
-      - "--accesslog=false"
-      - "--api.dashboard=true"
-      - "--providers.file.directory=/FileProvider/"
-      - "--providers.file.watch=true"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--entrypoints.web-secure.address=:443"
-      - "--entrypoints.ssh.address=:22"
-      - "--serverstransport.insecureskipverify=true"
-      # Set up LetsEncrypt
-      - "--certificatesresolvers.certificato.acme.dnschallenge=true"
-      - "--certificatesresolvers.certificato.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.certificato.acme.dnschallenge.delaybeforecheck=10"
-      - "--certificatesresolvers.certificato.acme.dnschallenge.resolvers=1.1.1.1:53"
-      # - "--certificatesresolvers.certificato.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.certificato.acme.email=postmaster@${DOMAIN}"
-      - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
-      - "--ping=true"
-    networks:
-      internal-net:
-      harmless-net:
-      01-transit_80-net:
-        ipv4_address: ${TRAEFIK_IP_ADDRESS}
-      network-services_things-net:
-    dns:
-      - 1.1.1.1
-    environment:
-      CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
-      CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`reverseproxy.${DOMAIN}`)"
-      - "traefik.http.routers.api.entrypoints=web-secure"
-      - "traefik.http.routers.api.tls.certresolver=certificato"
-      # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.services.api@internal.loadbalancer.server.port=80"
-      - "traefik.docker.network=metal-services_01-transit_80-net"
-      - homepage.group=Metal
-      - homepage.name=Traefik
-      - homepage.weight=1000
-      - homepage.description=for Metal
-      - homepage.icon=traefik.png
-      - homepage.href=https://reverseproxy.${DOMAIN}
-      - homepage.widget.type=traefik
-      - homepage.widget.url=https://reverseproxy.${DOMAIN}
-      # - homepage.widget.fields=["routers", "services", "middleware"]
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
-      - /etc/localtime:/etc/localtime:ro  
-      - ${DATA_STORAGE}/traefik/certs:/letsencrypt
-      - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
-    restart: always
-    depends_on:
-      - pihole
-    healthcheck: # This is to announce to the network (router and switch) that this ip address is sitting here
-      test: ping -c 1 bing.com || exit 1
-      interval: 30s
-      retries: 5
-
   cloudflared-tunnel:
     image: cloudflare/cloudflared:latest
     container_name: "cloudflared-tunnel"
@@ -202,8 +132,6 @@ services:
       - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
       - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_1}
       - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}      
-    depends_on:
-      - traefik
 
   plex-music:
     image: plexinc/pms-docker:plexpass
@@ -244,8 +172,6 @@ services:
       - ${DATA_STORAGE}/plex/config:/config
       - ${MUSIC}:/media/music
     restart: unless-stopped
-    depends_on:
-      - traefik
 
   librespeed:
     image: adolfintel/speedtest
@@ -262,8 +188,6 @@ services:
       - "traefik.http.routers.librespeed.tls.certresolver=certificato"
       - traefik.http.routers.librespeed.entrypoints=web,web-secure
       - "traefik.http.services.librespeed.loadbalancer.server.port=80"
-    depends_on:
-      - traefik
 
   speedtest-tracker:
     image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
@@ -294,8 +218,6 @@ services:
       - homepage.widget.type=speedtest
       - homepage.widget.url=https://speedtracker.${DOMAIN}
       # - homepage.widget.fields=["download", "upload", "ping"]
-    depends_on:
-      - traefik
 
   homepage:
     image: ghcr.io/benphelps/homepage:main
@@ -319,8 +241,6 @@ services:
       traefik.http.routers.homepage.tls.certresolver: "certificato"
       traefik.http.services.homepage.loadbalancer.server.port: 3000
       traefik.http.routers.homepage.entrypoints: web,web-secure
-    depends_on:
-      - traefik
 
   dockerproxy:
     image: ghcr.io/tecnativa/docker-socket-proxy:latest
@@ -372,8 +292,6 @@ services:
       - homepage.widget.password=${QBITTORRENT_PASSWORD}
       - homepage.widget.url=https://torrent.${DOMAIN}
       # - homepage.widget.fields=["leech","download", "seed", "upload"]
-    depends_on:
-      - traefik
 
   overseerr:
     image: sctx/overseerr:latest
@@ -406,8 +324,6 @@ services:
       - homepage.widget.key=${OVERSEERR_API_KEY}
       - homepage.widget.url=https://fetch.${DOMAIN}
       # - homepage.widget.fields=["pending", "approved", "available", "processing"]
-    depends_on:
-      - traefik
 
   autoheal:
     image: jhnrn/docker-autoheal:latest
