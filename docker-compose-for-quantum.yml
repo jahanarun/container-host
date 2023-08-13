@@ -78,7 +78,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: nextdns#53 #dns-upstream#${TUNNEL_DNS_PORT};127.0.0.1#5053;8.8.8.8;8.8.4.4;upstream0;upstream1
+      PIHOLE_DNS_: nextdns-upstream#53 #dns-upstream#${TUNNEL_DNS_PORT};127.0.0.1#5053;8.8.8.8;8.8.4.4;upstream0;upstream1
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
       # but do not expose pi-hole to the internet!
