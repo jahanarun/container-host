@@ -21,7 +21,7 @@ services:
     command: proxy-dns
     restart: always
     environment:
-      TZ: ${TZ}    
+      TZ: ${TZ}
       TUNNEL_METRICS: "0.0.0.0:49312"
       TUNNEL_DNS_ADDRESS: "0.0.0.0"
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
@@ -111,3 +111,22 @@ services:
       - traefik.http.routers.homeassistant.tls.certresolver=certificato
       - traefik.http.routers.homeassistant.entrypoints=web,web-secure
       - traefik.http.services.homeassistant.loadbalancer.server.port=8123
+
+  go2rtc:
+    container_name: go2rtc
+    image: alexxit/go2rtc
+    # network_mode: host       # important for WebRTC, HomeKit, UDP cameras
+    privileged: true         # only for FFmpeg hardware transcoding
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+    networks:
+      things-net:
+    volumes:
+      - ${DATA_STORAGE}/go2rtc:/config # folder for go2rtc.yaml file (edit from WebUI)
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.camera.rule=Host(`camera.${DOMAIN}`)
+      - traefik.http.routers.camera.tls.certresolver=certificato
+      - traefik.http.routers.camera.entrypoints=web,web-secure
+      - traefik.http.services.camera.loadbalancer.server.port=1984
