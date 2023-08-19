@@ -11,13 +11,13 @@ networks:
       config:
         - subnet: 10.100.${THINGS_VLAN_ID}.0/24
           gateway: 10.100.${THINGS_VLAN_ID}.2
-          ip_range: 10.100.${THINGS_VLAN_ID}.50/30 # 48 - 51
+          ip_range: 10.100.${THINGS_VLAN_ID}.64/29 # 64 - 71
 
 services:
 
   dns-upstream-things:
     image: jhnrn/cloudflared:latest
-    container_name: "cloudflared-dnsproxy-${THINGS_VLAN_NAME}"
+    container_name: "dns-upstream-${THINGS_VLAN_NAME}"
     command: proxy-dns
     restart: always
     environment:
