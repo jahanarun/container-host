@@ -765,10 +765,10 @@ services:
       - ${USER2_PHOTOS}:/photos/${USER2}:ro
     labels:
       traefik.enable: true
-      traefik.http.routers.photoview-camera.rule: "Host(`camera.${DOMAIN}`)"
-      traefik.http.routers.photoview-camera.tls.certresolver: "certificato"
-      traefik.http.routers.photoview-camera.entrypoints: "web,web-secure"
-      traefik.http.services.photoview-camera.loadbalancer.server.port: 80
+      traefik.http.routers.photoview-photos.rule: "Host(`photos.${DOMAIN}`)"
+      traefik.http.routers.photoview-photos.tls.certresolver: "certificato"
+      traefik.http.routers.photoview-photos.entrypoints: "web,web-secure"
+      traefik.http.services.photoview-photos.loadbalancer.server.port: 80
     networks:
       internal-net:
 
