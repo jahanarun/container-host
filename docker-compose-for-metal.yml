@@ -408,3 +408,23 @@ services:
       - traefik.http.routers.whoogle.tls.certresolver=certificato
       - traefik.http.routers.whoogle.entrypoints=web,web-secure
       - traefik.http.services.whoogle.loadbalancer.server.port=5000
+
+  dozzle:
+    container_name: dozzle
+    hostname: dozzle
+    image: amir20/dozzle:latest
+    environment:
+      DOZZLE_REMOTE_HOST: tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375,tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375
+    networks:
+      01-transit_80-net:
+    labels:
+      - homepage.group=Monitoring
+      - homepage.description=Docker log monitoring
+      - homepage.name=Dozzle
+      - homepage.icon=dozzle.png
+      - homepage.href=https://dockerlogs.${DOMAIN}
+      - traefik.enable=true
+      - traefik.http.routers.dozzle.rule=Host(`dockerlogs.${DOMAIN}`)
+      - traefik.http.routers.dozzle.tls.certresolver=certificato
+      - traefik.http.routers.dozzle.entrypoints=web,web-secure
+      - traefik.http.services.dozzle.loadbalancer.server.port=8080
