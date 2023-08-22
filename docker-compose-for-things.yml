@@ -11,7 +11,7 @@ networks:
       config:
         - subnet: 10.100.${THINGS_VLAN_ID}.0/24
           gateway: 10.100.${THINGS_VLAN_ID}.2
-          ip_range: 10.100.${THINGS_VLAN_ID}.64/29 # 64 - 71
+          ip_range: 10.100.${THINGS_VLAN_ID}.64/26 # 64 - 127 (Internet blocked range)
 
 services:
 
@@ -28,6 +28,7 @@ services:
       TUNNEL_DNS_UPSTREAM: ${THINGS_DNS_UPSTREAM}
     networks:
       things-net:
+        ipv4_address: ${THINGS_DNS_UPSTREAM_ADDRESS}
     healthcheck:
       # test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} bing.com AAAA || exit 1
       test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
