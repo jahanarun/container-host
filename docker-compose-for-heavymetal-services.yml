@@ -818,15 +818,12 @@ services:
     hostname: netdata-heavymetal
     pid: host
     restart: unless-stopped
+    network_mode: host
     cap_add:
       - SYS_PTRACE
       - SYS_ADMIN
     security_opt:
       - apparmor:unconfined
-    networks:
-      01-transit_80-net:
-    dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
     volumes:
       - ${DATA_STORAGE}/netdata-heavymetal/config:/etc/netdata
       - ${DATA_STORAGE}/netdata-heavymetal/lib:/var/lib/netdata
