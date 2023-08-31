@@ -197,7 +197,7 @@ services:
       - POSTGRES_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
     volumes:
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/db:/var/lib/postgresql/data
-    network:
+    networks:
       internal-net:
 
   speedtest_tracker:
