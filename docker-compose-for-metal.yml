@@ -403,6 +403,8 @@ services:
     networks:
       01-transit_80-net:
         ipv4_address: ${METAL_WHOOGLE_IP_ADDRESS}
+    dns:
+      - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoogle.rule=Host(`whoogle.${DOMAIN}`)
