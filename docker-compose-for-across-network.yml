@@ -11,9 +11,6 @@ networks:
   metal-services_01-transit_80-net:
     external: true
 
-  metal-services_harmless-net:
-    external: true
-
   metal-services_internal-net:
     external: true
 
@@ -64,7 +61,6 @@ services:
       metal-services_01-transit_80-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}
       metal-services_internal-net:
-      metal-services_harmless-net:
       things-services_things-net:
     dns:
       - 1.1.1.1

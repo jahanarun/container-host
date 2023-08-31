@@ -1,7 +1,6 @@
 version: "3.9"
 
 networks:
-  harmless-net:
   internal-net:
     internal: true
 
@@ -16,7 +15,7 @@ networks:
       config:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
           gateway: 10.100.${METAL_VLAN_ID}.2
-          ip_range: 10.100.${METAL_VLAN_ID}.150/27 # 128 - 159
+          ip_range: 10.100.${METAL_VLAN_ID}.128/26 # 128-191
           # aux_addresses:
           #   reserved: 10.100.${METAL_VLAN_ID}.1
           #   dns: 10.100.${METAL_VLAN_ID}.3
@@ -200,6 +199,7 @@ services:
         - ${DATA_STORAGE}/speedtest-tracker-alexjustesen:/config
     networks:
       01-transit_80-net:
+        ipv4_address: ${METAL_SPEEDTRACKER_IP_ADDRESS}
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     restart: unless-stopped
@@ -401,7 +401,8 @@ services:
     # ports:
     #   - 5000:5000
     networks:
-      harmless-net:
+      01-transit_80-net:
+        ipv4_address: ${METAL_WHOOGLE_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoogle.rule=Host(`whoogle.${DOMAIN}`)

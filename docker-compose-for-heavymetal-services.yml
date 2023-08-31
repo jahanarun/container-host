@@ -11,7 +11,7 @@ networks:
       config:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
           gateway: 10.100.${METAL_VLAN_ID}.2
-          ip_range: 10.100.${METAL_VLAN_ID}.100/27 # 96 - 127
+          ip_range: 10.100.${METAL_VLAN_ID}.192/26 # 192-255
           # aux_addresses:
           #   reserved: 10.100.${METAL_VLAN_ID}.1
           #   dns: 10.100.${METAL_VLAN_ID}.3
@@ -638,7 +638,6 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
-      01-transit_80-net:
       internal-net:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
