@@ -190,6 +190,7 @@ services:
 
   speedtest_tracker-db:
     image: postgres:15
+    container_name: speedtest_tracker-db
     restart: always
     environment:
       - POSTGRES_DB=speedtest_tracker
@@ -203,7 +204,7 @@ services:
   speedtest_tracker:
     image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
     hostname: speedtest-tracker
-    container_name: speedtest-tracker
+    container_name: speedtest_tracker
     environment:
       - PUID=33
       - PGID=33
