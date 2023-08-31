@@ -196,7 +196,7 @@ services:
         - PUID=33
         - PGID=33
     volumes:
-        - ${DATA_STORAGE}/speedtest-tracker-alexjustesen:/config
+        - ${DATA_STORAGE}/speedtest-tracker-alexjustesen:/var/www/html
     networks:
       01-transit_80-net:
         ipv4_address: ${METAL_SPEEDTRACKER_IP_ADDRESS}
