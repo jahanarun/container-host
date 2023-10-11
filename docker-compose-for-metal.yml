@@ -245,7 +245,7 @@ services:
       # - homepage.widget.fields=["download", "upload", "ping"]
 
   homepage:
-    image: ghcr.io/benphelps/homepage:main
+    image: ghcr.io/gethomepage/homepage:main
     container_name: homepage
     hostname: homepage
     environment:
