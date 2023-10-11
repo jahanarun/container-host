@@ -151,6 +151,7 @@ services:
       homepage.widget.type: plex
       homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
       homepage.widget.key: ${PLEX_MUSIC_TOKEN}
+      autoheal: true
     networks:
       01-transit_80-net:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}

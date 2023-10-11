@@ -316,6 +316,7 @@ services:
       - homepage.widget.type=plex
       - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
       - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}      
+      - autoheal=true
     depends_on:
       - traefik
 
@@ -846,3 +847,14 @@ services:
       - traefik.http.routers.netdatahm.tls.certresolver=certificato
       - traefik.http.routers.netdatahm.entrypoints=web,web-secure
       - traefik.http.services.netdatahm.loadbalancer.server.port=19999
+
+  autoheal:
+    image: jhnrn/docker-autoheal:latest
+    container_name: "autoheal"
+    restart: always
+    environment:
+      TZ: ${TZ}    
+      AUTOHEAL_CONTAINER_LABEL: autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: none
