@@ -373,6 +373,12 @@ services:
       - ${NEXTCLOUD_DATA}/data:/var/www/html/data
       - ${NEXTCLOUD_DATA}/tmp/app:/tmp
       - ${NEXTCLOUD_DATA}/php/conf.d:/usr/local/etc/php/conf.d
+    group_add:
+      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud-private
@@ -621,6 +627,12 @@ services:
     volumes:
       - ${NEXTCLOUD_PRIVATE_DATA}/html:/var/www/html
       - ${NEXTCLOUD_PRIVATE_DATA}/data:/var/www/html/data
+    group_add:
+      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
