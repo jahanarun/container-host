@@ -216,6 +216,8 @@ services:
       - DB_USERNAME=${SPEEDTEST_TRACKER_POSTGRES_USER}
       - DB_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
       - TZ=${TZ}
+      - APP_DEBUG=${SPEEDTRACKER_APP_DEBUG:-false}
+      - APP_KEY={SPEEDTRACKER_APP_KEY}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/config:/config
