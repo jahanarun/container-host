@@ -210,7 +210,6 @@ services:
     container_name: flaresolverr
     hostname: flaresolverr
     restart: unless-stopped
-    user: ${UID}:${GID}
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
@@ -271,7 +270,6 @@ services:
     container_name: plex-movietvshow
     hostname: plex-movietvshow
     restart: unless-stopped
-    user: ${UID}:${GID}
     environment:
       - PLEX_UID=33
       - PLEX_GID=33
@@ -402,8 +400,6 @@ services:
       - PGID=33
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
-      - NEXTCLOUD_ENABLE_DRI_DEVICE=true
-      - NEXTCLOUD_ADDITIONAL_APKS=imagick libva-utils libva-vdpau-driver libva-intel-driver intel-media-driver mesa-va-gallium 
     networks:
       01-transit_80-net:
       internal-net:
@@ -475,6 +471,7 @@ services:
     container_name: "gogs"
     hostname: "gogs"
     restart: "always"
+    user: ${UID}:${GID}
     environment:
       RUN_CROND: true
       SSH_PORT: "22"
@@ -503,6 +500,7 @@ services:
     image: "mariadb:latest"
     container_name: "gogs-mariadb"
     restart: "always"
+    user: ${UID}:${GID}
     environment:
       MYSQL_DATABASE: "gogs"
       MYSQL_PASSWORD: ${GOGS_DATABASE_PASSWORD}
