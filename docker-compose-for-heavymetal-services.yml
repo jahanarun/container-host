@@ -373,6 +373,7 @@ services:
       - ${NEXTCLOUD_DATA}/data:/var/www/html/data
       - ${NEXTCLOUD_DATA}/tmp/app:/tmp
       - ${NEXTCLOUD_DATA}/php/conf.d:/usr/local/etc/php/conf.d
+    user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
