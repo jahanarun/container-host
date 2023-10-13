@@ -471,7 +471,7 @@ services:
     container_name: "gogs"
     hostname: "gogs"
     restart: "always"
-    user: ${UID}:${GID}
+    # user: ${UID}:${GID}
     environment:
       RUN_CROND: true
       SSH_PORT: "22"
