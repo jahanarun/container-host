@@ -294,13 +294,14 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - WEBUI_PORT=8220
+      - WEBUI_PORT=${QBITTORRENT_PORT}
     volumes:
       - ${DATA_STORAGE}/qbittorrent:/config
       - ${TORRENTS}:/downloads #optional
     networks:
       01-transit_80-net:
         ipv4_address: ${QBITTORRENT_IP_ADDRESS}
+      traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     restart: unless-stopped
@@ -309,7 +310,7 @@ services:
       - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent.tls.certresolver=certificato
       - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
-      - traefik.http.services.qbittorrent.loadbalancer.server.port=8220
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
       - homepage.group=Metal
       - homepage.name=Qbittorrent
       - homepage.weight=4000
@@ -531,19 +532,18 @@ services:
       - qbittorrent
     user: $PUID:$PGID
     volumes:
+      - ${DATA_STORAGE}/qbittorrent:/qbittorrent:ro
       - ${DATA_STORAGE}/flood:/config
       - ${TORRENTS}:/downloads:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
       traefik_proxy:
-    dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
     command:
       - --auth=none
-      - --qburl=https://torrent.${DOMAIN}
-      - --qbuser=$QBITTORRENT_USER
-      - --qbpass=$QBITTORRENT_PASS
-      - --rundir=/config
+      - --qburl=http://qbittorrent:${QBITTORRENT_PORT}
+      - --qbuser=$QBITTORRENT_USERNAME
+      - --qbpass=$QBITTORRENT_PASSWORD
+      - --rundir=/qbittorrent
     logging:  
       driver: "json-file"
       options:
