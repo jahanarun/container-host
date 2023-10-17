@@ -1,7 +1,7 @@
 version: "3.9"
 
 networks:
-  internal-net:
+  traefik_proxy:
     internal: true
 
   01-transit_80-net:
@@ -19,9 +19,6 @@ networks:
           # aux_addresses:
           #   reserved: 10.100.${METAL_VLAN_ID}.1
           #   dns: 10.100.${METAL_VLAN_ID}.3
-
-  network-services_things-net:
-    external: true
 
 services:
   dns-upstream:
@@ -183,7 +180,7 @@ services:
     environment:
       - MODE=standalone
     networks:
-      - internal-net
+      - traefik_proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
@@ -203,7 +200,7 @@ services:
     volumes:
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/db:/var/lib/postgresql/data
     networks:
-      internal-net:
+      traefik_proxy:
 
   speedtest_tracker:
     image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
@@ -228,7 +225,7 @@ services:
     depends_on:
       - speedtest_tracker-db
     networks:
-      internal-net:
+      traefik_proxy:
       01-transit_80-net:
         ipv4_address: ${METAL_SPEEDTRACKER_IP_ADDRESS}
     dns:
@@ -474,7 +471,7 @@ services:
     # if container doesn't run detached on your machine, uncomment the next line:
     #tty: true
     networks:
-      internal-net:
+      traefik_proxy:
       01-transit_80-net:
     # ports:
       # - 9000:9000/tcp
@@ -508,7 +505,7 @@ services:
     # if container doesn't run detached on your machine, uncomment the next line:
     #tty: true
     networks:
-      internal-net:
+      traefik_proxy:
     # ports:
         # - 9001:9001/tcp
         # if you're using a reverse proxy, uncomment the next line:
