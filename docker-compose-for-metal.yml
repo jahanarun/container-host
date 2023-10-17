@@ -524,40 +524,40 @@ services:
       - traefik.http.routers.ytdl.entrypoints=web,web-secure
       - traefik.http.services.ytdl.loadbalancer.server.port=9001
 
-  flood:
-    image: jesec/flood:latest
-    container_name: flood
-    restart: always
-    depends_on:
-      - qbittorrent
-    user: $PUID:$PGID
-    volumes:
-      - ${DATA_STORAGE}/qbittorrent/qbittorrent:/qbittorrent
-      - ${DATA_STORAGE}/flood:/config
-      - ${TORRENTS}:/downloads:ro
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      traefik_proxy:
-    command:
-      - --auth=none
-      - --qburl=http://qbittorrent:${QBITTORRENT_PORT}
-      - --qbuser=$QBITTORRENT_USERNAME
-      - --qbpass=$QBITTORRENT_PASSWORD
-      - --rundir=/qbittorrent
-    logging:  
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "10"
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - traefik.http.routers.flood-rtr.rule=Host(`flood.$DOMAIN`)
-      - traefik.http.routers.flood-rtr.entrypoints=web,web-secure
-      - traefik.http.routers.flood-rtr.tls.certresolver=certificato
-      ## Middlewares
-      ## HTTP Services
-      - traefik.http.routers.flood-rtr.service=flood-svc
-      - traefik.http.services.flood-svc.loadbalancer.server.port=3000
-      ## Diun
-      - diun.enable=true
+  # flood:
+  #   image: jesec/flood:latest
+  #   container_name: flood
+  #   restart: always
+  #   depends_on:
+  #     - qbittorrent
+  #   user: $PUID:$PGID
+  #   volumes:
+  #     - ${DATA_STORAGE}/qbittorrent/qbittorrent:/qbittorrent
+  #     - ${DATA_STORAGE}/flood:/config
+  #     - ${TORRENTS}:/downloads:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #   networks:
+  #     traefik_proxy:
+  #   command:
+  #     - --auth=none
+  #     - --qburl=http://qbittorrent:${QBITTORRENT_PORT}
+  #     - --qbuser=$QBITTORRENT_USERNAME
+  #     - --qbpass=$QBITTORRENT_PASSWORD
+  #     - --rundir=/qbittorrent
+  #   logging:  
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "10"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - traefik.http.routers.flood-rtr.rule=Host(`flood.$DOMAIN`)
+  #     - traefik.http.routers.flood-rtr.entrypoints=web,web-secure
+  #     - traefik.http.routers.flood-rtr.tls.certresolver=certificato
+  #     ## Middlewares
+  #     ## HTTP Services
+  #     - traefik.http.routers.flood-rtr.service=flood-svc
+  #     - traefik.http.services.flood-svc.loadbalancer.server.port=3000
+  #     ## Diun
+  #     - diun.enable=true
