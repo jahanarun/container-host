@@ -30,8 +30,8 @@ services:
       things-net:
         ipv4_address: ${THINGS_DNS_UPSTREAM_ADDRESS}
     healthcheck:
-      # test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} bing.com AAAA || exit 1
-      test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
+      test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} cloudflare.com AAAA || exit 1
+      # test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
       interval: 30s
       timeout: 5s
       retries: 2
