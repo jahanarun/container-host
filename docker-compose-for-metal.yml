@@ -536,6 +536,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     networks:
       traefik_proxy:
+    dns:
+      - ${METAL_PIHOLE_IP_ADDRESS}
     command:
       - --auth=none
       - --qburl=https://torrent.${DOMAIN}
