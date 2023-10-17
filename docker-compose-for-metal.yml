@@ -471,7 +471,6 @@ services:
     # if container doesn't run detached on your machine, uncomment the next line:
     #tty: true
     networks:
-      traefik_proxy:
       01-transit_80-net:
     # ports:
       # - 9000:9000/tcp
