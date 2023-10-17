@@ -459,3 +459,64 @@ services:
       - traefik.http.routers.dozzle.tls.certresolver=certificato
       - traefik.http.routers.dozzle.entrypoints=web,web-secure
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
+
+  cobalt-api:
+    image: ghcr.io/wukko/cobalt:latest
+    restart: unless-stopped
+    container_name: cobalt-api
+    init: true
+    # if container doesn't run detached on your machine, uncomment the next line:
+    #tty: true
+    networks:
+      internal-net:
+      01-transit_80-net:
+    # ports:
+      # - 9000:9000/tcp
+      # if you're using a reverse proxy, uncomment the next line:
+      #- 127.0.0.1:9000:9000
+    environment:
+      - apiPort=9000
+      # replace apiURL with your instance's target url in same format
+      - apiURL=https://ytdl-api.${DOMAIN}/
+      # replace apiName with your instance's distinctive name
+      - apiName=ytdl-api
+      # if you want to use cookies when fetching data from services, uncomment the next line
+      #- cookiePath=/cookies.json
+      # see src/modules/processing/cookie/cookies_example.json for example file.
+    # labels:
+    # if you want to use cookies when fetching data from services, uncomment volumes and next line
+    #volumes:
+        #- ./cookies.json:/cookies.json
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ytdl-api.rule=Host(`ytdl-api.${DOMAIN}`)
+      - traefik.http.routers.ytdl-api.tls.certresolver=certificato
+      - traefik.http.routers.ytdl-api.entrypoints=web,web-secure
+      - traefik.http.services.ytdl-api.loadbalancer.server.port=9000
+
+  cobalt-web:
+    image: ghcr.io/wukko/cobalt:latest
+    restart: unless-stopped
+    container_name: cobalt-web
+    init: true
+    # if container doesn't run detached on your machine, uncomment the next line:
+    #tty: true
+    networks:
+      internal-net:
+    # ports:
+        # - 9001:9001/tcp
+        # if you're using a reverse proxy, uncomment the next line:
+        # - 127.0.0.1:9001:9001
+    environment:
+        - webPort=9001
+        # replace webURL with your instance's target url in same format
+        - webURL=https://ytdl.${DOMAIN}/
+        # replace apiURL with preferred api instance url
+        - apiURL=https://ytdl-api.${DOMAIN}/
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ytdl.rule=Host(`ytdl.${DOMAIN}`)
+      - traefik.http.routers.ytdl.tls.certresolver=certificato
+      - traefik.http.routers.ytdl.entrypoints=web,web-secure
+      - traefik.http.services.ytdl.loadbalancer.server.port=9001
