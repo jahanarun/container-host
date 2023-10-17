@@ -452,7 +452,8 @@ services:
     environment:
       DOZZLE_REMOTE_HOST: tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375,tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375
     networks:
-      internal-net:
+      # Need the transit network to talk to other docker host(s)
+      01-transit_80-net:
     labels:
       - homepage.group=Monitoring
       - homepage.description=Docker log monitoring
