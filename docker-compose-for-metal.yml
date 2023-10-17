@@ -110,6 +110,7 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: "cloudflared-tunnel"
     hostname: cloudflared-tunnel
+    user: $PUID:$PGID
     restart: always
     networks:
       01-transit_80-net:
@@ -158,10 +159,10 @@ services:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     environment:
-      - PLEX_UID=33
-      - PLEX_GID=33
-      - PUID=33
-      - PGID=33
+      - PLEX_UID=${PUID}
+      - PLEX_GID=${PGID}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM}
       - TZ=${TZ}
@@ -178,6 +179,7 @@ services:
     hostname: librespeed
     container_name: librespeed
     restart: unless-stopped
+    user: $PUID:$PGID
     environment:
       - MODE=standalone
     networks:
@@ -193,6 +195,7 @@ services:
     image: postgres:15
     container_name: speedtest_tracker-db
     restart: always
+    user: $PUID:$PGID
     environment:
       - POSTGRES_DB=speedtest_tracker
       - POSTGRES_USER=${SPEEDTEST_TRACKER_POSTGRES_USER}
@@ -207,8 +210,8 @@ services:
     hostname: speedtest-tracker
     container_name: speedtest_tracker
     environment:
-      - PUID=33
-      - PGID=33
+      - PUID=${PUID}
+      - PGID=${PGID}
       - DB_CONNECTION=pgsql
       - DB_HOST=speedtest_tracker-db
       - DB_PORT=5432
@@ -251,10 +254,11 @@ services:
     image: ghcr.io/gethomepage/homepage:main
     container_name: homepage
     hostname: homepage
+    user: $PUID:$PGID
     environment:
       - TZ=${TZ}
-      - PGID=33
-      - PUID=33
+      - PUID=${PUID}
+      - PGID=${PGID}
     volumes:
       - ${DATA_STORAGE}/homepage:/app/config # Make sure your local config directory exists
       # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
@@ -290,8 +294,8 @@ services:
     hostname: qbittorrent
     container_name: qbittorrent
     environment:
-      - PUID=33
-      - PGID=33
+      - PUID=${PUID}
+      - PGID=${PGID}
       - TZ=${TZ}
       - WEBUI_PORT=8220
     volumes:
@@ -325,6 +329,7 @@ services:
     image: sctx/overseerr:latest
     hostname: overseerr
     container_name: overseerr
+    user: $PUID:$PGID
     environment:
       - LOG_LEVEL=debug
       - TZ=${TZ}
@@ -447,7 +452,7 @@ services:
     environment:
       DOZZLE_REMOTE_HOST: tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375,tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375
     networks:
-      01-transit_80-net:
+      internal-net:
     labels:
       - homepage.group=Monitoring
       - homepage.description=Docker log monitoring
