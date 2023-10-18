@@ -634,6 +634,8 @@ services:
     volumes:
       - ${NEXTCLOUD_PRIVATE_DATA}/html:/var/www/html
       - ${NEXTCLOUD_PRIVATE_DATA}/data:/var/www/html/data
+      - ${NEXTCLOUD_PRIVATE_DATA}/tmp/app:/tmp
+      - ${NEXTCLOUD_PRIVATE_DATA}/php/conf.d:/usr/local/etc/php/conf.d
     user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
