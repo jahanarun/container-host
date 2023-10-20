@@ -363,6 +363,11 @@ services:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
+    healthcheck:
+      test: healthcheck.sh --connect --innodb_initialized
+      timeout: 30s
+      retries: 10
+      interval: 2s
 
   nextcloud:
     image: jhnrn/nextcloud-linux
@@ -516,6 +521,11 @@ services:
       - "3306"
     networks:
       - traefik_proxy
+    healthcheck:
+      test: healthcheck.sh --connect --innodb_initialized
+      timeout: 30s
+      retries: 10
+      interval: 2s
 
   proxmox-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
@@ -627,6 +637,11 @@ services:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-private-user
+    healthcheck:
+      test: healthcheck.sh --connect --innodb_initialized
+      timeout: 30s
+      retries: 10
+      interval: 2s
 
   nextcloud-private:
     image: jhnrn/nextcloud-linux
@@ -737,6 +752,11 @@ services:
       - ${APPDATA}/photoview-private/db:/var/lib/mysql
     networks:
       traefik_proxy:
+    healthcheck:
+      test: healthcheck.sh  --connect --innodb_initialized
+      timeout: 30s
+      retries: 10
+      interval: 2s
 
   photoview-private:
     image: jhnrn/photoview:latest
@@ -779,6 +799,11 @@ services:
       - ${APPDATA}/photoview-camera/db:/var/lib/mysql
     networks:
       traefik_proxy:
+    healthcheck:
+      test: healthcheck.sh  --connect --innodb_initialized
+      timeout: 30s
+      retries: 10
+      interval: 2s
 
   photoview-camera:
     image: jhnrn/photoview:latest
@@ -822,6 +847,11 @@ services:
       - ${APPDATA}/photoview-album/db:/var/lib/mysql
     networks:
       traefik_proxy:
+    healthcheck:
+      test: healthcheck.sh --connect --innodb_initialized
+      timeout: 30s
+      retries: 10
+      interval: 2s
 
   photoview-album:
     image: jhnrn/photoview:latest
