@@ -512,11 +512,6 @@ services:
       - "3306"
     networks:
       - traefik_proxy
-    healthcheck:
-      test: health-check.sh
-      timeout: 30s
-      retries: 10
-      interval: 2s
 
   proxmox-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
@@ -734,11 +729,6 @@ services:
       - ${APPDATA}/photoview-private/db:/var/lib/mysql
     networks:
       traefik_proxy:
-    healthcheck:
-      test: health-check.sh
-      timeout: 30s
-      retries: 10
-      interval: 2s
 
   photoview-private:
     image: viktorstrate/photoview:master
@@ -781,11 +771,6 @@ services:
       - ${APPDATA}/photoview-camera/db:/var/lib/mysql
     networks:
       traefik_proxy:
-    healthcheck:
-      test: health-check.sh
-      timeout: 30s
-      retries: 10
-      interval: 2s
 
   photoview-camera:
     image: viktorstrate/photoview:master
@@ -829,11 +814,6 @@ services:
       - ${APPDATA}/photoview-album/db:/var/lib/mysql
     networks:
       traefik_proxy:
-    healthcheck:
-      test: health-check.sh
-      timeout: 30s
-      retries: 10
-      interval: 2s
 
   photoview-album:
     image: viktorstrate/photoview:master
