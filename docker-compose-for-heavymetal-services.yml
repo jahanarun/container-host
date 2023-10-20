@@ -739,7 +739,7 @@ services:
       traefik_proxy:
 
   photoview-private:
-    image: viktorstrate/photoview:master
+    image: jhnrn/photoview:latest
     container_name: photoview-private
     hostname: photoview-private
     restart: always
@@ -781,7 +781,7 @@ services:
       traefik_proxy:
 
   photoview-camera:
-    image: viktorstrate/photoview:master
+    image: jhnrn/photoview:latest
     container_name: photoview-camera
     hostname: photoview-camera
     restart: always
@@ -824,7 +824,7 @@ services:
       traefik_proxy:
 
   photoview-album:
-    image: viktorstrate/photoview:master
+    image: jhnrn/photoview:latest
     container_name: photoview-album
     hostname: photoview-album
     restart: always
