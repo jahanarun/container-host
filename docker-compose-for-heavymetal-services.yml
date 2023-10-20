@@ -16,7 +16,7 @@ networks:
           #   reserved: 10.100.${METAL_VLAN_ID}.1
           #   dns: 10.100.${METAL_VLAN_ID}.3
 
-  internal-net:
+  traefik_proxy:
     driver: bridge
     internal: true
 
@@ -66,7 +66,7 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      internal-net:
+      traefik_proxy:
       01-transit_80-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
     dns:
@@ -332,7 +332,7 @@ services:
     ports:
       - "9000:9000"
     networks:
-      - internal-net
+      - traefik_proxy
 
   redis:
     image: redis:6
@@ -344,7 +344,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
-      - internal-net
+      - traefik_proxy
 
   nextcloud-db:
     image: mariadb
@@ -352,7 +352,7 @@ services:
     restart: unless-stopped
     user: ${UID}:${GID}
     networks:
-      - internal-net
+      - traefik_proxy
     expose:
       - "3306"
     command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
@@ -402,7 +402,7 @@ services:
       - PHP_UPLOAD_LIMIT=20G
     networks:
       01-transit_80-net:
-      internal-net:
+      traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -479,7 +479,7 @@ services:
       - ${DATA_STORAGE}/gogs/data:/data
       - ${DATA_STORAGE}/gogs/backup:/backup
     networks:
-      internal-net:
+      traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -511,7 +511,7 @@ services:
     expose:
       - "3306"
     networks:
-      - internal-net
+      - traefik_proxy
 
   proxmox-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
@@ -611,7 +611,7 @@ services:
     container_name: "nextcloud-private-db"
     restart: unless-stopped
     networks:
-      - internal-net
+      - traefik_proxy
     expose:
       - "3306"
     command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
@@ -661,7 +661,7 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
-      internal-net:
+      traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -728,7 +728,7 @@ services:
     volumes:
       - ${APPDATA}/photoview-private/db:/var/lib/mysql
     networks:
-      internal-net:
+      traefik_proxy:
 
   photoview-private:
     image: viktorstrate/photoview:2
@@ -754,7 +754,7 @@ services:
       traefik.http.routers.photoview-private.entrypoints: "web,web-secure"
       traefik.http.services.photoview-private.loadbalancer.server.port: 80
     networks:
-      internal-net:
+      traefik_proxy:
 
   photoview-camera-db:
     image: mariadb:10.5
@@ -770,7 +770,7 @@ services:
     volumes:
       - ${APPDATA}/photoview-camera/db:/var/lib/mysql
     networks:
-      internal-net:
+      traefik_proxy:
 
   photoview-camera:
     image: viktorstrate/photoview:2
@@ -797,7 +797,7 @@ services:
       traefik.http.routers.photoview-photos.entrypoints: "web,web-secure"
       traefik.http.services.photoview-photos.loadbalancer.server.port: 80
     networks:
-      internal-net:
+      traefik_proxy:
 
   photoview-album-db:
     image: mariadb:10.6
@@ -813,7 +813,7 @@ services:
     volumes:
       - ${APPDATA}/photoview-album/db:/var/lib/mysql
     networks:
-      internal-net:
+      traefik_proxy:
 
   photoview-album:
     image: viktorstrate/photoview:2
@@ -839,7 +839,7 @@ services:
       traefik.http.routers.photoview-album.entrypoints: "web,web-secure"
       traefik.http.services.photoview-album.loadbalancer.server.port: 80
     networks:
-      internal-net:
+      traefik_proxy:
 
   netdata-heavymetal:
     image: netdata/netdata:edge
