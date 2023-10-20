@@ -329,8 +329,8 @@ services:
     environment:
        PORT: 9000
        MALLOC_ARENA_MAX: 2
-    ports:
-      - "9000:9000"
+    expose:
+      - "9000"
     networks:
       - traefik_proxy
 
