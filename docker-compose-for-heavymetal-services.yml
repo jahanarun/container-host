@@ -720,7 +720,7 @@ services:
       - redis
 
   photoview-private-db:
-    image: mariadb:10.5
+    image: mariadb:10.6
     container_name: photoview-private-db
     hostname: photoview-private-db
     restart: always
@@ -767,7 +767,7 @@ services:
       traefik_proxy:
 
   photoview-camera-db:
-    image: mariadb:10.5
+    image: mariadb:10.6
     container_name: photoview-camera-db
     hostname: photoview-camera-db
     restart: always
