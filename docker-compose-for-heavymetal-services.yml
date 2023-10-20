@@ -449,11 +449,15 @@ services:
       # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
       - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
       # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
-
     depends_on:
       - traefik
       - nextcloud-db
       - redis
+    healthcheck:
+      test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   ## Ofelia Job Runner (recommended for running background jobs)
   ## see https://github.com/mcuadros/ofelia
@@ -708,11 +712,15 @@ services:
       # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
       - homepage.widget.key=${NEXTCLOUD_PRIVATE_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
       # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
-
     depends_on:
       - traefik
       - nextcloud-private-db
       - redis
+    healthcheck:
+      test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   photoview-private-db:
     image: mariadb:10.6
