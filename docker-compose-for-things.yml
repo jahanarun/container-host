@@ -74,7 +74,8 @@ services:
       - 127.0.0.1        
     restart: unless-stopped
     depends_on:
-      - dns-upstream-things
+      dns-upstream-things:
+        condition: service_healthy
     healthcheck:
       test: ping -c 1 bing.com || exit 1
       # test: dig +short @127.0.0.1 pi.hole || exit 1
@@ -110,7 +111,8 @@ services:
     dns:
       - ${THINGS_PIHOLE_IP_ADDRESS}
     depends_on:
-      - pihole
+      pihole:
+        condition: service_healthy
     labels:
       - traefik.enable=true
       - traefik.http.routers.homeassistant.rule=Host(`home.${DOMAIN}`)

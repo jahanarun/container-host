@@ -100,7 +100,7 @@ services:
     depends_on:
       - dockerproxy
     healthcheck: # This is to announce to the network (router and switch) that this ip address is sitting here
-      test: ping -c 1 bing.com || exit 1
+      test: traefik healthcheck --ping && ping -c 1 bing.com || exit 1
       interval: 30s
       retries: 5
 
@@ -172,8 +172,6 @@ services:
       - homepage.widget.url=https://tvshows.${DOMAIN}
       - homepage.widget.key=${SONARR_API_KEY}
       # - homepage.widget.fields=["wanted", "queued", "series"]
-    depends_on:
-      - traefik
 
   radarr:
     image: lscr.io/linuxserver/radarr:nightly
@@ -208,8 +206,6 @@ services:
       - homepage.widget.url=https://movies.${DOMAIN}
       - homepage.widget.key=${RADARR_API_KEY}
       # - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
-    depends_on:
-      - traefik
 
   flaresolverr:
     image: flaresolverr/flaresolverr:latest
@@ -232,8 +228,6 @@ services:
       - "traefik.http.routers.flaresolverr.tls.certresolver=certificato"
       - "traefik.http.routers.flaresolverr.entrypoints=web,web-secure"
       - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
-    depends_on:
-      - traefik
 
   prowlarr:
     image: linuxserver/prowlarr:develop
@@ -269,7 +263,6 @@ services:
       - homepage.widget.url=https://prowlarr.${DOMAIN}
       # - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
     depends_on:
-      - traefik
       - flaresolverr
 
   plex-movietvshow:
@@ -324,8 +317,6 @@ services:
       - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
       - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}      
       - autoheal=true
-    depends_on:
-      - traefik
 
   imaginary:
     image: nextcloud/aio-imaginary:latest
@@ -370,6 +361,11 @@ services:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
+    healthcheck:
+      test: redis-cli ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   nextcloud:
     image: jhnrn/nextcloud-linux
@@ -457,9 +453,9 @@ services:
       - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
       # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
     depends_on:
-      - traefik
-      - nextcloud-db
-      - redis
+      nextcloud-db:
+      redis:
+        condition: service_healthy
     healthcheck:
       test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
       interval: 10s
@@ -505,7 +501,6 @@ services:
       traefik.tcp.services.gogs-ssh.loadbalancer.server.port: 22      
     depends_on:
       - gogs-mariadb
-      - traefik
 
   gogs-mariadb:
     image: "mariadb:latest"
@@ -720,9 +715,9 @@ services:
       - homepage.widget.key=${NEXTCLOUD_PRIVATE_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
       # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
     depends_on:
-      - traefik
-      - nextcloud-private-db
-      - redis
+      nextcloud-private-db:
+      redis:
+        condition: service_healthy
     healthcheck:
       test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
       interval: 10s
