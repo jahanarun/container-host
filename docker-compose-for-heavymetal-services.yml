@@ -343,6 +343,11 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
       - traefik_proxy
+    healthcheck:
+      test: redis-cli ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   nextcloud-db:
     image: mariadb
@@ -361,11 +366,6 @@ services:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
-    healthcheck:
-      test: redis-cli ping || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
   nextcloud:
     image: jhnrn/nextcloud-linux
