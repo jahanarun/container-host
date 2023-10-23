@@ -105,14 +105,18 @@ services:
       retries: 5
 
   cloudflared-tunnel:
-    image: cloudflare/cloudflared:latest
+    image: jhnrn/cloudflared:latest
     container_name: "cloudflared-tunnel"
     hostname: cloudflared-tunnel
+    user: $PUID:$PGID
     restart: always
     networks:
       01-transit_80-net:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
+    environment:
+      TZ: ${TZ}
+      TUNNEL_METRICS: "0.0.0.0:${CLOUDFARED_METRICS_PORT}"
     command:
       - tunnel
       - --no-autoupdate
@@ -128,9 +132,12 @@ services:
       - homepage.widget.type=cloudflared
       - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
       - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_2}
-      - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}
-    depends_on:
-      - traefik
+      - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}      
+    healthcheck:
+      test: curl -sSf 'http://localhost:${CLOUDFARED_METRICS_PORT}/healthcheck' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
