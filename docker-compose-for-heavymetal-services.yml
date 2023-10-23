@@ -454,6 +454,7 @@ services:
       # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
     depends_on:
       nextcloud-db:
+        condition: service_started
       redis:
         condition: service_healthy
     healthcheck:
@@ -716,6 +717,7 @@ services:
       # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
     depends_on:
       nextcloud-private-db:
+        condition: service_started
       redis:
         condition: service_healthy
     healthcheck:
