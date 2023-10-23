@@ -104,7 +104,7 @@ services:
       # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   cloudflared-tunnel:
-    image: cloudflare/cloudflared:latest
+    image: jhnrn/cloudflared:latest
     container_name: "cloudflared-tunnel"
     hostname: cloudflared-tunnel
     user: $PUID:$PGID
@@ -113,9 +113,12 @@ services:
       01-transit_80-net:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
+    environment:
+      TZ: ${TZ}
     command:
       - tunnel
       - --no-autoupdate
+      - --metrics localhost:${CLOUDFARED_METRICS_PORT}
       - run 
       - --token
       - ${CLOUDFARED_TOKEN}
@@ -129,6 +132,11 @@ services:
       - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
       - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_1}
       - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}      
+    healthcheck:
+      test: curl -sSf 'http://localhost:${CLOUDFARED_METRICS_PORT}/healthcheck' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   plex-music:
     image: plexinc/pms-docker:plexpass
