@@ -454,6 +454,7 @@ services:
       - traefik.http.routers.whoogle.tls.certresolver=certificato
       - traefik.http.routers.whoogle.entrypoints=web,web-secure
       - traefik.http.services.whoogle.loadbalancer.server.port=5000
+      - autoheal=true
 
   dozzle:
     container_name: dozzle
