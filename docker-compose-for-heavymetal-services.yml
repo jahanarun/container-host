@@ -580,7 +580,23 @@ services:
       - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
     networks:
       01-transit_80-net:
-    devices: ${DISK_DEVICES}
+    devices:
+      - "/dev/sda"
+      - "/dev/sdb"
+      - "/dev/sdc"
+      - "/dev/sdd"
+      - "/dev/sde"
+      - "/dev/sdf"
+      - "/dev/sdg"
+      - "/dev/sdh"
+      - "/dev/sdi"
+      - "/dev/sdj"
+      - "/dev/sdk"
+      - "/dev/sdl"
+      - "/dev/sdm"
+      - "/dev/sdn"
+      - "/dev/nvme2n1"
+      - "/dev/nvme1n1"    
     labels:
       - traefik.enable=true
       - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
