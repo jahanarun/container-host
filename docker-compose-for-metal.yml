@@ -476,6 +476,12 @@ services:
       - traefik.http.routers.dozzle.tls.certresolver=certificato
       - traefik.http.routers.dozzle.entrypoints=web,web-secure
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
+      - autoheal=true
+    healthcheck:
+      test: /dozzle healthcheck
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   cobalt-api:
     image: ghcr.io/wukko/cobalt:latest
