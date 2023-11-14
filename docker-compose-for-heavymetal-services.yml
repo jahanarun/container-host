@@ -705,7 +705,7 @@ services:
       - traefik.http.routers.private.middlewares=nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
       - traefik.docker.network=heavymetal-services_01-transit_80-net
       - homepage.group=HeavyMetal
-      - homepage.name=Nextcloud
+      - homepage.name=Nextcloud (private)
       - homepage.weight=4000
       - homepage.description=for private
       - homepage.icon=nextcloud.png
