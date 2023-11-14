@@ -478,7 +478,8 @@ services:
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
       - autoheal=true
     healthcheck:
-      test: curl -sSf 'http://localhost:8080/healthcheck' || exit 1
+      test: [ "CMD", "/dozzle", "healthcheck" ]
+      # test: curl -sSf 'http://localhost:8080/healthcheck' || exit 1
       # test: /dozzle healthcheck
       interval: 10s
       timeout: 5s
