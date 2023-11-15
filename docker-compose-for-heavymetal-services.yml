@@ -677,9 +677,9 @@ services:
       - ofelia.job-exec.nextcloud_private_scan.schedule=@every 1h30m
       - ofelia.job-exec.nextcloud_private_scan.user=33
       - ofelia.job-exec.nextcloud_private_scan.command=php occ files:scan --all
-      - ofelia.job-exec.nextcloud_cron.schedule=@every 5m
-      - ofelia.job-exec.nextcloud_cron.user=33
-      - ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php
+      - ofelia.job-exec.nextcloud_private_cron.schedule=@every 5m
+      - ofelia.job-exec.nextcloud_private_cron.user=33
+      - ofelia.job-exec.nextcloud_private_cron.command=php -f /var/www/html/cron.php
       - traefik.enable=true
       - traefik.http.routers.nextcloud-private.rule=Host(`private.${DOMAIN}`)
       - traefik.http.routers.nextcloud-private.tls.certresolver=certificato
