@@ -494,6 +494,8 @@ services:
     #tty: true
     networks:
       01-transit_80-net:
+    dns:
+      - ${METAL_PIHOLE_IP_ADDRESS}      
     # ports:
       # - 9000:9000/tcp
       # if you're using a reverse proxy, uncomment the next line:
