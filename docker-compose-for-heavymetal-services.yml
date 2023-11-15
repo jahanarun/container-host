@@ -54,6 +54,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web-secure.address=:443"
+      - "--entrypoints.web-secure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
       - "--entrypoints.ssh.address=:22"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
