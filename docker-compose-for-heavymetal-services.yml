@@ -674,9 +674,9 @@ services:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
       - ofelia.enabled=true
-      - ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m
-      - ofelia.job-exec.nextcloud_scan.user=33
-      - ofelia.job-exec.nextcloud_scan.command=php occ files:scan --all
+      - ofelia.job-exec.nextcloud_private_scan.schedule=@every 1h30m
+      - ofelia.job-exec.nextcloud_private_scan.user=33
+      - ofelia.job-exec.nextcloud_private_scan.command=php occ files:scan --all
       - ofelia.job-exec.nextcloud_cron.schedule=@every 5m
       - ofelia.job-exec.nextcloud_cron.user=33
       - ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php
