@@ -134,7 +134,11 @@ services:
       - ${DATA_STORAGE}/go2rtc:/config # folder for go2rtc.yaml file (edit from WebUI)
     labels:
       - traefik.enable=true
-      - traefik.http.routers.camera.rule=Host(`camera.${DOMAIN}`)
-      - traefik.http.routers.camera.tls.certresolver=certificato
-      - traefik.http.routers.camera.entrypoints=web,web-secure
-      - traefik.http.services.camera.loadbalancer.server.port=1984
+      - traefik.http.routers.go2rtc.rule=Host(`camera.${DOMAIN}`)
+      - traefik.http.routers.go2rtc.tls.certresolver=certificato
+      - traefik.http.routers.go2rtc.entrypoints=web,web-secure
+      - traefik.http.services.go2rtc.loadbalancer.server.port=1984
+      - traefik.tcp.routers.go2rtc-tcp.rule=HostSNI(`*`)
+      - traefik.tcp.routers.go2rtc-tcp.entrypoints=rtsp
+      - traefik.tcp.routers.go2rtc-tcp.service=go2rtc-tcp
+      - traefik.tcp.services.go2rtc-tcp.loadbalancer.server.port=8554  

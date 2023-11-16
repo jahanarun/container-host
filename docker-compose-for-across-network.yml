@@ -47,6 +47,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web-secure.address=:443"
       - "--entrypoints.ssh.address=:22"
+      - "--entrypoints.rtsp.address=:8554"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
