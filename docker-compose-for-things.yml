@@ -96,7 +96,7 @@ services:
   homeassistant:
     container_name: homeassistant
     hostname: homeassistant
-    image: "ghcr.io/home-assistant/home-assistant:2023.9.3"
+    image: "ghcr.io/home-assistant/home-assistant:${HOMEASSISTANT_VERSION}"
     volumes:
       - ${DATA_STORAGE}/homeassistant/config:/config
       - /etc/localtime:/etc/localtime:ro
