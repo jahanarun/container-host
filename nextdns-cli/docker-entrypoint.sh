@@ -6,7 +6,7 @@ set -e
 # to not have conflicts in regards to the container's name.
 export NEXTDNS_USE_HOSTS="${NEXTDNS_USE_HOSTS:-false}"
 
-CLI_ARGS="-setup-router=true"
+CLI_ARGS="-setup-router=true -report-client-info=true"
 
 while IFS="=" read -r var val; do
     if [[ "$var" = "NEXTDNS_PROFILE_"* ]]; then
