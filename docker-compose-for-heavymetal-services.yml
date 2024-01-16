@@ -670,6 +670,7 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
+      01-transit_80-net:
       traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
