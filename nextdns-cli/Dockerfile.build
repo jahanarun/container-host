@@ -29,6 +29,7 @@ RUN go build -ldflags="-s -w" -o /go/bin/nextdns
 FROM alpine AS binaries
 # FROM scratch AS binaries
 COPY --from=build /go/bin/nextdns /usr/bin/
+RUN apk --no-cache add bind-tools curl jq
 
 COPY docker-entrypoint.sh /
 
