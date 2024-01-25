@@ -209,6 +209,7 @@ services:
       - POSTGRES_DB=speedtest_tracker
       - POSTGRES_USER=${SPEEDTEST_TRACKER_POSTGRES_USER}
       - POSTGRES_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
+      - TZ=UTC
     volumes:
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/db:/var/lib/postgresql/data
     networks:
@@ -227,6 +228,7 @@ services:
       - DB_DATABASE=speedtest_tracker
       - DB_USERNAME=${SPEEDTEST_TRACKER_POSTGRES_USER}
       - DB_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
+      - TZ=UTC
       - APP_DEBUG=${SPEEDTRACKER_APP_DEBUG:-false}
       - APP_KEY=${SPEEDTRACKER_APP_KEY}
     volumes:
