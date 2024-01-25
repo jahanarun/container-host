@@ -232,7 +232,6 @@ services:
       - APP_DEBUG=${SPEEDTRACKER_APP_DEBUG:-false}
       - APP_KEY=${SPEEDTRACKER_APP_KEY}
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/config:/config
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/web:/etc/ssl/web
     depends_on:
