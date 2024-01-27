@@ -309,6 +309,9 @@ services:
       - WEBUI_PORT=${QBITTORRENT_PORT}
     volumes:
       - ${DATA_STORAGE}/qbittorrent:/config
+      - ${DATA_STORAGE}/qbittorrent/healthcheck.sh:/healthcheck.sh
+      - ${DATA_STORAGE}/qbittorrent/forwarded_port.dat:/forwarded_port.dat
+      - ${DATA_STORAGE}/qbittorrent/healthcheck.log:/healthcheck.log
       - ${TORRENTS}:/downloads #optional
     networks:
       01-transit_80-net:
@@ -316,6 +319,11 @@ services:
       traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 20s
+      timeout: 10s
+      start_period: 30s
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -323,6 +331,7 @@ services:
       - traefik.http.routers.qbittorrent.tls.certresolver=certificato
       - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
       - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
+      - autoheal=true
       - homepage.group=Metal
       - homepage.name=Qbittorrent
       - homepage.weight=4000
