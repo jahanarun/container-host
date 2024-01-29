@@ -66,8 +66,9 @@ services:
     expose:
       # Graylog web interface and REST API
       - "9000"
+    ports:
       # Syslog UDP
-      - "1514/udp"
+      - 1514:1514/udp # Publish to host so that it can server as opnsense's logging target
       # Syslog TCP Optional
       #- 1514:1514
     restart: "unless-stopped"
