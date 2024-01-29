@@ -52,6 +52,12 @@ services:
       - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
       - GRAYLOG_HTTP_BIND_ADDRESS=0.0.0.0:9000
       - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.graylog.rule=Host(`graylog.${DOMAIN}`)
+      - traefik.http.routers.graylog.tls.certresolver=certificato
+      - traefik.http.routers.graylog.entrypoints=web,web-secure
+      - traefik.http.services.graylog.loadbalancer.server.port=9000
     networks:
       - heavymetal_networks_metrics
     depends_on:
@@ -81,6 +87,12 @@ services:
     restart: "unless-stopped"
     networks:
       - heavymetal_networks_metrics
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.influxdb.rule=Host(`influxdb.${DOMAIN}`)
+      - traefik.http.routers.influxdb.tls.certresolver=certificato
+      - traefik.http.routers.influxdb.entrypoints=web,web-secure
+      - traefik.http.services.influxdb.loadbalancer.server.port=8086
 
   grafana:
     container_name: grafana
@@ -103,3 +115,9 @@ services:
     restart: "unless-stopped"
     networks:
       - heavymetal_networks_metrics
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
+      - traefik.http.routers.grafana.tls.certresolver=certificato
+      - traefik.http.routers.grafana.entrypoints=web,web-secure
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
