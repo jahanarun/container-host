@@ -20,6 +20,9 @@ networks:
     driver: bridge
     internal: true
 
+  metrics-stack_lan-net:
+    external: true
+
 services:
   dockerproxy:
     image: ghcr.io/tecnativa/docker-socket-proxy:latest
@@ -70,6 +73,7 @@ services:
       traefik_proxy:
       01-transit_80-net:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
+      metrics-stack_lan-net:
     dns:
       - 1.1.1.1
     environment:
