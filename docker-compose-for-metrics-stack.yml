@@ -1,7 +1,7 @@
 version: "3.9"
 
 networks:
-  heavymetal_networks_metrics:
+  networks_metrics:
     external: true
 
 services:
@@ -17,7 +17,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     networks:
-      - heavymetal_networks_metrics  
+      - networks_metrics  
 
   elasticsearch:
     container_name: elasticsearch
@@ -32,7 +32,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: "unless-stopped"
     networks:
-      - heavymetal_networks_metrics
+      - networks_metrics
 
   graylog:
     container_name: graylog
@@ -59,7 +59,7 @@ services:
       - traefik.http.routers.graylog.entrypoints=web,web-secure
       - traefik.http.services.graylog.loadbalancer.server.port=9000
     networks:
-      - heavymetal_networks_metrics
+      - networks_metrics
     depends_on:
       - mongodb
       - elasticsearch
@@ -86,7 +86,7 @@ services:
       - PGID=${PGID}
     restart: "unless-stopped"
     networks:
-      - heavymetal_networks_metrics
+      - networks_metrics
     labels:
       - traefik.enable=true
       - traefik.http.routers.influxdb.rule=Host(`influxdb.${DOMAIN}`)
@@ -114,7 +114,7 @@ services:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel
     restart: "unless-stopped"
     networks:
-      - heavymetal_networks_metrics
+      - networks_metrics
     labels:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)

@@ -1,11 +1,11 @@
 version: "3.9"
 
 networks:
-  heavymetal_networks_01_transit_80:
+  networks_01_transit_80:
     external: true
-  heavymetal_networks_traefik_proxy:
+  networks_traefik_proxy:
     external: true
-  heavymetal_networks_metrics:
+  networks_metrics:
     external: true
 
 services:
@@ -20,7 +20,7 @@ services:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
         ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
 
@@ -55,9 +55,9 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      heavymetal_networks_metrics:
-      heavymetal_networks_traefik_proxy:
-      heavymetal_networks_01_transit_80:
+      networks_metrics:
+      networks_traefik_proxy:
+      networks_01_transit_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
     dns:
       - 1.1.1.1
@@ -72,7 +72,7 @@ services:
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
-      - "traefik.docker.network=heavymetal-services_heavymetal_networks_01_transit_80"
+      - "traefik.docker.network=heavymetal-services_networks_01_transit_80"
       - homepage.group=HeavyMetal
       - homepage.name=Traefik
       - homepage.weight=1000
@@ -101,7 +101,7 @@ services:
     user: $PUID:$PGID
     restart: always
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     environment:
@@ -143,7 +143,7 @@ services:
       - ${TVSHOWS}:/media/Series #optional
       - ${TORRENTS}:/downloads #optional
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -177,7 +177,7 @@ services:
       - ${MOVIES}:/media/Movies
       - ${TORRENTS}:/downloads #optional
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -209,7 +209,7 @@ services:
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
       - TZ=${TZ}
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -233,7 +233,7 @@ services:
     volumes:
       - ${DATA_STORAGE}/prowlarr:/config
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -287,7 +287,7 @@ services:
       - ${PLEX_USER1_VOLUME_MOUNT}
       - ${PLEX_USER2_VOLUME_MOUNT}
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
         ipv4_address: ${PLEX_MOVIETVSHOW_IP_ADDRESS}
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -320,7 +320,7 @@ services:
     expose:
       - "9000"
     networks:
-      - heavymetal_networks_traefik_proxy
+      - networks_traefik_proxy
 
   redis:
     image: redis:6
@@ -332,7 +332,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
-      - heavymetal_networks_traefik_proxy
+      - networks_traefik_proxy
     healthcheck:
       test: redis-cli ping || exit 1
       interval: 10s
@@ -345,7 +345,7 @@ services:
     restart: unless-stopped
     user: ${UID}:${GID}
     networks:
-      - heavymetal_networks_traefik_proxy
+      - networks_traefik_proxy
     expose:
       - "3306"
     command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
@@ -394,8 +394,8 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
-      heavymetal_networks_01_transit_80:
-      heavymetal_networks_traefik_proxy:
+      networks_01_transit_80:
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -429,7 +429,7 @@ services:
       - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
       - traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds=31536000
       - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
-      - traefik.docker.network=heavymetal-services_heavymetal_networks_01_transit_80
+      - traefik.docker.network=heavymetal-services_networks_01_transit_80
       - homepage.group=HeavyMetal
       - homepage.weight=3000
       - homepage.name=Nextcloud
@@ -477,7 +477,7 @@ services:
       - ${DATA_STORAGE}/gogs/data:/data
       - ${DATA_STORAGE}/gogs/backup:/backup
     networks:
-      heavymetal_networks_traefik_proxy:
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -508,7 +508,7 @@ services:
     expose:
       - "3306"
     networks:
-      - heavymetal_networks_traefik_proxy
+      - networks_traefik_proxy
 
   proxmox-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
@@ -535,7 +535,7 @@ services:
     pid: host
     privileged: true
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
@@ -569,7 +569,7 @@ services:
       - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
       - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
     networks:
-      heavymetal_networks_01_transit_80:
+      networks_01_transit_80:
     devices:
       - '/dev/disk/by-id/ata-SPCC_Solid_State_Disk_AA000000000000000978'
       - '/dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82'
@@ -609,7 +609,7 @@ services:
     container_name: "nextcloud-private-db"
     restart: unless-stopped
     networks:
-      - heavymetal_networks_traefik_proxy
+      - networks_traefik_proxy
     expose:
       - "3306"
     command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
@@ -659,8 +659,8 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
-      heavymetal_networks_01_transit_80:
-      heavymetal_networks_traefik_proxy:
+      networks_01_transit_80:
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -694,7 +694,7 @@ services:
       - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
       - traefik.http.middlewares.nextcloud-private-hsts.headers.stsSeconds=31536000
       - traefik.http.routers.private.middlewares=nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
-      - traefik.docker.network=heavymetal-services_heavymetal_networks_01_transit_80
+      - traefik.docker.network=heavymetal-services_networks_01_transit_80
       - homepage.group=HeavyMetal
       - homepage.name=Nextcloud (private)
       - homepage.weight=4000
@@ -732,7 +732,7 @@ services:
     volumes:
       - ${APPDATA}/photoview-private/db:/var/lib/mysql
     networks:
-      heavymetal_networks_traefik_proxy:
+      networks_traefik_proxy:
 
   photoview-private:
     image: jhnrn/photoview:latest
@@ -758,7 +758,7 @@ services:
       traefik.http.routers.photoview-private.entrypoints: "web,web-secure"
       traefik.http.services.photoview-private.loadbalancer.server.port: 80
     networks:
-      heavymetal_networks_traefik_proxy:
+      networks_traefik_proxy:
 
   photoview-camera-db:
     image: mariadb:10.6
@@ -774,7 +774,7 @@ services:
     volumes:
       - ${APPDATA}/photoview-camera/db:/var/lib/mysql
     networks:
-      heavymetal_networks_traefik_proxy:
+      networks_traefik_proxy:
 
   photoview-camera:
     image: jhnrn/photoview:latest
@@ -809,7 +809,7 @@ services:
       traefik.http.routers.photoview-photos.entrypoints: "web,web-secure"
       traefik.http.services.photoview-photos.loadbalancer.server.port: 80
     networks:
-      heavymetal_networks_traefik_proxy:
+      networks_traefik_proxy:
 
   photoview-album-db:
     image: mariadb:10.6
@@ -825,7 +825,7 @@ services:
     volumes:
       - ${APPDATA}/photoview-album/db:/var/lib/mysql
     networks:
-      heavymetal_networks_traefik_proxy:
+      networks_traefik_proxy:
 
   photoview-album:
     image: jhnrn/photoview:latest
@@ -851,7 +851,7 @@ services:
       traefik.http.routers.photoview-album.entrypoints: "web,web-secure"
       traefik.http.services.photoview-album.loadbalancer.server.port: 80
     networks:
-      heavymetal_networks_traefik_proxy:
+      networks_traefik_proxy:
 
   netdata-heavymetal:
     image: netdata/netdata:edge
