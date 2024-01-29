@@ -22,6 +22,7 @@ networks:
 
   metrics:
     driver: bridge
+    internal: true
 
 services:
   do-nothing:
