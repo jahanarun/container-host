@@ -1,0 +1,116 @@
+version: "3.9"
+
+networks:
+  lan-net:
+    driver: macvlan
+    driver_opts:
+      parent: ${NETWORK_DEVICE}
+      name: metrics-stack-macvlan
+    ipam:
+      config:
+        - subnet: 10.100.0.0/24
+          gateway: 10.100.0.2
+          ip_range: ${IP_RANGE}
+  metrics-net:
+    driver: bridge
+
+services:
+  mongodb:
+    container_name: mongo
+    image: mongo:6.0.4
+    user: $PUID:$PGID
+    volumes:
+      - ${DATA_STORAGE}/metrics/mongodb:/data/db
+    restart: "unless-stopped"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    networks:
+      - metrics-net  
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
+    volumes:
+      - ${DATA_STORAGE}/metrics/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - TZ=${TZ}
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    restart: "unless-stopped"
+    networks:
+      - metrics-net
+
+  graylog:
+    container_name: graylog
+    image: graylog/graylog:5.2
+    user: "1100"
+    volumes:
+      - ${DATA_STORAGE}/metrics/graylog:/usr/share/graylog/data
+    environment:
+      - TZ=${TZ}
+      - ROOT_TIMEZONE=${TZ}
+      - GRAYLOG_TIMEZONE=${TZ}
+      # CHANGE ME (must be at least 16 characters)! This is not your password, this is meant for salting the password below.
+      - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET}
+      # Username is "admin"
+      # Password is "admin", change this to your own hashed password. 'echo -n "password" | sha256sum' 
+      - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
+      - GRAYLOG_HTTP_BIND_ADDRESS=0.0.0.0:9000
+      - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog
+    networks:
+      - metrics-net
+    depends_on:
+      - mongodb
+      - elasticsearch
+    ports:
+      # Graylog web interface and REST API
+      - 9000:9000
+      # Syslog UDP
+      - 1514:1514/udp
+      # Syslog TCP Optional
+      #- 1514:1514
+    restart: "unless-stopped"
+
+  influxdb:
+    container_name: influxdb
+    image: influxdb:2.6.1
+    ports:
+      - '8086:8086'
+    user: $PUID:$PGID
+    volumes:
+      - ${DATA_STORAGE}/metrics/influxdb2:/var/lib/influxdb2
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    restart: "unless-stopped"
+    networks:
+      - metrics-net
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:9.2.10
+    ports:
+      - '3000:3000'
+    user: $PUID:$PGID
+    volumes:
+      - ${DATA_STORAGE}/metrics/grafana:/var/lib/grafana
+    depends_on:
+      - influxdb
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      # Change these
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+      - GF_INSTALL_PLUGINS=grafana-worldmap-panel
+    restart: "unless-stopped"
+    networks:
+      - metrics-net
+      - lan-net
