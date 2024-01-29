@@ -75,8 +75,8 @@ services:
   influxdb:
     container_name: influxdb
     image: influxdb:2.6.1
-    expose:
-      - "8086"
+    ports:
+      - '8086:8086' # Publish to host so that opnsense's telegraf can send data
     user: $PUID:$PGID
     volumes:
       - ${DATA_STORAGE}/metrics/influxdb2:/var/lib/influxdb2
