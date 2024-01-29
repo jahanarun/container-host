@@ -1,17 +1,7 @@
 version: "3.9"
 
 networks:
-  lan-net:
-    driver: macvlan
-    driver_opts:
-      parent: ${NETWORK_DEVICE}
-      name: metrics-stack-macvlan
-    ipam:
-      config:
-        - subnet: 10.100.0.0/24
-          gateway: 10.100.0.2
-          ip_range: ${IP_RANGE}
-  metrics-net:
+  heavymetal_networks_metrics:
     driver: bridge
 
 services:
@@ -27,7 +17,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     networks:
-      - metrics-net  
+      - heavymetal_networks_metrics  
 
   elasticsearch:
     container_name: elasticsearch
@@ -42,7 +32,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: "unless-stopped"
     networks:
-      - metrics-net
+      - heavymetal_networks_metrics
 
   graylog:
     container_name: graylog
@@ -63,7 +53,7 @@ services:
       - GRAYLOG_HTTP_BIND_ADDRESS=0.0.0.0:9000
       - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog
     networks:
-      - metrics-net
+      - heavymetal_networks_metrics
     depends_on:
       - mongodb
       - elasticsearch
@@ -90,7 +80,7 @@ services:
       - PGID=${PGID}
     restart: "unless-stopped"
     networks:
-      - metrics-net
+      - heavymetal_networks_metrics
 
   grafana:
     container_name: grafana
@@ -112,5 +102,4 @@ services:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel
     restart: "unless-stopped"
     networks:
-      - metrics-net
-      - lan-net
+      - heavymetal_networks_metrics
