@@ -1,0 +1,109 @@
+version: "3.9"
+
+networks:
+  networks_traefik_proxy:
+    external: true
+
+  zimmich: # Named like this so that traefik does not tag this ip addr for routing
+    driver: bridge
+    internal: true
+
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: [ "start.sh", "immich" ]
+    volumes:
+      - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016:ro
+      - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017:ro
+      - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018:ro
+      - ${USER1_PHOTOS}/2019:/photos/${USER1}/2019:ro
+      - ${USER1_PHOTOS}/2020:/photos/${USER1}/2020:ro
+      - ${USER1_PHOTOS}/2021:/photos/${USER1}/2021:ro
+      - ${USER1_PHOTOS}/2022:/photos/${USER1}/2022:ro
+      - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023:ro
+      - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024:ro
+      - ${USER2_PHOTOS}:/photos/${USER2}:ro
+      - ${APPDATA}/immich/upload:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      DB_USERNAME: ${IMMICH_DB_USERNAME}
+      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
+      DB_HOSTNAME: immich_postgres
+      LOG_LEVEL: verbose
+    depends_on:
+      - redis
+      - database
+    restart: always
+    networks:
+      - zimmich
+      - networks_traefik_proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.immich.rule=Host(`photos.${DOMAIN}`)
+      - traefik.http.routers.immich.tls.certresolver=certificato
+      - traefik.http.routers.immich.entrypoints=web,web-secure
+      - traefik.http.services.immich.loadbalancer.server.port=3001
+
+  immich-microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128 # If using Intel QuickSync or VAAPI
+      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+    command: [ "start.sh", "microservices" ]
+    environment:
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      DB_USERNAME: ${IMMICH_DB_USERNAME}
+      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
+      DB_HOSTNAME: immich_postgres
+      LOG_LEVEL: verbose
+    volumes:
+      - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016:ro
+      - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017:ro
+      - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018:ro
+      - ${USER1_PHOTOS}/2019:/photos/${USER1}/2019:ro
+      - ${USER1_PHOTOS}/2020:/photos/${USER1}/2020:ro
+      - ${USER1_PHOTOS}/2021:/photos/${USER1}/2021:ro
+      - ${USER1_PHOTOS}/2022:/photos/${USER1}/2022:ro
+      - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023:ro
+      - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024:ro
+      - ${USER2_PHOTOS}:/photos/${USER2}:ro
+      - ${APPDATA}/immich/upload:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - redis
+      - database
+    restart: always
+    networks:
+      - zimmich
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    volumes:
+      - ${APPDATA}/immich/model-cache:/cache
+    restart: always
+    networks:
+      - zimmich
+
+  redis:
+    container_name: immich_redis
+    image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
+    restart: always
+    networks:
+      - zimmich
+
+  database:
+    container_name: immich_postgres
+    image: tensorchord/pgvecto-rs:pg14-v0.1.11@sha256:0335a1a22f8c5dd1b697f14f079934f5152eaaa216c09b61e293be285491f8ee
+    environment:
+      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
+      POSTGRES_USER: ${IMMICH_DB_USERNAME}
+      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
+    volumes:
+      - ${APPDATA}/immich/database:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - zimmich

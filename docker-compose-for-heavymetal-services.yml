@@ -1,5 +1,6 @@
 version: "3.9"
 
+name: heavymetal-services
 networks:
   networks_01_transit_80:
     external: true
@@ -804,7 +805,7 @@ services:
       - ${USER2_PHOTOS}:/photos/${USER2}:ro
     labels:
       traefik.enable: true
-      traefik.http.routers.photoview-photos.rule: "Host(`photos.${DOMAIN}`)"
+      traefik.http.routers.photoview-photos.rule: "Host(`photoview.${DOMAIN}`)"
       traefik.http.routers.photoview-photos.tls.certresolver: "certificato"
       traefik.http.routers.photoview-photos.entrypoints: "web,web-secure"
       traefik.http.services.photoview-photos.loadbalancer.server.port: 80
