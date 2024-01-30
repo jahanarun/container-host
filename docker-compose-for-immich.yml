@@ -45,6 +45,7 @@ services:
       - traefik.http.routers.immich.tls.certresolver=certificato
       - traefik.http.routers.immich.entrypoints=web,web-secure
       - traefik.http.services.immich.loadbalancer.server.port=3001
+      - "traefik.docker.network=networks_traefik_proxy"
 
   immich-microservices:
     container_name: immich_microservices
