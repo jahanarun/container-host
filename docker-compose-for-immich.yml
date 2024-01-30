@@ -4,9 +4,8 @@ networks:
   networks_traefik_proxy:
     external: true
 
-  zimmich: # Named like this so that traefik does not tag this ip addr for routing
+  immich: # Named like this so that traefik does not tag this ip addr for routing
     driver: bridge
-    internal: true
 
 services:
   immich-server:
@@ -37,7 +36,7 @@ services:
       - database
     restart: always
     networks:
-      - zimmich
+      - immich
       - networks_traefik_proxy
     labels:
       - traefik.enable=true
@@ -78,7 +77,7 @@ services:
       - database
     restart: always
     networks:
-      - zimmich
+      - immich
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -87,14 +86,14 @@ services:
       - ${APPDATA}/immich/model-cache:/cache
     restart: always
     networks:
-      - zimmich
+      - immich
 
   redis:
     container_name: immich_redis
     image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
     restart: always
     networks:
-      - zimmich
+      - immich
 
   database:
     container_name: immich_postgres
@@ -107,4 +106,4 @@ services:
       - ${APPDATA}/immich/database:/var/lib/postgresql/data
     restart: always
     networks:
-      - zimmich
+      - immich
