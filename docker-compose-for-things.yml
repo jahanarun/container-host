@@ -10,7 +10,7 @@ networks:
     ipam:
       config:
         - subnet: 10.100.${THINGS_VLAN_ID}.0/24
-          gateway: 10.100.${THINGS_VLAN_ID}.2
+          gateway: ${THINGS_GATEWAY}
           ip_range: 10.100.${THINGS_VLAN_ID}.64/26 # 64 - 127 (Internet blocked range)
 
 services:
@@ -55,7 +55,7 @@ services:
       DHCP_ACTIVE: true
       DHCP_START: 10.100.${THINGS_VLAN_ID}.${DHCP_START_OCTET}
       DHCP_END: 10.100.${THINGS_VLAN_ID}.${DHCP_END_OCTET}
-      DHCP_ROUTER: 10.100.${THINGS_VLAN_ID}.2
+      DHCP_ROUTER: ${THINGS_GATEWAY}
       PIHOLE_DOMAIN: ${DOMAIN}
       DHCP_LEASETIME: 24
       WEBTHEME: default-auto
