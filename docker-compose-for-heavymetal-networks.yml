@@ -10,7 +10,7 @@ networks:
     ipam:
       config:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
-          gateway: 10.100.${METAL_VLAN_ID}.2
+          gateway: ${METAL_GATEWAY}
           ip_range: 10.100.${METAL_VLAN_ID}.192/26 # 192-255
           # aux_addresses:
           #   reserved: 10.100.${METAL_VLAN_ID}.1
