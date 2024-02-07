@@ -2,7 +2,7 @@ version: "3.9"
 
 name: heavymetal-services
 networks:
-  networks_01_transit_80:
+  networks_vlan_80:
     external: true
   networks_traefik_proxy:
     external: true
@@ -21,7 +21,7 @@ services:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
         ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
 
@@ -58,7 +58,7 @@ services:
     networks:
       networks_metrics:
       networks_traefik_proxy:
-      networks_01_transit_80:
+      networks_vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
     dns:
       - 1.1.1.1
@@ -101,7 +101,7 @@ services:
     user: $PUID:$PGID
     restart: always
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     environment:
@@ -143,7 +143,7 @@ services:
       - ${TVSHOWS}:/media/Series #optional
       - ${TORRENTS}:/downloads #optional
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
       networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -180,7 +180,7 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       networks_traefik_proxy:
-      networks_01_transit_80:
+      networks_vlan_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -213,7 +213,7 @@ services:
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
       - TZ=${TZ}
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
       networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -239,7 +239,7 @@ services:
     volumes:
       - ${DATA_STORAGE}/prowlarr:/config
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
       networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -295,7 +295,7 @@ services:
       - ${PLEX_USER1_VOLUME_MOUNT}
       - ${PLEX_USER2_VOLUME_MOUNT}
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
         ipv4_address: ${PLEX_MOVIETVSHOW_IP_ADDRESS}
       networks_traefik_proxy:
     dns:
@@ -404,7 +404,7 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
       networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -545,7 +545,7 @@ services:
     pid: host
     privileged: true
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
       networks_traefik_proxy:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -581,7 +581,7 @@ services:
       - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
       - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
       networks_traefik_proxy:
     devices:
       - '/dev/disk/by-id/ata-SPCC_Solid_State_Disk_AA000000000000000978'
@@ -673,7 +673,7 @@ services:
       - PHP_MEMORY_LIMIT=8G
       - PHP_UPLOAD_LIMIT=20G
     networks:
-      networks_01_transit_80:
+      networks_vlan_80:
       networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
