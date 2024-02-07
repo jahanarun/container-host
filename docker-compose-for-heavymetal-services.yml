@@ -144,6 +144,7 @@ services:
       - ${TORRENTS}:/downloads #optional
     networks:
       networks_01_transit_80:
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -152,6 +153,7 @@ services:
       - traefik.http.routers.sonarr.tls.certresolver=certificato
       - traefik.http.routers.sonarr.entrypoints=web,web-secure
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.weight=6000
       - homepage.name=Sonarr
@@ -177,6 +179,7 @@ services:
       - ${MOVIES}:/media/Movies
       - ${TORRENTS}:/downloads #optional
     networks:
+      networks_traefik_proxy:
       networks_01_transit_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -187,6 +190,7 @@ services:
       - traefik.http.routers.radarr.entrypoints=web,web-secure
       - traefik.http.services.radarr.loadbalancer.server.port=7878
       - homepage.group=HeavyMetal
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.name=Radarr
       - homepage.weight=7000
       - homepage.description=for movies
@@ -210,6 +214,7 @@ services:
       - TZ=${TZ}
     networks:
       networks_01_transit_80:
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -218,6 +223,7 @@ services:
       - "traefik.http.routers.flaresolverr.tls.certresolver=certificato"
       - "traefik.http.routers.flaresolverr.entrypoints=web,web-secure"
       - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
+      - traefik.docker.network=networks_traefik_proxy
 
   prowlarr:
     image: linuxserver/prowlarr:develop
@@ -234,6 +240,7 @@ services:
       - ${DATA_STORAGE}/prowlarr:/config
     networks:
       networks_01_transit_80:
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -242,6 +249,7 @@ services:
       - traefik.http.routers.prowlarr.tls.certresolver=certificato
       - traefik.http.routers.prowlarr.entrypoints=web,web-secure
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.weight=5000
       - homepage.name=Prowlarr
@@ -289,6 +297,7 @@ services:
     networks:
       networks_01_transit_80:
         ipv4_address: ${PLEX_MOVIETVSHOW_IP_ADDRESS}
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -297,6 +306,7 @@ services:
       - traefik.http.routers.plex.tls.certresolver=certificato
       - traefik.http.routers.plex.entrypoints=web,web-secure
       - traefik.http.services.plex.loadbalancer.server.port=32400
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.weight=2000
       - homepage.name=Plex
@@ -536,6 +546,7 @@ services:
     privileged: true
     networks:
       networks_01_transit_80:
+      networks_traefik_proxy:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
@@ -548,6 +559,7 @@ services:
       - traefik.http.routers.glances.tls.certresolver=certificato
       - traefik.http.routers.glances.entrypoints=web,web-secure
       - traefik.http.services.glances.loadbalancer.server.port=61208
+      - traefik.docker.network=networks_traefik_proxy
 
   scrutiny:
     container_name: scrutiny
@@ -570,6 +582,7 @@ services:
       - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
     networks:
       networks_01_transit_80:
+      networks_traefik_proxy:
     devices:
       - '/dev/disk/by-id/ata-SPCC_Solid_State_Disk_AA000000000000000978'
       - '/dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82'
@@ -594,6 +607,7 @@ services:
       - traefik.http.routers.scrutiny.tls.certresolver=certificato
       - traefik.http.routers.scrutiny.entrypoints=web,web-secure
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Hardware
       - homepage.weight=3000
       - homepage.name=Disk health
