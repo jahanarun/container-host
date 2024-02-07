@@ -3,6 +3,8 @@ version: "3.9"
 networks:
   networks_metrics:
     external: true
+  networks_internet:
+    external: true
 
 services:
   mongodb:
@@ -116,6 +118,7 @@ services:
     restart: "unless-stopped"
     networks:
       - networks_metrics
+      - networks_internet
     labels:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)

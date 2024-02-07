@@ -24,6 +24,9 @@ networks:
     driver: bridge
     internal: true
 
+  internet:
+    driver: bridge
+
 services:
   do-nothing:
     image: jhnrn/do-nothing:latest
