@@ -429,7 +429,7 @@ services:
       - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
       - traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds=31536000
       - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
-      - traefik.docker.network=heavymetal-services_networks_01_transit_80
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.weight=3000
       - homepage.name=Nextcloud
@@ -694,7 +694,7 @@ services:
       - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
       - traefik.http.middlewares.nextcloud-private-hsts.headers.stsSeconds=31536000
       - traefik.http.routers.private.middlewares=nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
-      - traefik.docker.network=heavymetal-services_networks_01_transit_80
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.name=Nextcloud (private)
       - homepage.weight=4000
