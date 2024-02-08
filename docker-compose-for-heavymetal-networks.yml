@@ -43,6 +43,7 @@ services:
     image: jhnrn/do-nothing:latest
     restart: unless-stopped
     networks:
+      vlan_20:
       vlan_80:
       traefik_proxy:
       metrics:
