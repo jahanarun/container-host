@@ -16,6 +16,17 @@ networks:
           #   reserved: 10.100.${METAL_VLAN_ID}.1
           #   dns: 10.100.${METAL_VLAN_ID}.3
 
+  vlan_20:
+    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
+    driver_opts:
+      parent: ${NETWORK_DEVICE}.${THINGS_VLAN_ID}
+      name: macvlan${THINGS_VLAN_ID}
+    ipam:
+      config:
+        - subnet: 10.100.${THINGS_VLAN_ID}.0/24
+          gateway: ${THINGS_GATEWAY}
+          ip_range: 10.100.${THINGS_VLAN_ID}.12/32
+
   traefik_proxy:
     driver: bridge
     internal: true
