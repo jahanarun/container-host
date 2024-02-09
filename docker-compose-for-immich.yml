@@ -40,6 +40,7 @@ services:
       - ${USER2_PHOTOS}:/photos/${USER2}:ro
       - ${APPDATA}/immich/family/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     environment:
       DB_PASSWORD: ${IMMICH_DB_PASSWORD}
       DB_USERNAME: ${IMMICH_DB_USERNAME}
@@ -93,6 +94,7 @@ services:
       - ${USER2_PHOTOS}:/photos/${USER2}:ro
       - ${APPDATA}/immich/family/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     depends_on:
       - immich-family-redis
       - immich-family-database
@@ -117,6 +119,8 @@ services:
       POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
     volumes:
       - ${APPDATA}/immich/family/database:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     restart: always
     networks:
       - immich-family-network
@@ -129,6 +133,7 @@ services:
       - ${PRIVATE_USER_GALLERY}:/photos:ro
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     environment:
       DB_PASSWORD: ${IMMICH_DB_PASSWORD}
       DB_USERNAME: ${IMMICH_DB_USERNAME}
@@ -172,6 +177,7 @@ services:
       - ${PRIVATE_USER_GALLERY}:/photos:ro
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     depends_on:
       - immich-private-redis
       - immich-private-database
@@ -196,6 +202,8 @@ services:
       POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
     volumes:
       - ${APPDATA}/immich/private/database:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     restart: always
     networks:
       - immich-private-network
