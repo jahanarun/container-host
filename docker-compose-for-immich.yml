@@ -14,6 +14,8 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    devices:
+      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
     volumes:
       - ${APPDATA}/immich/global/model-cache:/cache
     restart: always
