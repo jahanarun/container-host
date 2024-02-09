@@ -4,12 +4,21 @@ networks:
   networks_traefik_proxy:
     external: true
 
-  immich-family-network: # Named like this so that traefik does not tag this ip addr for routing
+  immich-family-network:
     driver: bridge
 
 services:
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    volumes:
+      - ${APPDATA}/immich/global/model-cache:/cache
+    restart: always
+    networks:
+      - immich-family-network
+
   immich-family-server:
-    container_name: immich_server
+    container_name: immich_family_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
     volumes:
@@ -29,7 +38,7 @@ services:
       DB_PASSWORD: ${IMMICH_DB_PASSWORD}
       DB_USERNAME: ${IMMICH_DB_USERNAME}
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
-      DB_HOSTNAME: immich_postgres
+      DB_HOSTNAME: immich_family_postgres
       LOG_LEVEL: verbose
     depends_on:
       - immich-family-redis
@@ -47,7 +56,7 @@ services:
       - "traefik.docker.network=networks_traefik_proxy"
 
   immich-family-microservices:
-    container_name: immich_microservices
+    container_name: immich_family_microservices
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128 # If using Intel QuickSync or VAAPI
@@ -61,7 +70,7 @@ services:
       DB_PASSWORD: ${IMMICH_DB_PASSWORD}
       DB_USERNAME: ${IMMICH_DB_USERNAME}
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
-      DB_HOSTNAME: immich_postgres
+      DB_HOSTNAME: immich_family_postgres
       LOG_LEVEL: verbose
     volumes:
       - ${ALBUM_PHOTOS}:/photos/album:ro
@@ -84,24 +93,15 @@ services:
     networks:
       - immich-family-network
 
-  immich-family-machine-learning:
-    container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
-    volumes:
-      - ${APPDATA}/immich/global/model-cache:/cache
-    restart: always
-    networks:
-      - immich-family-network
-
   immich-family-redis:
-    container_name: immich_redis
+    container_name: immich_family_redis
     image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
     restart: always
     networks:
       - immich-family-network
 
   immich-family-database:
-    container_name: immich_postgres
+    container_name: immich_family_postgres
     image: tensorchord/pgvecto-rs:pg14-v0.1.11@sha256:0335a1a22f8c5dd1b697f14f079934f5152eaaa216c09b61e293be285491f8ee
     environment:
       POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
