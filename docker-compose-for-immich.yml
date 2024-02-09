@@ -63,8 +63,8 @@ services:
     container_name: immich_family_microservices
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128 # If using Intel QuickSync or VAAPI
-      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
+      - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
@@ -76,6 +76,7 @@ services:
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
       DB_HOSTNAME: immich_family_postgres
       LOG_LEVEL: verbose
+      LIBVA_DRIVER_NAME: "radeonsi"
     volumes:
       - ${ALBUM_PHOTOS}:/photos/album:ro
       - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016:ro
@@ -151,8 +152,8 @@ services:
     container_name: immich_private_microservices
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128 # If using Intel QuickSync or VAAPI
-      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
+      - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
@@ -164,6 +165,7 @@ services:
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
       DB_HOSTNAME: immich_private_postgres
       LOG_LEVEL: verbose
+      LIBVA_DRIVER_NAME: "radeonsi"
     volumes:
       - ${PRIVATE_USER_GALLERY}:/photos:ro
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
