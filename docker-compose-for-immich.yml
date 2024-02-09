@@ -7,6 +7,9 @@ networks:
   immich-family-network:
     driver: bridge
 
+  immich-private-network:
+    driver: bridge
+
 services:
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -16,6 +19,7 @@ services:
     restart: always
     networks:
       - immich-family-network
+      - immich-private-network
 
   immich-family-server:
     container_name: immich_family_server
@@ -113,3 +117,81 @@ services:
     restart: always
     networks:
       - immich-family-network
+
+  immich-private-server:
+    container_name: immich_private_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: [ "start.sh", "immich" ]
+    volumes:
+      - ${PRIVATE_USER_GALLERY}:/photos:ro
+      - ${APPDATA}/immich/private/upload:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      DB_USERNAME: ${IMMICH_DB_USERNAME}
+      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
+      DB_HOSTNAME: immich_private_postgres
+      LOG_LEVEL: verbose
+    depends_on:
+      - immich-private-redis
+      - immich-private-database
+    restart: always
+    networks:
+      - immich-private-network
+      - networks_traefik_proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.immich-private.rule=Host(`private-viewer.${DOMAIN}`)
+      - traefik.http.routers.immich-private.tls.certresolver=certificato
+      - traefik.http.routers.immich-private.entrypoints=web,web-secure
+      - traefik.http.services.immich-private.loadbalancer.server.port=3001
+      - "traefik.docker.network=networks_traefik_proxy"
+
+  immich-private-microservices:
+    container_name: immich_private_microservices
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128 # If using Intel QuickSync or VAAPI
+      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+    group_add:
+      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+    user: ${UID}:${GID}
+    command: [ "start.sh", "microservices" ]
+    environment:
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      DB_USERNAME: ${IMMICH_DB_USERNAME}
+      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
+      DB_HOSTNAME: immich_private_postgres
+      LOG_LEVEL: verbose
+    volumes:
+      - ${PRIVATE_USER_GALLERY}:/photos:ro
+      - ${APPDATA}/immich/private/upload:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - immich-private-redis
+      - immich-private-database
+    restart: always
+    networks:
+      - immich-private-network
+
+  immich-private-redis:
+    container_name: immich_private_redis
+    hostname: immich_redis
+    image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
+    restart: always
+    networks:
+      - immich-private-network
+
+  immich-private-database:
+    container_name: immich_private_postgres
+    image: tensorchord/pgvecto-rs:pg14-v0.1.11@sha256:0335a1a22f8c5dd1b697f14f079934f5152eaaa216c09b61e293be285491f8ee
+    environment:
+      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
+      POSTGRES_USER: ${IMMICH_DB_USERNAME}
+      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
+    volumes:
+      - ${APPDATA}/immich/private/database:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - immich-private-network
