@@ -4,11 +4,11 @@ networks:
   networks_traefik_proxy:
     external: true
 
-  immich: # Named like this so that traefik does not tag this ip addr for routing
+  immich-family-network: # Named like this so that traefik does not tag this ip addr for routing
     driver: bridge
 
 services:
-  immich-server:
+  immich-family-server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
@@ -23,7 +23,7 @@ services:
       - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023:ro
       - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024:ro
       - ${USER2_PHOTOS}:/photos/${USER2}:ro
-      - ${APPDATA}/immich/upload:/usr/src/app/upload
+      - ${APPDATA}/immich/family/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     environment:
       DB_PASSWORD: ${IMMICH_DB_PASSWORD}
@@ -32,11 +32,11 @@ services:
       DB_HOSTNAME: immich_postgres
       LOG_LEVEL: verbose
     depends_on:
-      - redis
-      - database
+      - immich-family-redis
+      - immich-family-database
     restart: always
     networks:
-      - immich
+      - immich-family-network
       - networks_traefik_proxy
     labels:
       - traefik.enable=true
@@ -46,7 +46,7 @@ services:
       - traefik.http.services.immich.loadbalancer.server.port=3001
       - "traefik.docker.network=networks_traefik_proxy"
 
-  immich-microservices:
+  immich-family-microservices:
     container_name: immich_microservices
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     devices:
@@ -64,6 +64,7 @@ services:
       DB_HOSTNAME: immich_postgres
       LOG_LEVEL: verbose
     volumes:
+      - ${ALBUM_PHOTOS}:/photos/album:ro
       - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016:ro
       - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017:ro
       - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018:ro
@@ -74,32 +75,32 @@ services:
       - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023:ro
       - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024:ro
       - ${USER2_PHOTOS}:/photos/${USER2}:ro
-      - ${APPDATA}/immich/upload:/usr/src/app/upload
+      - ${APPDATA}/immich/family/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - redis
-      - database
+      - immich-family-redis
+      - immich-family-database
     restart: always
     networks:
-      - immich
+      - immich-family-network
 
-  immich-machine-learning:
+  immich-family-machine-learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
     volumes:
-      - ${APPDATA}/immich/model-cache:/cache
+      - ${APPDATA}/immich/global/model-cache:/cache
     restart: always
     networks:
-      - immich
+      - immich-family-network
 
-  redis:
+  immich-family-redis:
     container_name: immich_redis
     image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
     restart: always
     networks:
-      - immich
+      - immich-family-network
 
-  database:
+  immich-family-database:
     container_name: immich_postgres
     image: tensorchord/pgvecto-rs:pg14-v0.1.11@sha256:0335a1a22f8c5dd1b697f14f079934f5152eaaa216c09b61e293be285491f8ee
     environment:
@@ -107,7 +108,7 @@ services:
       POSTGRES_USER: ${IMMICH_DB_USERNAME}
       POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
     volumes:
-      - ${APPDATA}/immich/database:/var/lib/postgresql/data
+      - ${APPDATA}/immich/family/database:/var/lib/postgresql/data
     restart: always
     networks:
-      - immich
+      - immich-family-network
