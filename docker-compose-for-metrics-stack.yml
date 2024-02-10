@@ -5,6 +5,8 @@ networks:
     external: true
   networks_internet:
     external: true
+  networks_vlan_80:
+    external: true
 
 services:
   mongodb:
@@ -61,7 +63,9 @@ services:
       - traefik.http.routers.graylog.entrypoints=web,web-secure
       - traefik.http.services.graylog.loadbalancer.server.port=9000
     networks:
-      - networks_metrics
+      networks_metrics:
+      networks_vlan_80:
+        ipv4_address: ${GRAYLOG_IP_ADDRESS}
     depends_on:
       - mongodb
       - elasticsearch
