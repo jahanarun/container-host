@@ -128,6 +128,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: ${TZ}
+      CAMERA_RTSP_PASSWORD: ${CAMERA_RTSP_PASSWORD}
+      CAMERA_RTSP_USER: ${CAMERA_RTSP_USER}
     networks:
       things-net:
     devices:
