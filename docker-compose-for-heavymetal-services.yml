@@ -785,12 +785,19 @@ services:
     container_name: frigate
     # privileged: true # this may not be necessary for all setups
     restart: unless-stopped
-    image: ghcr.io/blakeblackshear/frigate:stable
+    # image: ghcr.io/blakeblackshear/frigate:stable
+    image: ghcr.io/harakas/frigate:latest-rocm
+    privileged: true
     shm_size: "200mb" # update for your cameras based on calculation above
+    user: ${UID}:${GID}
+    group_add:
+      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     devices:
       # - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
       # - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
-      - /dev/dri/renderD128 # for intel hwaccel, needs to be updated for your hardware
+      - /dev/dri
+      - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${APPDATA}/frigate:/config
@@ -810,7 +817,9 @@ services:
     environment:
       FRIGATE_RTSP_PASSWORD: ${CAMERA_RTSP_PASSWORD}
       FRIGATE_RTSP_USER: ${CAMERA_RTSP_USER}
-      LIBVA_DRIVER_NAME: "radeonsi"
+      NVIDIA_VISIBLE_DEVICES: void
+      LIBVA_DRIVER_NAME: radeonsi
+      HSA_OVERRIDE_GFX_VERSION: 11.0.0
     labels:
       - traefik.enable=true
       - traefik.http.routers.frigate.rule=Host(`recorder.${DOMAIN}`)

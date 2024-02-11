@@ -130,9 +130,10 @@ services:
       TZ: ${TZ}
     networks:
       things-net:
+    devices:
+      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
     volumes:
       - ${DATA_STORAGE}/go2rtc:/config # folder for go2rtc.yaml file (edit from WebUI)
-      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
     labels:
       - traefik.enable=true
       - traefik.http.routers.go2rtc.rule=Host(`camera.${DOMAIN}`)
