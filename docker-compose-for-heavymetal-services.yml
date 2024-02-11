@@ -809,6 +809,8 @@ services:
     networks:
       networks_traefik_proxy:
       networks_vlan_20:
+    dns:
+      - 1.1.1.1
     # ports:
     #   - "5000:5000"
     #   - "8554:8554" # RTSP feeds
