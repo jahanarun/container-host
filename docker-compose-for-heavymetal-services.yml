@@ -810,7 +810,7 @@ services:
       networks_traefik_proxy:
       networks_vlan_20:
     dns:
-      - 1.1.1.1
+      - ${THINGS_PIHOLE_IP_ADDRESS}
     # ports:
     #   - "5000:5000"
     #   - "8554:8554" # RTSP feeds
