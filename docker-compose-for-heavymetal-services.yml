@@ -788,7 +788,7 @@ services:
     # image: ghcr.io/blakeblackshear/frigate:stable
     image: ghcr.io/harakas/frigate:latest-rocm
     # privileged: true
-    shm_size: "200mb" # update for your cameras based on calculation above
+    shm_size: "256mb" # update for your cameras based on calculation above
     # user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
@@ -800,6 +800,7 @@ services:
       - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
       - ${APPDATA}/frigate:/config
       - ${CAMERA_STORAGE}/frigate:/media/frigate
       - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
@@ -821,7 +822,8 @@ services:
       FRIGATE_RTSP_USER: ${CAMERA_RTSP_USER}
       NVIDIA_VISIBLE_DEVICES: void
       LIBVA_DRIVER_NAME: radeonsi
-      # HSA_OVERRIDE_GFX_VERSION: 11.0.0
+      HSA_OVERRIDE_GFX_VERSION: ${HSA_OVERRIDE_GFX_VERSION}
+      DOWNLOAD_YOLOV8: ${DOWNLOAD_YOLOV8}
     labels:
       - traefik.enable=true
       - traefik.http.routers.frigate.rule=Host(`recorder.${DOMAIN}`)
