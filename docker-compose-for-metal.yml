@@ -389,7 +389,7 @@ services:
     network_mode: none
 
   glances:
-    image: nicolargo/glances:dev
+    image: nicolargo/glances:latest-full
     container_name: glances
     restart: unless-stopped
     pid: host
