@@ -6,10 +6,8 @@ networks:
     external: true
   nextcloud:
     driver: bridge
-    internal: true
   nextcloud-private:
     driver: bridge
-    internal: true
 
 services:
   imaginary:
@@ -102,8 +100,6 @@ services:
     networks:
       networks_traefik_proxy:
       nextcloud:
-    dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
       - ofelia.enabled=true
       - ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m
@@ -216,8 +212,6 @@ services:
     networks:
       networks_traefik_proxy:
       nextcloud-private:
-    dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
       - ofelia.enabled=true
       - ofelia.job-exec.nextcloud_private_scan.schedule=@every 1h30m
