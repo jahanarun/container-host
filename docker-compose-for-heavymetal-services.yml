@@ -320,150 +320,150 @@ services:
       - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}      
       - autoheal=true
 
-  imaginary:
-    image: nextcloud/aio-imaginary:latest
-    command: -concurrency 6 -enable-url-source
-    container_name: "imaginary"
-    user: ${UID}:${GID}
-    restart: unless-stopped
-    environment:
-       PORT: 9000
-       MALLOC_ARENA_MAX: 2
-    expose:
-      - "9000"
-    networks:
-      - networks_traefik_proxy
+  # imaginary:
+  #   image: nextcloud/aio-imaginary:latest
+  #   command: -concurrency 6 -enable-url-source
+  #   container_name: "imaginary"
+  #   user: ${UID}:${GID}
+  #   restart: unless-stopped
+  #   environment:
+  #      PORT: 9000
+  #      MALLOC_ARENA_MAX: 2
+  #   expose:
+  #     - "9000"
+  #   networks:
+  #     - networks_traefik_proxy
 
-  redis:
-    image: redis:6
-    container_name: "redis"
-    restart: unless-stopped
-    user: ${UID}:${GID}
-    volumes:
-      - ${DATA_STORAGE}/redis:/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    networks:
-      - networks_traefik_proxy
-    healthcheck:
-      test: redis-cli ping || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 10
+  # redis:
+  #   image: redis:6
+  #   container_name: "redis"
+  #   restart: unless-stopped
+  #   user: ${UID}:${GID}
+  #   volumes:
+  #     - ${DATA_STORAGE}/redis:/data
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #   networks:
+  #     - networks_traefik_proxy
+  #   healthcheck:
+  #     test: redis-cli ping || exit 1
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
 
-  nextcloud-db:
-    image: mariadb
-    container_name: "nextcloud-db"
-    restart: unless-stopped
-    user: ${UID}:${GID}
-    networks:
-      - networks_traefik_proxy
-    expose:
-      - "3306"
-    command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
-    volumes:
-      - ${NEXTCLOUD_DATA}/db:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
-      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud-user
+  # nextcloud-db:
+  #   image: mariadb
+  #   container_name: "nextcloud-db"
+  #   restart: unless-stopped
+  #   user: ${UID}:${GID}
+  #   networks:
+  #     - networks_traefik_proxy
+  #   expose:
+  #     - "3306"
+  #   command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+  #   volumes:
+  #     - ${NEXTCLOUD_DATA}/db:/var/lib/mysql
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
+  #     - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+  #     - MYSQL_DATABASE=nextcloud
+  #     - MYSQL_USER=nextcloud-user
 
-  nextcloud:
-    image: jhnrn/nextcloud-linux
-    container_name: nextcloud
-    hostname: nextcloud
-    restart: unless-stopped
-    links:
-      - nextcloud-db
-    volumes:
-      - ${NEXTCLOUD_DATA}/html:/var/www/html
-      - ${NEXTCLOUD_DATA}/data:/var/www/html/data
-      - ${NEXTCLOUD_DATA}/tmp/app:/tmp
-      - ${NEXTCLOUD_DATA}/php/conf.d:/usr/local/etc/php/conf.d
-    user: ${UID}:${GID}
-    group_add:
-      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
-      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
-    devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
-    environment:
-      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud-user
-      - MYSQL_HOST=nextcloud-db
-      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
-      - REDIS_HOST=redis
-      - NEXTCLOUD_HOSTNAME=${NEXTCLOUD_HOSTNAME}
-      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
-      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
-      - OVERWRITEPROTOCOL=https
-      - OVERWRITECLIURL=https://nextcloud.${DOMAIN}
-      - OVERWRITEHOST=nextcloud.${DOMAIN}
-      - PUID=33
-      - PGID=33
-      - PHP_MEMORY_LIMIT=8G
-      - PHP_UPLOAD_LIMIT=20G
-    networks:
-      networks_vlan_80:
-      networks_traefik_proxy:
-    dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
-    labels:
-      - ofelia.enabled=true
-      - ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m
-      - ofelia.job-exec.nextcloud_scan.user=33
-      - ofelia.job-exec.nextcloud_scan.command=php occ files:scan --all
-      - ofelia.job-exec.nextcloud_cron.schedule=@every 5m
-      - ofelia.job-exec.nextcloud_cron.user=33
-      - ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php
-      - traefik.enable=true
-      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
-      - traefik.http.routers.nextcloud.tls.certresolver=certificato
-      - traefik.http.routers.nextcloud.entrypoints=web,web-secure
-      - traefik.http.services.nextcloud.loadbalancer.server.port=80
-      # traefik.http.middlewares.nextcloud-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
-      # traefik.http.middlewares.nextcloud-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
-      # traefik.http.middlewares.nextcloud-limit.buffering.maxResponseBodyBytes: 16777216 # 16 GBytes
-      # traefik.http.middlewares.nextcloud-limit.buffering.memResponseBodyBytes: 16777216 # 16 GBytes
-      - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.regex=https?://([^/]*)/.well-known/(card|cal)dav
-      - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.replacement=https://$${1}/remote.php/dav
-      - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.regex=https?://([^/]*)/.well-known/webfinger
-      - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.replacement=https://$${1}/index.php/.well-known/webfinger/
-      - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.regex=https?://([^/]*)/.well-known/nodeinfo
-      - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.replacement=https://$${1}/index.php/.well-known/nodeinfo/
-      - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.regex=https?://([^/]*)(/.well-known[^#]*)
-      - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
-      - traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds=31536000
-      - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
-      - traefik.docker.network=networks_traefik_proxy
-      - homepage.group=HeavyMetal
-      - homepage.weight=3000
-      - homepage.name=Nextcloud
-      - homepage.description=for Home
-      - homepage.icon=nextcloud.png
-      - homepage.href=https://nextcloud.${DOMAIN}/
-      - homepage.widget.type=nextcloud
-      - homepage.widget.url=https://nextcloud.${DOMAIN}
-      # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
-      # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
-      - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
-      # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
-    depends_on:
-      nextcloud-db:
-        condition: service_started
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 10
+  # nextcloud:
+  #   image: jhnrn/nextcloud-linux
+  #   container_name: nextcloud
+  #   hostname: nextcloud
+  #   restart: unless-stopped
+  #   links:
+  #     - nextcloud-db
+  #   volumes:
+  #     - ${NEXTCLOUD_DATA}/html:/var/www/html
+  #     - ${NEXTCLOUD_DATA}/data:/var/www/html/data
+  #     - ${NEXTCLOUD_DATA}/tmp/app:/tmp
+  #     - ${NEXTCLOUD_DATA}/php/conf.d:/usr/local/etc/php/conf.d
+  #   user: ${UID}:${GID}
+  #   group_add:
+  #     - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+  #     - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+  #   devices:
+  #     - /dev/dri/renderD128:/dev/dri/renderD128
+  #     - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+  #   environment:
+  #     - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+  #     - MYSQL_DATABASE=nextcloud
+  #     - MYSQL_USER=nextcloud-user
+  #     - MYSQL_HOST=nextcloud-db
+  #     - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
+  #     - REDIS_HOST=redis
+  #     - NEXTCLOUD_HOSTNAME=${NEXTCLOUD_HOSTNAME}
+  #     - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+  #     - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+  #     - OVERWRITEPROTOCOL=https
+  #     - OVERWRITECLIURL=https://nextcloud.${DOMAIN}
+  #     - OVERWRITEHOST=nextcloud.${DOMAIN}
+  #     - PUID=33
+  #     - PGID=33
+  #     - PHP_MEMORY_LIMIT=8G
+  #     - PHP_UPLOAD_LIMIT=20G
+  #   networks:
+  #     networks_vlan_80:
+  #     networks_traefik_proxy:
+  #   dns:
+  #     - ${METAL_PIHOLE_IP_ADDRESS}
+  #   labels:
+  #     - ofelia.enabled=true
+  #     - ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m
+  #     - ofelia.job-exec.nextcloud_scan.user=33
+  #     - ofelia.job-exec.nextcloud_scan.command=php occ files:scan --all
+  #     - ofelia.job-exec.nextcloud_cron.schedule=@every 5m
+  #     - ofelia.job-exec.nextcloud_cron.user=33
+  #     - ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php
+  #     - traefik.enable=true
+  #     - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
+  #     - traefik.http.routers.nextcloud.tls.certresolver=certificato
+  #     - traefik.http.routers.nextcloud.entrypoints=web,web-secure
+  #     - traefik.http.services.nextcloud.loadbalancer.server.port=80
+  #     # traefik.http.middlewares.nextcloud-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
+  #     # traefik.http.middlewares.nextcloud-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
+  #     # traefik.http.middlewares.nextcloud-limit.buffering.maxResponseBodyBytes: 16777216 # 16 GBytes
+  #     # traefik.http.middlewares.nextcloud-limit.buffering.memResponseBodyBytes: 16777216 # 16 GBytes
+  #     - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.regex=https?://([^/]*)/.well-known/(card|cal)dav
+  #     - traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.replacement=https://$${1}/remote.php/dav
+  #     - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.regex=https?://([^/]*)/.well-known/webfinger
+  #     - traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.replacement=https://$${1}/index.php/.well-known/webfinger/
+  #     - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.regex=https?://([^/]*)/.well-known/nodeinfo
+  #     - traefik.http.middlewares.nextcloud-redirectregex3.redirectregex.replacement=https://$${1}/index.php/.well-known/nodeinfo/
+  #     - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.regex=https?://([^/]*)(/.well-known[^#]*)
+  #     - traefik.http.middlewares.nextcloud-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
+  #     - traefik.http.middlewares.nextcloud-hsts.headers.stsSeconds=31536000
+  #     - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
+  #     - traefik.docker.network=networks_traefik_proxy
+  #     - homepage.group=HeavyMetal
+  #     - homepage.weight=3000
+  #     - homepage.name=Nextcloud
+  #     - homepage.description=for Home
+  #     - homepage.icon=nextcloud.png
+  #     - homepage.href=https://nextcloud.${DOMAIN}/
+  #     - homepage.widget.type=nextcloud
+  #     - homepage.widget.url=https://nextcloud.${DOMAIN}
+  #     # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
+  #     # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
+  #     - homepage.widget.key=${NEXTCLOUD_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
+  #     # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
+  #   depends_on:
+  #     nextcloud-db:
+  #       condition: service_started
+  #     redis:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
 
   ## Ofelia Job Runner (recommended for running background jobs)
   ## see https://github.com/mcuadros/ofelia
@@ -620,119 +620,119 @@ services:
       - homepage.widget.url=https://drive.${DOMAIN}
       # - homepage.widget.fields=["passed", "failed", "unknown"]
 
-  nextcloud-private-db:
-    image: mariadb
-    container_name: "nextcloud-private-db"
-    restart: unless-stopped
-    networks:
-      - networks_traefik_proxy
-    expose:
-      - "3306"
-    command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
-    volumes:
-      - ${NEXTCLOUD_PRIVATE_DATA}/db:/var/lib/mysql
-    user: ${UID}:${GID}
-    environment:
-      - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
-      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud-private-user
+  # nextcloud-private-db:
+  #   image: mariadb
+  #   container_name: "nextcloud-private-db"
+  #   restart: unless-stopped
+  #   networks:
+  #     - networks_traefik_proxy
+  #   expose:
+  #     - "3306"
+  #   command: --verbose --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+  #   volumes:
+  #     - ${NEXTCLOUD_PRIVATE_DATA}/db:/var/lib/mysql
+  #   user: ${UID}:${GID}
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_ROOT_PASSWORD}
+  #     - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+  #     - MYSQL_DATABASE=nextcloud
+  #     - MYSQL_USER=nextcloud-private-user
 
-  nextcloud-private:
-    image: jhnrn/nextcloud-linux
-    container_name: nextcloud-private
-    hostname: nextcloud-private
-    restart: unless-stopped
-    links:
-      - nextcloud-private-db
-    volumes:
-      - ${NEXTCLOUD_PRIVATE_DATA}/html:/var/www/html
-      - ${NEXTCLOUD_PRIVATE_DATA}/data:/var/www/html/data
-      - ${NEXTCLOUD_PRIVATE_DATA}/tmp/app:/tmp
-      - ${NEXTCLOUD_PRIVATE_DATA}/php/conf.d:/usr/local/etc/php/conf.d
-    user: ${UID}:${GID}
-    group_add:
-      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
-      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
-    devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
-    environment:
-      - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud-private-user
-      - MYSQL_HOST=nextcloud-private-db
-      - NEXTCLOUD_TRUSTED_DOMAINS=private.${DOMAIN}
-      - REDIS_HOST=redis
-      - NEXTCLOUD_HOSTNAME=nextcloud-private
-      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
-      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
-      - OVERWRITEPROTOCOL=https
-      - OVERWRITECLIURL=https://private.${DOMAIN}
-      - OVERWRITEHOST=private.${DOMAIN}
-      - PUID=33
-      - PGID=33
-      - PHP_MEMORY_LIMIT=8G
-      - PHP_UPLOAD_LIMIT=20G
-    networks:
-      networks_vlan_80:
-      networks_traefik_proxy:
-    dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
-    labels:
-      - ofelia.enabled=true
-      - ofelia.job-exec.nextcloud_private_scan.schedule=@every 1h30m
-      - ofelia.job-exec.nextcloud_private_scan.user=33
-      - ofelia.job-exec.nextcloud_private_scan.command=php occ files:scan --all
-      - ofelia.job-exec.nextcloud_private_cron.schedule=@every 5m
-      - ofelia.job-exec.nextcloud_private_cron.user=33
-      - ofelia.job-exec.nextcloud_private_cron.command=php -f /var/www/html/cron.php
-      - traefik.enable=true
-      - traefik.http.routers.nextcloud-private.rule=Host(`private.${DOMAIN}`)
-      - traefik.http.routers.nextcloud-private.tls.certresolver=certificato
-      - traefik.http.routers.nextcloud-private.entrypoints=web,web-secure
-      - traefik.http.services.nextcloud-private.loadbalancer.server.port=80
-      # traefik.http.middlewares.nextcloud-private-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
-      # traefik.http.middlewares.nextcloud-private-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
-      # traefik.http.middlewares.nextcloud-private-limit.buffering.maxResponseBodyBytes: 16777216 # 16 GBytes
-      # traefik.http.middlewares.nextcloud-private-limit.buffering.memResponseBodyBytes: 16777216 # 16 GBytes
-      - traefik.http.middlewares.nextcloud-private-redirectregex1.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-private-redirectregex1.redirectregex.regex=https?://([^/]*)/.well-known/(card|cal)dav
-      - traefik.http.middlewares.nextcloud-private-redirectregex1.redirectregex.replacement=https://$${1}/remote.php/dav
-      - traefik.http.middlewares.nextcloud-private-redirectregex2.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-private-redirectregex2.redirectregex.regex=https?://([^/]*)/.well-known/webfinger
-      - traefik.http.middlewares.nextcloud-private-redirectregex2.redirectregex.replacement=https://$${1}/index.php/.well-known/webfinger/
-      - traefik.http.middlewares.nextcloud-private-redirectregex3.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-private-redirectregex3.redirectregex.regex=https?://([^/]*)/.well-known/nodeinfo
-      - traefik.http.middlewares.nextcloud-private-redirectregex3.redirectregex.replacement=https://$${1}/index.php/.well-known/nodeinfo/
-      - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.permanent=true
-      - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.regex=https?://([^/]*)(/.well-known[^#]*)
-      - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
-      - traefik.http.middlewares.nextcloud-private-hsts.headers.stsSeconds=31536000
-      - traefik.http.routers.private.middlewares=nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
-      - traefik.docker.network=networks_traefik_proxy
-      - homepage.group=HeavyMetal
-      - homepage.name=Nextcloud (private)
-      - homepage.weight=4000
-      - homepage.description=for private
-      - homepage.icon=nextcloud.png
-      - homepage.href=https://private.${DOMAIN}
-      - homepage.widget.type=nextcloud
-      - homepage.widget.url=https://private.${DOMAIN}
-      # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
-      # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
-      - homepage.widget.key=${NEXTCLOUD_PRIVATE_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
-      # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
-    depends_on:
-      nextcloud-private-db:
-        condition: service_started
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 10
+  # nextcloud-private:
+  #   image: jhnrn/nextcloud-linux
+  #   container_name: nextcloud-private
+  #   hostname: nextcloud-private
+  #   restart: unless-stopped
+  #   links:
+  #     - nextcloud-private-db
+  #   volumes:
+  #     - ${NEXTCLOUD_PRIVATE_DATA}/html:/var/www/html
+  #     - ${NEXTCLOUD_PRIVATE_DATA}/data:/var/www/html/data
+  #     - ${NEXTCLOUD_PRIVATE_DATA}/tmp/app:/tmp
+  #     - ${NEXTCLOUD_PRIVATE_DATA}/php/conf.d:/usr/local/etc/php/conf.d
+  #   user: ${UID}:${GID}
+  #   group_add:
+  #     - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+  #     - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+  #   devices:
+  #     - /dev/dri/renderD128:/dev/dri/renderD128
+  #     - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+  #   environment:
+  #     - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
+  #     - MYSQL_DATABASE=nextcloud
+  #     - MYSQL_USER=nextcloud-private-user
+  #     - MYSQL_HOST=nextcloud-private-db
+  #     - NEXTCLOUD_TRUSTED_DOMAINS=private.${DOMAIN}
+  #     - REDIS_HOST=redis
+  #     - NEXTCLOUD_HOSTNAME=nextcloud-private
+  #     - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+  #     - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+  #     - OVERWRITEPROTOCOL=https
+  #     - OVERWRITECLIURL=https://private.${DOMAIN}
+  #     - OVERWRITEHOST=private.${DOMAIN}
+  #     - PUID=33
+  #     - PGID=33
+  #     - PHP_MEMORY_LIMIT=8G
+  #     - PHP_UPLOAD_LIMIT=20G
+  #   networks:
+  #     networks_vlan_80:
+  #     networks_traefik_proxy:
+  #   dns:
+  #     - ${METAL_PIHOLE_IP_ADDRESS}
+  #   labels:
+  #     - ofelia.enabled=true
+  #     - ofelia.job-exec.nextcloud_private_scan.schedule=@every 1h30m
+  #     - ofelia.job-exec.nextcloud_private_scan.user=33
+  #     - ofelia.job-exec.nextcloud_private_scan.command=php occ files:scan --all
+  #     - ofelia.job-exec.nextcloud_private_cron.schedule=@every 5m
+  #     - ofelia.job-exec.nextcloud_private_cron.user=33
+  #     - ofelia.job-exec.nextcloud_private_cron.command=php -f /var/www/html/cron.php
+  #     - traefik.enable=true
+  #     - traefik.http.routers.nextcloud-private.rule=Host(`private.${DOMAIN}`)
+  #     - traefik.http.routers.nextcloud-private.tls.certresolver=certificato
+  #     - traefik.http.routers.nextcloud-private.entrypoints=web,web-secure
+  #     - traefik.http.services.nextcloud-private.loadbalancer.server.port=80
+  #     # traefik.http.middlewares.nextcloud-private-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
+  #     # traefik.http.middlewares.nextcloud-private-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
+  #     # traefik.http.middlewares.nextcloud-private-limit.buffering.maxResponseBodyBytes: 16777216 # 16 GBytes
+  #     # traefik.http.middlewares.nextcloud-private-limit.buffering.memResponseBodyBytes: 16777216 # 16 GBytes
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex1.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex1.redirectregex.regex=https?://([^/]*)/.well-known/(card|cal)dav
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex1.redirectregex.replacement=https://$${1}/remote.php/dav
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex2.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex2.redirectregex.regex=https?://([^/]*)/.well-known/webfinger
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex2.redirectregex.replacement=https://$${1}/index.php/.well-known/webfinger/
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex3.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex3.redirectregex.regex=https?://([^/]*)/.well-known/nodeinfo
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex3.redirectregex.replacement=https://$${1}/index.php/.well-known/nodeinfo/
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.permanent=true
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.regex=https?://([^/]*)(/.well-known[^#]*)
+  #     - traefik.http.middlewares.nextcloud-private-redirectregex4.redirectregex.replacement=https://$${1}/index.php$${2}
+  #     - traefik.http.middlewares.nextcloud-private-hsts.headers.stsSeconds=31536000
+  #     - traefik.http.routers.private.middlewares=nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
+  #     - traefik.docker.network=networks_traefik_proxy
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Nextcloud (private)
+  #     - homepage.weight=4000
+  #     - homepage.description=for private
+  #     - homepage.icon=nextcloud.png
+  #     - homepage.href=https://private.${DOMAIN}
+  #     - homepage.widget.type=nextcloud
+  #     - homepage.widget.url=https://private.${DOMAIN}
+  #     # - homepage.widget.username=${NEXTCLOUD_APP_USERNAME}
+  #     # - homepage.widget.password=${NEXTCLOUD_APP_PASSWORD}
+  #     - homepage.widget.key=${NEXTCLOUD_PRIVATE_TOKEN}   #  You can generate the token with "php occ config:app:set serverinfo token --value yourtoken
+  #     # - homepage.widget.fields=["cpuload", "memoryusage", "freespace", "activeusers"]
+  #   depends_on:
+  #     nextcloud-private-db:
+  #       condition: service_started
+  #     redis:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
 
   netdata-heavymetal:
     image: netdata/netdata:edge
