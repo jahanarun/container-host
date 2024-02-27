@@ -31,10 +31,6 @@ networks:
     driver: bridge
     internal: true
 
-  metrics:
-    driver: bridge
-    internal: true
-
   internet:
     driver: bridge
 
@@ -46,5 +42,4 @@ services:
       vlan_20:
       vlan_80:
       traefik_proxy:
-      metrics:
       internet:

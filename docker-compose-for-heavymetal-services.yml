@@ -8,8 +8,6 @@ networks:
     external: true
   networks_traefik_proxy:
     external: true
-  networks_metrics:
-    external: true
 
 services:
   dockerproxy:
@@ -58,7 +56,6 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      networks_metrics:
       networks_traefik_proxy:
       networks_vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
@@ -537,8 +534,10 @@ services:
     devices:
       # - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
       # - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
-      - /dev/dri
-      - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+      - /dev/dri # direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
+      - /dev/kfd # the main compute interface shared by all GPUs. 
+    security_opt:
+      - seccomp:unconfined
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro

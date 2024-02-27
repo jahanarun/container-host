@@ -1,11 +1,14 @@
 version: "3.9"
 
 networks:
-  networks_metrics:
-    external: true
+  metrics:
+    driver: bridge
+    internal: true
   networks_internet:
     external: true
   networks_vlan_80:
+    external: true
+  networks_traefik_proxy:
     external: true
 
 services:
@@ -23,7 +26,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     networks:
-      - networks_metrics  
+      - metrics  
 
   elasticsearch:
     container_name: elasticsearch
@@ -40,7 +43,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: "unless-stopped"
     networks:
-      - networks_metrics
+      - metrics
 
   graylog:
     container_name: graylog
@@ -68,19 +71,25 @@ services:
       - traefik.http.routers.graylog.tls.certresolver=certificato
       - traefik.http.routers.graylog.entrypoints=web,web-secure
       - traefik.http.services.graylog.loadbalancer.server.port=9000
+      - traefik.docker.network=networks_traefik_proxy
     networks:
-      networks_metrics:
+      metrics:
+      networks_internet:
       networks_vlan_80:
         ipv4_address: ${GRAYLOG_IP_ADDRESS}
+      networks_traefik_proxy:
     depends_on:
       - mongodb
       - elasticsearch
     expose:
       # Graylog web interface and REST API
       - "9000"
+      - 1514/udp # Publish to host so that it can server as opnsense's logging target
+      - 1515/udp # Publish to host so that it can server as opnsense's logging target
+      - 1516/udp # Publish to host so that it can server as opnsense's logging target
     ports:
       # Syslog UDP
-      - 1514:1514/udp # Publish to host so that it can server as opnsense's logging target
+      # - 1514:1514/udp # Publish to host so that it can server as opnsense's logging target
       # Syslog TCP Optional
       #- 1514:1514
     restart: "unless-stopped"
@@ -101,13 +110,15 @@ services:
       - PGID=${PGID}
     restart: "unless-stopped"
     networks:
-      - networks_metrics
+      - metrics
+      - networks_traefik_proxy
     labels:
       - traefik.enable=true
       - traefik.http.routers.influxdb.rule=Host(`influxdb.${DOMAIN}`)
       - traefik.http.routers.influxdb.tls.certresolver=certificato
       - traefik.http.routers.influxdb.entrypoints=web,web-secure
       - traefik.http.services.influxdb.loadbalancer.server.port=8086
+      - traefik.docker.network=networks_traefik_proxy
 
   grafana:
     container_name: grafana
@@ -131,11 +142,13 @@ services:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel
     restart: "unless-stopped"
     networks:
-      - networks_metrics
+      - metrics
       - networks_internet
+      - networks_traefik_proxy
     labels:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
       - traefik.http.routers.grafana.tls.certresolver=certificato
       - traefik.http.routers.grafana.entrypoints=web,web-secure
       - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - traefik.docker.network=networks_traefik_proxy
