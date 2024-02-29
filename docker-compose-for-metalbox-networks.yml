@@ -99,6 +99,8 @@ services:
       traefik_proxy:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}
+      vlan_20:
+        ipv4_address: ${TRAEFIK_IP_ADDRESS_FOR_THINGS}
     dns:
       - 1.1.1.1
     environment:
