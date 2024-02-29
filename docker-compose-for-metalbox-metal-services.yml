@@ -1,25 +1,12 @@
 version: "3.9"
 
 networks:
-  traefik_proxy:
+  networks_traefik_proxy:
+    external: true
+  networks_vlan_80:
+    external: true
+  speedtest_tracker:
     internal: true
-
-  01-transit_80-net:
-    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
-    # driver: ipvlan
-    driver_opts:
-      # ipvlan_mode: l2
-      parent: ${NETWORK_DEVICE}.${METAL_VLAN_ID}
-      name: macvlan${METAL_VLAN_ID}
-    ipam:
-      config:
-        - subnet: 10.100.${METAL_VLAN_ID}.0/24
-          gateway: ${METAL_GATEWAY}
-          ip_range: 10.100.${METAL_VLAN_ID}.128/26 # 128-191
-          # aux_addresses:
-          #   reserved: 10.100.${METAL_VLAN_ID}.1
-          #   dns: 10.100.${METAL_VLAN_ID}.3
-
 services:
   dns-upstream:
     image: jhnrn/cloudflared:latest
@@ -33,7 +20,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: ${TUNNEL_DNS_UPSTREAM}
     networks:
-      01-transit_80-net:
+      networks_vlan_80:
     healthcheck:
       test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
       # test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
@@ -79,7 +66,7 @@ services:
     cap_add:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
-      01-transit_80-net:
+      networks_vlan_80:
         ipv4_address: ${METAL_PIHOLE_IP_ADDRESS}
     dns:
       - 127.0.0.1        
@@ -111,7 +98,7 @@ services:
     user: $PUID:$PGID
     restart: always
     networks:
-      01-transit_80-net:
+      networks_vlan_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     environment:
@@ -152,6 +139,7 @@ services:
       traefik.http.routers.plex.entrypoints: web,web-secure
       traefik.http.routers.plex.tls.certresolver: "certificato"
       traefik.http.services.plex.loadbalancer.server.port: 32400
+      traefik.docker.network: networks_traefik_proxy
       homepage.group: Metal
       homepage.weight: 2000
       homepage.name: Plex
@@ -163,7 +151,7 @@ services:
       homepage.widget.key: ${PLEX_MUSIC_TOKEN}
       autoheal: true
     networks:
-      01-transit_80-net:
+      networks_vlan_80:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -192,13 +180,14 @@ services:
     environment:
       - MODE=standalone
     networks:
-      - traefik_proxy
+      - networks_traefik_proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
       - "traefik.http.routers.librespeed.tls.certresolver=certificato"
       - traefik.http.routers.librespeed.entrypoints=web,web-secure
       - "traefik.http.services.librespeed.loadbalancer.server.port=80"
+      - traefik.docker.network=networks_traefik_proxy
 
   speedtest_tracker-db:
     image: postgres:15
@@ -213,7 +202,7 @@ services:
     volumes:
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/db:/var/lib/postgresql/data
     networks:
-      traefik_proxy:
+      speedtest_tracker:
 
   speedtest_tracker:
     image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
@@ -237,8 +226,9 @@ services:
     depends_on:
       - speedtest_tracker-db
     networks:
-      traefik_proxy:
-      01-transit_80-net:
+      speedtest_tracker:
+      networks_traefik_proxy:
+      networks_vlan_80:
         ipv4_address: ${METAL_SPEEDTRACKER_IP_ADDRESS}
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -249,6 +239,7 @@ services:
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
       - traefik.http.routers.speedtest-tracker.entrypoints=web,web-secure
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Network
       - homepage.weight=10000
       - homepage.name=Speedtest
@@ -272,7 +263,8 @@ services:
       - ${DATA_STORAGE}/homepage:/app/config # Make sure your local config directory exists
       # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
     networks:
-      01-transit_80-net:
+      networks_traefik_proxy:
+      networks_vlan_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     restart: unless-stopped
@@ -282,6 +274,7 @@ services:
       traefik.http.routers.homepage.tls.certresolver: "certificato"
       traefik.http.services.homepage.loadbalancer.server.port: 3000
       traefik.http.routers.homepage.entrypoints: web,web-secure
+      traefik.docker.network: networks_traefik_proxy
 
   dockerproxy:
     image: ghcr.io/tecnativa/docker-socket-proxy:latest
@@ -294,7 +287,7 @@ services:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
-      01-transit_80-net:
+      networks_vlan_80:
         ipv4_address: ${METAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
 
@@ -314,9 +307,9 @@ services:
       - ${DATA_STORAGE}/qbittorrent/healthcheck.log:/healthcheck.log
       - ${TORRENTS}:/downloads #optional
     networks:
-      01-transit_80-net:
+      networks_vlan_80:
         ipv4_address: ${QBITTORRENT_IP_ADDRESS}
-      traefik_proxy:
+      networks_traefik_proxy:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     healthcheck:
@@ -331,6 +324,7 @@ services:
       - traefik.http.routers.qbittorrent.tls.certresolver=certificato
       - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
       - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
+      - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
       - homepage.group=Metal
       - homepage.name=Qbittorrent
@@ -357,7 +351,8 @@ services:
       - ${DATA_STORAGE}/overseerr:/app/config
     restart: unless-stopped
     networks:
-      01-transit_80-net:
+      networks_traefik_proxy:
+      networks_vlan_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     labels:
@@ -366,6 +361,7 @@ services:
       - traefik.http.routers.overseerr.tls.certresolver=certificato
       - traefik.http.routers.overseerr.entrypoints=web,web-secure
       - traefik.http.services.overseerr.loadbalancer.server.port=5055
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Metal
       - homepage.weight=3000
       - homepage.name=Overseerr
@@ -395,7 +391,8 @@ services:
     pid: host
     privileged: true
     networks:
-      01-transit_80-net:
+      networks_vlan_80:
+      networks_traefik_proxy:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
@@ -408,6 +405,7 @@ services:
       - traefik.http.routers.glances.tls.certresolver=certificato
       - traefik.http.routers.glances.entrypoints=web,web-secure
       - traefik.http.services.glances.loadbalancer.server.port=61208
+      - traefik.docker.network=networks_traefik_proxy
 
   whoogle-search:
     image: ${WHOOGLE_IMAGE:-benbusby/whoogle-search}
@@ -453,7 +451,8 @@ services:
     # ports:
     #   - 5000:5000
     networks:
-      01-transit_80-net:
+      networks_traefik_proxy:
+      networks_vlan_80:
         ipv4_address: ${METAL_WHOOGLE_IP_ADDRESS}
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
@@ -463,6 +462,7 @@ services:
       - traefik.http.routers.whoogle.tls.certresolver=certificato
       - traefik.http.routers.whoogle.entrypoints=web,web-secure
       - traefik.http.services.whoogle.loadbalancer.server.port=5000
+      - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
 
   dozzle:
@@ -473,7 +473,8 @@ services:
       DOZZLE_REMOTE_HOST: tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375,tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375
     networks:
       # Need the transit network to talk to other docker host(s)
-      01-transit_80-net:
+      networks_vlan_80:
+      networks_traefik_proxy:
     labels:
       - homepage.group=Monitoring
       - homepage.description=Docker log monitoring
@@ -485,6 +486,7 @@ services:
       - traefik.http.routers.dozzle.tls.certresolver=certificato
       - traefik.http.routers.dozzle.entrypoints=web,web-secure
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
+      - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
     healthcheck:
       test: [ "CMD", "/dozzle", "healthcheck" ]
@@ -502,7 +504,8 @@ services:
     # if container doesn't run detached on your machine, uncomment the next line:
     #tty: true
     networks:
-      01-transit_80-net:
+      networks_traefik_proxy:
+      networks_vlan_80:
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}      
     # ports:
@@ -528,6 +531,7 @@ services:
       - traefik.http.routers.ytdl-api.tls.certresolver=certificato
       - traefik.http.routers.ytdl-api.entrypoints=web,web-secure
       - traefik.http.services.ytdl-api.loadbalancer.server.port=9000
+      - traefik.docker.network=networks_traefik_proxy
 
   cobalt-web:
     image: ghcr.io/wukko/cobalt:latest
@@ -537,7 +541,7 @@ services:
     # if container doesn't run detached on your machine, uncomment the next line:
     #tty: true
     networks:
-      traefik_proxy:
+      networks_traefik_proxy:
     # ports:
         # - 9001:9001/tcp
         # if you're using a reverse proxy, uncomment the next line:
@@ -548,13 +552,13 @@ services:
         - webURL=https://ytdl.${DOMAIN}/
         # replace apiURL with preferred api instance url
         - apiURL=https://ytdl-api.${DOMAIN}/
-
     labels:
       - traefik.enable=true
       - traefik.http.routers.ytdl.rule=Host(`ytdl.${DOMAIN}`)
       - traefik.http.routers.ytdl.tls.certresolver=certificato
       - traefik.http.routers.ytdl.entrypoints=web,web-secure
       - traefik.http.services.ytdl.loadbalancer.server.port=9001
+      - traefik.docker.network=networks_traefik_proxy
 
   # flood:
   #   image: jesec/flood:latest
@@ -569,7 +573,7 @@ services:
   #     - ${TORRENTS}:/downloads:ro
   #     - /etc/localtime:/etc/localtime:ro
   #   networks:
-  #     traefik_proxy:
+  #     networks_traefik_proxy:
   #   command:
   #     - --auth=none
   #     - --qburl=http://qbittorrent:${QBITTORRENT_PORT}
@@ -591,5 +595,6 @@ services:
   #     ## HTTP Services
   #     - traefik.http.routers.flood-rtr.service=flood-svc
   #     - traefik.http.services.flood-svc.loadbalancer.server.port=3000
+  #     - traefik.docker.network=networks_traefik_proxy
   #     ## Diun
   #     - diun.enable=true

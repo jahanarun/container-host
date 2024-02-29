@@ -1,0 +1,54 @@
+version: "3.9"
+
+networks:
+  vlan_80:
+    driver: macvlan # Otherwise PiHole and other containers cannot resolve DNS internally due to NAT issue within Docker
+    # driver: ipvlan
+    driver_opts:
+      # ipvlan_mode: l2
+      parent: ${NETWORK_DEVICE}.${METAL_VLAN_ID}
+      name: macvlan${METAL_VLAN_ID}
+    ipam:
+      config:
+        - subnet: 10.100.${METAL_VLAN_ID}.0/24
+          gateway: ${METAL_GATEWAY}
+          ip_range: 10.100.${METAL_VLAN_ID}.128/26 # 128-191
+          # aux_addresses:
+          #   reserved: 10.100.${METAL_VLAN_ID}.1
+          #   dns: 10.100.${METAL_VLAN_ID}.3
+
+  vlan_30:
+    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
+    driver_opts:
+      parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
+      name: macvlan${QUANTUM_VLAN_ID}
+    ipam:
+      config:
+        - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
+          gateway: ${QUANTUM_GATEWAY}
+          ip_range: 10.100.${QUANTUM_VLAN_ID}.50/29 # 48 - 55
+
+  vlan_20:
+    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
+    driver_opts:
+      parent: ${NETWORK_DEVICE}.${THINGS_VLAN_ID}
+      name: macvlan${THINGS_VLAN_ID}
+    ipam:
+      config:
+        - subnet: 10.100.${THINGS_VLAN_ID}.0/24
+          gateway: ${THINGS_GATEWAY}
+          ip_range: 10.100.${THINGS_VLAN_ID}.64/26 # 64 - 127 (Internet blocked range)
+
+  traefik_proxy:
+    driver: bridge
+    internal: true
+
+services:
+  do-nothing:
+    image: jhnrn/do-nothing:latest
+    restart: unless-stopped
+    networks:
+      vlan_80:
+      vlan_30:
+      vlan_20:
+      traefik_proxy:

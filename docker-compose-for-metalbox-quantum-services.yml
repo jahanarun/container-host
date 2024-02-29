@@ -2,16 +2,8 @@ version: "3.5"
 
 networks:
 
-  quantum-net:
-    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
-    driver_opts:
-      parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
-      name: macvlan${QUANTUM_VLAN_ID}
-    ipam:
-      config:
-        - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
-          gateway: ${QUANTUM_GATEWAY}
-          ip_range: 10.100.${QUANTUM_VLAN_ID}.50/30 # 48 - 51
+  networks_vlan_30:
+    external: true
 
 services:
 
@@ -27,7 +19,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: ${QUANTUM_DNS_UPSTREAM}
     networks:
-      quantum-net:
+      networks_vlan_30:
     healthcheck:
       test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
       # test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
@@ -49,7 +41,7 @@ services:
       NEXTDNS_CACHE_SIZE: "10m"
       NEXTDNS_REPORT_CLIENT_INFO: "true"
     networks:
-      quantum-net:
+      networks_vlan_30:
     # Warning: This WILL use your DNS query quota. Since its TTL is 300s,
     # each check will be 1 query against your quota every 5 minutes. Enable carefully.
     healthcheck:
@@ -101,7 +93,7 @@ services:
     cap_add:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
-      quantum-net:
+      networks_vlan_30:
         ipv4_address: ${QUANTUM_PIHOLE_IP_ADDRESS}
     dns:
       - 127.0.0.1
@@ -136,7 +128,7 @@ services:
     volumes:
       - ${DATA_STORAGE}/tailscale:/var/lib
     networks:
-      quantum-net:
+      networks_vlan_30:
     dns:
       ${QUANTUM_PIHOLE_IP_ADDRESS}
     depends_on:

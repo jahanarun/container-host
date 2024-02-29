@@ -2,16 +2,19 @@ version: "3.9"
 
 networks:
 
-  things-services_things-net:
+  networks_vlan_20:
     external: true
 
-  quantum-services_quantum-net:
+  networks_vlan_30:
     external: true
 
-  metal-services_01-transit_80-net:
+  networks_vlan_80:
     external: true
 
-  metal-services_traefik_proxy:
+  networks_internet:
+    external: true
+
+  traefik_proxy:
     external: true
 
 services:
@@ -24,9 +27,9 @@ services:
       - REFLECTOR_ENABLE_REFLECTOR=yes
     restart: unless-stopped
     networks:
-      things-services_things-net:
+      networks_vlan_20:
         ipv4_address: ${AVAHI_THINGS_IP_ADDRESS}
-      quantum-services_quantum-net:
+      networks_vlan_30:
         ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
 
   traefik:
@@ -59,11 +62,8 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      metal-services_01-transit_80-net:
-        ipv4_address: ${TRAEFIK_IP_ADDRESS}
-      metal-services_traefik_proxy:
-      things-services_things-net:
-        ipv4_address: ${TRAEFIK_IP_ADDRESS_FOR_THINGS}
+      traefik_proxy:
+      networks_internet:
     dns:
       - 1.1.1.1
     environment:
