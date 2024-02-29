@@ -128,6 +128,7 @@ services:
       CAMERA_RTSP_USER: ${CAMERA_RTSP_USER}
     networks:
       networks_vlan_20:
+      networks_traefik_proxy:
     devices:
       - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
     volumes:
@@ -142,3 +143,4 @@ services:
       - traefik.tcp.routers.go2rtc-tcp.entrypoints=rtsp
       - traefik.tcp.routers.go2rtc-tcp.service=go2rtc-tcp
       - traefik.tcp.services.go2rtc-tcp.loadbalancer.server.port=8554  
+      - traefik.docker.network=networks_traefik_proxy
