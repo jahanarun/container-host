@@ -97,12 +97,13 @@ services:
       - "--ping=true"
     networks:
       traefik_proxy:
-      vlan_80:
-        ipv4_address: ${TRAEFIK_IP_ADDRESS}
       vlan_20:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_FOR_THINGS}
+      vlan_80:
+        ipv4_address: ${TRAEFIK_IP_ADDRESS}
     dns:
       - 1.1.1.1
+      - ${METAL_PIHOLE_IP_ADDRESS}
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
