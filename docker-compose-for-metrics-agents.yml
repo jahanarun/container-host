@@ -1,0 +1,26 @@
+version: "3.9"
+
+networks:
+  lan-net:
+    driver: macvlan
+    driver_opts:
+      parent: ${NETWORK_DEVICE}
+      name: metrics-agent-macvlan
+    ipam:
+      config:
+        - subnet: 10.100.0.0/24
+          gateway: 10.100.0.2
+          ip_range: ${IP_RANGE}
+
+services:
+  telegraf:
+    image: docker.io/telegraf:latest
+    container_name: telegraf
+    environment:
+     - MQTT_USERNAME=sample
+     - MQTT_PASSWORD=sample
+     - INFLUX_TOKEN=${INFLUX_TOKEN}
+    volumes:
+      - ${DATA_STORAGE}/metrics/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    networks:
+      - lan-net
