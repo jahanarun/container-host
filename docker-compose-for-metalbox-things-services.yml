@@ -21,7 +21,7 @@ services:
       TUNNEL_DNS_PORT: ${TUNNEL_DNS_PORT}
       TUNNEL_DNS_UPSTREAM: ${THINGS_DNS_UPSTREAM}
     networks:
-      things-net:
+      networks_vlan_20:
         ipv4_address: ${THINGS_DNS_UPSTREAM_ADDRESS}
     healthcheck:
       test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} cloudflare.com AAAA || exit 1
@@ -62,7 +62,7 @@ services:
     cap_add:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
-      things-net:
+      networks_vlan_20:
         ipv4_address: ${THINGS_PIHOLE_IP_ADDRESS}
     dns:
       - 127.0.0.1        
@@ -101,7 +101,7 @@ services:
     restart: unless-stopped
     networks:
       networks_traefik_proxy:
-      things-net:
+      networks_vlan_20:
         ipv4_address: ${HOMEASSISTANT_IP_ADDRESS}
     dns:
       - ${THINGS_PIHOLE_IP_ADDRESS}
@@ -127,7 +127,7 @@ services:
       CAMERA_RTSP_PASSWORD: ${CAMERA_RTSP_PASSWORD}
       CAMERA_RTSP_USER: ${CAMERA_RTSP_USER}
     networks:
-      things-net:
+      networks_vlan_20:
     devices:
       - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
     volumes:
