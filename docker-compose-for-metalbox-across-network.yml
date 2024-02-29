@@ -11,10 +11,7 @@ networks:
   networks_vlan_80:
     external: true
 
-  networks_internet:
-    external: true
-
-  traefik_proxy:
+  networks_traefik_proxy:
     external: true
 
 services:
@@ -62,8 +59,9 @@ services:
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
     networks:
-      traefik_proxy:
-      networks_internet:
+      networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${TRAEFIK_IP_ADDRESS}
     dns:
       - 1.1.1.1
     environment:
