@@ -102,8 +102,8 @@ services:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}
     dns:
-      - 1.1.1.1
       - ${METAL_PIHOLE_IP_ADDRESS}
+      - 1.1.1.1
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
