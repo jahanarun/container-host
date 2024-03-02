@@ -7,6 +7,7 @@ networks:
     external: true
   speedtest_tracker:
     internal: true
+
 services:
   dns-upstream:
     image: jhnrn/cloudflared:latest
@@ -469,6 +470,7 @@ services:
     container_name: dozzle
     hostname: dozzle
     image: amir20/dozzle:latest
+    restart: unless-stopped
     environment:
       DOZZLE_REMOTE_HOST: tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375,tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375
     networks:
