@@ -62,12 +62,12 @@ services:
       # Username is "admin"
       # Password is "admin", change this to your own hashed password. 'echo -n "password" | sha256sum' 
       - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
+      - GRAYLOG_HTTP_EXTERNAL_URI=https://logs.${DOMAIN}/
       - GRAYLOG_HTTP_BIND_ADDRESS=0.0.0.0:9000
       - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog
     labels:
       - traefik.enable=true
-      - traefik.http.routers.graylog.rule=Host(`graylog.${DOMAIN}`)
+      - traefik.http.routers.graylog.rule=Host(`logs.${DOMAIN}`)
       - traefik.http.routers.graylog.tls.certresolver=certificato
       - traefik.http.routers.graylog.entrypoints=web,web-secure
       - traefik.http.services.graylog.loadbalancer.server.port=9000
