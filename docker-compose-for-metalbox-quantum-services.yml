@@ -20,7 +20,6 @@ services:
       TUNNEL_DNS_UPSTREAM: ${QUANTUM_DNS_UPSTREAM}
     networks:
       networks_vlan_30:
-        mac_address: 02:04:06:08:10:01
     healthcheck:
       test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
       # test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
@@ -31,7 +30,7 @@ services:
       - autoheal=true
 
   nextdns-upstream:
-    container_name: nextdns-upstream-${QUANTUM_VLAN_NAME}
+    container_name: nextdns-upstream
     image: "jhnrn/nextdns-cli:latest"
     restart: "always"
     # ports:
@@ -43,7 +42,6 @@ services:
       NEXTDNS_REPORT_CLIENT_INFO: "true"
     networks:
       networks_vlan_30:
-        mac_address: 02:04:06:08:10:02
     # Warning: This WILL use your DNS query quota. Since its TTL is 300s,
     # each check will be 1 query against your quota every 5 minutes. Enable carefully.
     healthcheck:
@@ -72,7 +70,7 @@ services:
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: nextdns-upstream-${QUANTUM_VLAN_NAME}#53 #dns-upstream#${TUNNEL_DNS_PORT};127.0.0.1#5053;8.8.8.8;8.8.4.4;upstream0;upstream1
+      PIHOLE_DNS_: nextdns-upstream#53 #dns-upstream#${TUNNEL_DNS_PORT};127.0.0.1#5053;8.8.8.8;8.8.4.4;upstream0;upstream1
       # Listen on all interfaces and permit all origins
       # This allows Pihole to work in this setup and when answering across VLANS,
       # but do not expose pi-hole to the internet!
@@ -97,7 +95,6 @@ services:
     networks:
       networks_vlan_30:
         ipv4_address: ${QUANTUM_PIHOLE_IP_ADDRESS}
-        mac_address: 02:04:06:08:10:03
     dns:
       - 127.0.0.1
     restart: unless-stopped
@@ -132,7 +129,6 @@ services:
       - ${DATA_STORAGE}/tailscale:/var/lib
     networks:
       networks_vlan_30:
-        mac_address: 02:04:06:08:10:04
     dns:
       ${QUANTUM_PIHOLE_IP_ADDRESS}
     depends_on:
