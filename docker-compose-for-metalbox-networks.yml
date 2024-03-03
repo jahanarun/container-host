@@ -65,6 +65,7 @@ services:
         ipv4_address: ${AVAHI_THINGS_IP_ADDRESS}
       vlan_30:
         ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
+        mac_address: 02:04:06:08:10:05
 
   traefik:
     image: traefik:latest
