@@ -577,8 +577,8 @@ services:
       - traefik.http.routers.frigate.entrypoints=web,web-secure
       - traefik.http.services.frigate.loadbalancer.server.port=5000
       - traefik.docker.network=networks_traefik_proxy
-    healthcheck:
-      test: curl -sSf 'http://localhost:5000/api/health' | grep '"success":true' || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 10
+    # healthcheck:
+    #   test: curl -sSf 'http://localhost:5000/api/health' | grep '"success":true' || exit 1
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 10
