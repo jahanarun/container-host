@@ -527,6 +527,12 @@ services:
     image: ghcr.io/harakas/frigate:latest-rocm
     # privileged: true
     shm_size: "256mb" # update for your cameras based on calculation above
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+        reservations:
+          memory: 2G
     # user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
@@ -571,3 +577,8 @@ services:
       - traefik.http.routers.frigate.entrypoints=web,web-secure
       - traefik.http.services.frigate.loadbalancer.server.port=5000
       - traefik.docker.network=networks_traefik_proxy
+    healthcheck:
+      test: curl -sSf 'http://localhost:5000/api/health' | grep '"success":true' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
