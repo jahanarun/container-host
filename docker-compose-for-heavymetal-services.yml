@@ -527,12 +527,12 @@ services:
     # image: ghcr.io/harakas/frigate:latest-rocm
     # privileged: true
     shm_size: "256mb" # update for your cameras based on calculation above
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 3G
-    #     reservations:
-    #       memory: 2G
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+        reservations:
+          memory: 4G
     # user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
