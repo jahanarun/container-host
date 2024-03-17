@@ -530,9 +530,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 5G
-        reservations:
           memory: 4G
+        reservations:
+          memory: 3G
     # user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
@@ -552,7 +552,7 @@ services:
       - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
         target: /tmp/cache
         tmpfs:
-          size: 1000000000
+          size: 536870912
     networks:
       networks_traefik_proxy:
       networks_vlan_20:
