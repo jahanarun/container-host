@@ -498,6 +498,7 @@ services:
       - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
       - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
       - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
+      - NETDATA_EXTRA_DEB_PACKAGES=lm_sensors,apcupsd
     deploy:
       mode: global
     labels:
