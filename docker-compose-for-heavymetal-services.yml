@@ -571,6 +571,7 @@ services:
       LIBVA_DRIVER_NAME: radeonsi
       HSA_OVERRIDE_GFX_VERSION: ${HSA_OVERRIDE_GFX_VERSION}
       DOWNLOAD_YOLOV8: ${DOWNLOAD_YOLOV8}
+      I_PROMISE_I_WONT_MAKE_AN_ISSUE_ON_GITHUB: somevalue
     labels:
       - traefik.enable=true
       - traefik.http.routers.frigate.rule=Host(`recorder.${DOMAIN}`)
