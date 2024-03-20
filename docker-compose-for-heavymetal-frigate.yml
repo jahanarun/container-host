@@ -1,0 +1,76 @@
+version: "3.9"
+
+name: frigate
+networks:
+  networks_vlan_20:
+    external: true
+  networks_traefik_proxy:
+    external: true
+
+services:
+    frigate:
+    container_name: frigate
+    # privileged: true # this may not be necessary for all setups
+    restart: unless-stopped
+    image: ghcr.io/blakeblackshear/frigate:${FRIGATE_IMAGE_TAG:-stable}
+    # image: ghcr.io/harakas/frigate:latest-rocm
+    # privileged: true
+    shm_size: "256mb" # update for your cameras based on calculation above
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 3G
+    # user: ${UID}:${GID}
+    group_add:
+      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+    devices:
+      # - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
+      # - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
+      - /dev/dri # direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
+      - /dev/kfd # the main compute interface shared by all GPUs. 
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ${APPDATA}/frigate:/config
+      - ${CAMERA_STORAGE}/frigate:/media/frigate
+      - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
+        target: /tmp/cache
+        tmpfs:
+          size: 536870912
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_20:
+    dns:
+      - ${THINGS_PIHOLE_IP_ADDRESS}
+    # ports:
+    #   - "5000:5000"
+    #   - "8554:8554" # RTSP feeds
+    #   - "8555:8555/tcp" # WebRTC over tcp
+    #   - "8555:8555/udp" # WebRTC over udp
+    environment:
+      FRIGATE_RTSP_PASSWORD: ${CAMERA_RTSP_PASSWORD}
+      FRIGATE_RTSP_USER: ${CAMERA_RTSP_USER}
+      TZ: ${TZ}
+      NVIDIA_VISIBLE_DEVICES: void
+      LIBVA_DRIVER_NAME: radeonsi
+      HSA_OVERRIDE_GFX_VERSION: ${HSA_OVERRIDE_GFX_VERSION}
+      DOWNLOAD_YOLOV8: ${DOWNLOAD_YOLOV8}
+      I_PROMISE_I_WONT_MAKE_AN_ISSUE_ON_GITHUB: somevalue
+      HSA_ENABLE_SDMA: 0
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frigate.rule=Host(`recorder.${DOMAIN}`)
+      - traefik.http.routers.frigate.tls.certresolver=certificato
+      - traefik.http.routers.frigate.entrypoints=web,web-secure
+      - traefik.http.services.frigate.loadbalancer.server.port=5000
+      - traefik.docker.network=networks_traefik_proxy
+    # healthcheck:
+    #   test: curl -sSf 'http://localhost:5000/api/health' | grep '"success":true' || exit 1
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 10
