@@ -8,7 +8,7 @@ networks:
     external: true
 
 services:
-    frigate:
+  frigate:
     container_name: frigate
     # privileged: true # this may not be necessary for all setups
     restart: unless-stopped
