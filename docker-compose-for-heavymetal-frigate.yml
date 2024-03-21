@@ -2,7 +2,7 @@ version: "3.9"
 
 name: frigate
 networks:
-  networks_vlan_20:
+  networks_vlan_80:
     external: true
   networks_traefik_proxy:
     external: true
@@ -44,9 +44,9 @@ services:
           size: 536870912
     networks:
       networks_traefik_proxy:
-      networks_vlan_20:
+      networks_vlan_80:
     dns:
-      - ${THINGS_PIHOLE_IP_ADDRESS}
+      - ${METAL_PIHOLE_IP_ADDRESS}
     # ports:
     #   - "5000:5000"
     #   - "8554:8554" # RTSP feeds
