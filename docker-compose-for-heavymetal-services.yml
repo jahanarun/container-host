@@ -68,7 +68,7 @@ services:
       - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
       - traefik.http.routers.sonarr.tls.certresolver=certificato
       - traefik.http.routers.sonarr.entrypoints=web,web-secure
-      - traefik.http.routers.sonarr.middlewares=quantum_metal-ipwhitelist
+      - traefik.http.routers.sonarr.middlewares=quantum_metal-ipallowlist
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
@@ -105,7 +105,7 @@ services:
       - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
       - traefik.http.routers.radarr.tls.certresolver=certificato
       - traefik.http.routers.radarr.entrypoints=web,web-secure
-      - traefik.http.routers.radarr.middlewares=quantum_metal-ipwhitelist
+      - traefik.http.routers.radarr.middlewares=quantum_metal-ipallowlist
       - traefik.http.services.radarr.loadbalancer.server.port=7878
       - homepage.group=HeavyMetal
       - traefik.docker.network=networks_traefik_proxy
@@ -140,7 +140,7 @@ services:
       - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
       - "traefik.http.routers.flaresolverr.tls.certresolver=certificato"
       - "traefik.http.routers.flaresolverr.entrypoints=web,web-secure"
-      - traefik.http.routers.flaresolverr.middlewares=quantum_metal-ipwhitelist
+      - traefik.http.routers.flaresolverr.middlewares=quantum_metal-ipallowlist
       - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
       - traefik.docker.network=networks_traefik_proxy
 
@@ -167,7 +167,7 @@ services:
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr.tls.certresolver=certificato
       - traefik.http.routers.prowlarr.entrypoints=web,web-secure
-      - traefik.http.routers.prowlarr.middlewares=quantum_metal-ipwhitelist
+      - traefik.http.routers.prowlarr.middlewares=quantum_metal-ipallowlist
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
@@ -381,7 +381,7 @@ services:
       - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
       - traefik.http.routers.scrutiny.tls.certresolver=certificato
       - traefik.http.routers.scrutiny.entrypoints=web,web-secure
-      - traefik.http.routers.scrutiny.middlewares=quantum-ipwhitelist
+      - traefik.http.routers.scrutiny.middlewares=quantum-ipallowlist
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Hardware
