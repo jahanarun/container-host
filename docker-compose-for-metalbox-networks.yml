@@ -7,7 +7,7 @@ networks:
     driver_opts:
       # ipvlan_mode: l2
       parent: ${NETWORK_DEVICE}.${METAL_VLAN_ID}
-      name: zzz_macvlan${METAL_VLAN_ID}
+      name: macvlan${METAL_VLAN_ID}
     ipam:
       config:
         - subnet: 10.100.${METAL_VLAN_ID}.0/24
