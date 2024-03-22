@@ -66,7 +66,7 @@ services:
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`reverse1.${DOMAIN}`)"
+      - "traefik.http.routers.api.rule=Host(`reverse-heavymetal.${DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=web-secure"
       - "traefik.http.routers.api.tls.certresolver=certificato"
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
@@ -77,9 +77,9 @@ services:
       - homepage.weight=1000
       - homepage.description=for HeavyMetal
       - homepage.icon=traefik.png
-      - homepage.href=https://reverse1.${DOMAIN}
+      - homepage.href=https://reverse-heavymetal.${DOMAIN}
       - homepage.widget.type=traefik
-      - homepage.widget.url=https://reverse1.${DOMAIN}
+      - homepage.widget.url=https://reverse-heavymetal.${DOMAIN}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro
