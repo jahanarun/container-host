@@ -115,6 +115,7 @@ services:
       - "traefik.http.middlewares.private-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${PRIVATE_IPS_COMMA_SEPARATED}"
       - "traefik.http.middlewares.quantum-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${QUANTUM_NETWORK}"
       - "traefik.http.middlewares.quantum_metal-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${QUANTUM_NETWORK}, ${METAL_NETWORK}"
+      - "traefik.http.middlewares.quantum_things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${QUANTUM_NETWORK}, ${THINGS_NETWORK}"
       - "traefik.http.middlewares.things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${THINGS_NETWORK}"
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
