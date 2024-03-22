@@ -55,6 +55,7 @@ services:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
+      traefik_proxy:
       vlan_80:
         ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
@@ -116,7 +117,6 @@ services:
       - homepage.widget.type=traefik
       - homepage.widget.url=https://reverse-heavymetal.${DOMAIN}
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro
       - ${DATA_STORAGE}/traefik/certs:/letsencrypt
       - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
