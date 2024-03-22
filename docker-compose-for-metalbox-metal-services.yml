@@ -271,10 +271,9 @@ services:
     restart: unless-stopped
     labels:
       traefik.enable: true
-      traefik.http.middlewares.homepage-ipwhitelist.ipwhitelist.sourcerange: 127.0.0.1/32, ${QUANTUM_NETWORK}
-      traefik.http.routers.homepage.middlewares: homepage-ipwhitelist
       traefik.http.routers.homepage.rule: "Host(`www.${DOMAIN}`)"
       traefik.http.routers.homepage.tls.certresolver: "certificato"
+      traefik.http.routers.homepage.middlewares: quantum-ipwhitelist
       traefik.http.services.homepage.loadbalancer.server.port: 3000
       traefik.http.routers.homepage.entrypoints: web,web-secure
       traefik.docker.network: networks_traefik_proxy

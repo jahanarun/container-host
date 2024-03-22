@@ -85,6 +85,7 @@ services:
       - "--entrypoints.web-secure.address=:443"
       - "--entrypoints.ssh.address=:22"
       - "--entrypoints.rtsp.address=:8554"
+      - "--middlewares.quantum-ipwhitelist.ipwhitelist.sourcerange: 127.0.0.1/32, ${QUANTUM_NETWORK}"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
