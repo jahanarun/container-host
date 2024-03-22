@@ -325,6 +325,7 @@ services:
       - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent.tls.certresolver=certificato
       - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
+      - traefik.http.routers.qbittorrent.middlewares=quantum-ipwhitelist
       - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
       - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
@@ -362,6 +363,7 @@ services:
       - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
       - traefik.http.routers.overseerr.tls.certresolver=certificato
       - traefik.http.routers.overseerr.entrypoints=web,web-secure
+      - traefik.http.routers.overseerr.middlewares=quantum-ipwhitelist
       - traefik.http.services.overseerr.loadbalancer.server.port=5055
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Metal
@@ -406,6 +408,7 @@ services:
       - traefik.http.routers.glances.rule=Host(`glancesmb.${DOMAIN}`)
       - traefik.http.routers.glances.tls.certresolver=certificato
       - traefik.http.routers.glances.entrypoints=web,web-secure
+      - traefik.http.routers.glances.middlewares=quantum_metal-ipwhitelist
       - traefik.http.services.glances.loadbalancer.server.port=61208
       - traefik.docker.network=networks_traefik_proxy
 
@@ -463,6 +466,7 @@ services:
       - traefik.http.routers.whoogle.rule=Host(`whoogle.${DOMAIN}`)
       - traefik.http.routers.whoogle.tls.certresolver=certificato
       - traefik.http.routers.whoogle.entrypoints=web,web-secure
+      - traefik.http.routers.whoogle.middlewares=quantum-ipwhitelist
       - traefik.http.services.whoogle.loadbalancer.server.port=5000
       - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
@@ -488,6 +492,7 @@ services:
       - traefik.http.routers.dozzle.rule=Host(`dockerlogs.${DOMAIN}`)
       - traefik.http.routers.dozzle.tls.certresolver=certificato
       - traefik.http.routers.dozzle.entrypoints=web,web-secure
+      - traefik.http.routers.dozzle.middlewares=quantum-ipwhitelist
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
       - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
@@ -560,6 +565,7 @@ services:
       - traefik.http.routers.ytdl.rule=Host(`ytdl.${DOMAIN}`)
       - traefik.http.routers.ytdl.tls.certresolver=certificato
       - traefik.http.routers.ytdl.entrypoints=web,web-secure
+      - traefik.http.routers.ytdl.middlewares=quantum-ipwhitelist
       - traefik.http.services.ytdl.loadbalancer.server.port=9001
       - traefik.docker.network=networks_traefik_proxy
 
