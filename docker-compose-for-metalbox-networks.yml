@@ -85,7 +85,6 @@ services:
       - "--entrypoints.web-secure.address=:443"
       - "--entrypoints.ssh.address=:22"
       - "--entrypoints.rtsp.address=:8554"
-      # - "--middlewares.quantum-ipwhitelist.ipwhitelist.sourcerange=:127.0.0.1/32,${QUANTUM_NETWORK}"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
@@ -113,6 +112,7 @@ services:
       - "traefik.http.routers.api.rule=Host(`reverse-metal.${DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=web-secure"
       - "traefik.http.routers.api.tls.certresolver=certificato"
+      - "traefik.http.middlewares.homepage-ipwhitelist.ipwhitelist.sourcerange=127.0.0.1/32, ${QUANTUM_NETWORK}"
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
