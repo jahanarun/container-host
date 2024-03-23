@@ -71,6 +71,11 @@ services:
       - traefik.http.routers.frigate.entrypoints=web,web-secure
       - traefik.http.routers.frigate.middlewares=quantum_things-ipallowlist
       - traefik.http.services.frigate.loadbalancer.server.port=5000
+      - traefik.tcp.routers.frigate-tcp.rule=HostSNI(`*`)
+      - traefik.tcp.routers.frigate-tcp.entrypoints=rtsp
+      - traefik.tcp.routers.frigate-tcp.service=frigate-tcp
+      - traefik.tcp.services.frigate-tcp.loadbalancer.server.port=8554  
+
     # healthcheck:
     #   test: curl -sSf 'http://localhost:5000/api/health' | grep '"success":true' || exit 1
     #   interval: 10s
