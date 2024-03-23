@@ -69,14 +69,8 @@ services:
       - traefik.http.routers.frigate.rule=Host(`recorder.${DOMAIN}`)
       - traefik.http.routers.frigate.tls.certresolver=certificato
       - traefik.http.routers.frigate.entrypoints=web,web-secure
-      - traefik.http.routers.frigate.middlewares=quantum-ipallowlist
+      - traefik.http.routers.frigate.middlewares=quantum_things-ipallowlist
       - traefik.http.services.frigate.loadbalancer.server.port=5000
-      - traefik.http.routers.frigate-public.rule=Host(`publiccam.${DOMAIN}`)
-      - traefik.http.routers.frigate-public.tls.certresolver=certificato
-      - traefik.http.routers.frigate-public.entrypoints=web,web-secure
-      - traefik.http.routers.frigate-public.middlewares=quantum_things-ipallowlist
-      - traefik.http.services.frigate-public.loadbalancer.server.port=5000
-      - traefik.docker.network=networks_traefik_proxy
     # healthcheck:
     #   test: curl -sSf 'http://localhost:5000/api/health' | grep '"success":true' || exit 1
     #   interval: 10s
