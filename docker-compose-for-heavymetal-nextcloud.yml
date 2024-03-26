@@ -112,7 +112,7 @@ services:
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
       - traefik.http.routers.nextcloud.tls.certresolver=certificato
       - traefik.http.routers.nextcloud.entrypoints=web,web-secure
-      - traefik.http.routers.nextcloud.middlewares=quantum-ipallowlist,nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
+      - traefik.http.routers.nextcloud.middlewares=quantum_metal-ipallowlist,nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
       - traefik.http.services.nextcloud.loadbalancer.server.port=80
       # traefik.http.middlewares.nextcloud-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes

@@ -325,7 +325,7 @@ services:
       - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent.tls.certresolver=certificato
       - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
-      - traefik.http.routers.qbittorrent.middlewares=quantum-ipallowlist
+      - traefik.http.routers.qbittorrent.middlewares=quantum_metal-ipallowlist
       - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
       - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
@@ -363,7 +363,7 @@ services:
       - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
       - traefik.http.routers.overseerr.tls.certresolver=certificato
       - traefik.http.routers.overseerr.entrypoints=web,web-secure
-      - traefik.http.routers.overseerr.middlewares=quantum-ipallowlist
+      - traefik.http.routers.overseerr.middlewares=quantum_metal-ipallowlist
       - traefik.http.services.overseerr.loadbalancer.server.port=5055
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Metal
