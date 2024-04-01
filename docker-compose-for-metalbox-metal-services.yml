@@ -152,6 +152,7 @@ services:
       homepage.widget.key: ${PLEX_MUSIC_TOKEN}
       autoheal: true
     networks:
+      networks_traefik_proxy:
       networks_vlan_80:
         ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
     dns:
