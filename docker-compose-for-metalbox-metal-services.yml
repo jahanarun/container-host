@@ -279,21 +279,6 @@ services:
       traefik.http.routers.homepage.entrypoints: web,web-secure
       traefik.docker.network: networks_traefik_proxy
 
-  dockerproxy:
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
-    container_name: dockerproxy
-    environment:
-        - CONTAINERS=1 # Allow access to viewing containers
-        - POST=0 # Disallow any POST operations (effectively read-only)
-    ports:
-        - 2375:2375
-    volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
-    networks:
-      networks_vlan_80:
-        ipv4_address: ${METAL_DOCKERPROXY_IP_ADDRESS}
-    restart: unless-stopped
-
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     hostname: qbittorrent

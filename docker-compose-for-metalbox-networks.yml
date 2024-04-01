@@ -48,9 +48,9 @@ services:
     image: jhnrn/do-nothing:latest
     restart: unless-stopped
     networks:
-      vlan_80:
-      vlan_30:
       vlan_20:
+      vlan_30:
+      vlan_80:
       traefik_proxy:
 
   mdns:
@@ -66,6 +66,22 @@ services:
       vlan_30:
         ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
 
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+        - CONTAINERS=1 # Allow access to viewing containers
+        - POST=0 # Disallow any POST operations (effectively read-only)
+    # ports:
+    #     - 2375:2375
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    networks:
+      traefik_proxy:
+      vlan_80:
+        ipv4_address: ${METAL_DOCKERPROXY_IP_ADDRESS}
+    restart: unless-stopped
+
   traefik:
     image: traefik:latest
     hostname: traefik
@@ -74,6 +90,7 @@ services:
       - "--log.level=INFO"
       - "--accesslog=false"
       - "--api.dashboard=true"
+      - "--providers.docker.endpoint=tcp://dockerproxy:2375"
       - "--providers.file.directory=/FileProvider/"
       - "--providers.file.watch=true"
       - "--api.insecure=true"
@@ -83,6 +100,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.to=web-secure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web-secure.address=:443"
+      - "--entrypoints.web-secure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
       - "--entrypoints.ssh.address=:22"
       - "--entrypoints.rtsp.address=:8554"
       - "--serverstransport.insecureskipverify=true"
@@ -131,11 +149,13 @@ services:
       - homepage.widget.url=https://reverse-metal.${DOMAIN}
       # - homepage.widget.fields=["routers", "services", "middleware"]
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
+      # - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
       - ${DATA_STORAGE}/traefik/certs:/letsencrypt
       - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
     restart: always
+    depends_on:
+      - dockerproxy
     healthcheck: # This is to announce to the network (router and switch) that this ip address is sitting here
       # test: traefik healthcheck --ping && ping -c 1 bing.com || exit 1
       test: traefik healthcheck --ping || exit 1

@@ -60,7 +60,6 @@ services:
         ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
 
-
   traefik:
     image: traefik:latest
     hostname: traefik
@@ -97,6 +96,7 @@ services:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
     dns:
+      - ${METAL_PIHOLE_IP_ADDRESS}
       - 1.1.1.1
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
@@ -106,14 +106,15 @@ services:
       - "traefik.http.routers.api.rule=Host(`reverse-heavymetal.${DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=web-secure"
       - "traefik.http.routers.api.tls.certresolver=certificato"
-      # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - "traefik.http.middlewares.private-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${PRIVATE_IPS_COMMA_SEPARATED}, ${METAL_NETWORK}"
       - "traefik.http.middlewares.quantum-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${QUANTUM_NETWORK}"
       - "traefik.http.middlewares.quantum_metal-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${QUANTUM_NETWORK}, ${METAL_NETWORK}"
       - "traefik.http.middlewares.quantum_things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${QUANTUM_NETWORK}, ${THINGS_NETWORK}"
       - "traefik.http.middlewares.things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32, ${THINGS_NETWORK}"
+      # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.services.api@internal.loadbalancer.server.port=80"
+      - traefik.docker.network=traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.name=Traefik
       - homepage.weight=1000
