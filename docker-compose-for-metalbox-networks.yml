@@ -138,7 +138,7 @@ services:
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
-      - traefik.docker.network=traefik_proxy
+      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Metal
       - homepage.name=Traefik
       - homepage.weight=1000
