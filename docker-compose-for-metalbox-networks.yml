@@ -137,6 +137,7 @@ services:
       - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
     restart: always
     healthcheck: # This is to announce to the network (router and switch) that this ip address is sitting here
-      test: traefik healthcheck --ping && ping -c 1 bing.com || exit 1
+      # test: traefik healthcheck --ping && ping -c 1 bing.com || exit 1
+      test: traefik healthcheck --ping || exit 1
       interval: 30s
       retries: 5
