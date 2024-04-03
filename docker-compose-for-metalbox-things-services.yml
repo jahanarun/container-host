@@ -131,7 +131,7 @@ services:
       networks_vlan_20:
       networks_traefik_proxy:
     devices:
-      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
+      - /dev/dri # If using Intel QuickSync or VAAPI, direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
     volumes:
       - ${DATA_STORAGE}/go2rtc:/config # folder for go2rtc.yaml file (edit from WebUI)
     labels:
