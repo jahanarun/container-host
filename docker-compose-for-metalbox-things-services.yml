@@ -142,6 +142,7 @@ services:
       - traefik.http.routers.go2rtc.tls.certresolver=certificato
       - traefik.http.routers.go2rtc.entrypoints=web,web-secure
       - traefik.http.services.go2rtc.loadbalancer.server.port=1984
+      - traefik.http.routers.go2rtc.middlewares=quantum-ipallowlist
       - traefik.tcp.routers.go2rtc-tcp.rule=HostSNI(`*`)
       - traefik.tcp.routers.go2rtc-tcp.entrypoints=rtsp
       - traefik.tcp.routers.go2rtc-tcp.service=go2rtc-tcp
