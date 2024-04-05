@@ -81,6 +81,7 @@ services:
       - "--entrypoints.web-secure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
       - "--entrypoints.ssh.address=:22"
       - "--entrypoints.rtsp.address=:8554"
+      - "--entrypoints.webrtc.address=:8555"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
