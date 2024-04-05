@@ -48,6 +48,7 @@ services:
       networks_traefik_proxy:
       networks_vlan_80:
       networks_vlan_20:
+        ipv4_address: ${FRIGATE_THINGS_IP_ADDRESS}
     dns:
       - ${METAL_PIHOLE_IP_ADDRESS}
     # ports:
