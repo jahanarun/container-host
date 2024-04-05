@@ -68,7 +68,7 @@ services:
       - traefik.http.routers.frigate.rule=Host(`recorder.${DOMAIN}`)
       - traefik.http.routers.frigate.tls.certresolver=certificato
       - traefik.http.routers.frigate.entrypoints=web,web-secure
-      - traefik.http.routers.frigate.middlewares=quantum_things-ipallowlist
+      # - traefik.http.routers.frigate.middlewares=quantum_things-ipallowlist
       - traefik.http.services.frigate.loadbalancer.server.port=5000
       - traefik.tcp.routers.frigate-tcp.rule=HostSNI(`*`)
       - traefik.tcp.routers.frigate-tcp.entrypoints=rtsp
