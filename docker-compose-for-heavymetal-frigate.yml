@@ -50,7 +50,7 @@ services:
       networks_vlan_20:
         ipv4_address: ${FRIGATE_THINGS_IP_ADDRESS}
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${THINGS_PIHOLE_IP_ADDRESS}
     # ports:
     #   - "5000:5000"
     #   - "8554:8554" # RTSP feeds
