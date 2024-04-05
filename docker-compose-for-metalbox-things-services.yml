@@ -130,6 +130,8 @@ services:
     networks:
       networks_vlan_20:
       networks_traefik_proxy:
+    dns:
+      - ${THINGS_PIHOLE_IP_ADDRESS}
     devices:
       - /dev/dri # If using Intel QuickSync or VAAPI, direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
     volumes:
