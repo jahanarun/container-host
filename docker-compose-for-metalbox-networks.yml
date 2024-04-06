@@ -88,9 +88,10 @@ services:
     container_name: traefik
     command:
       - "--log.level=${LOGLEVEL}"
-      - '--logLevel="${LOGLEVEL}"'
+      # - '--logLevel="${LOGLEVEL}"'
       - '--traefikLog.filePath="/logs/traefik.log"'
       - '--traefikLog.format="json"'
+      - "--accesslog=true"
       - '--accessLog.filePath="/logs/access.log"'
       - '--accessLog.format="json"'
       # - '--accessLog.filters.statusCodes="200,300-302"'
@@ -100,7 +101,6 @@ services:
       # - '--accessLog.fields.names="Username=drop Hostname=drop"'
       # - '--accessLog.fields.headers.defaultMode="keep"'
       # - '--accessLog.fields.headers.names="User-Agent=redact Authorization=drop Content-Type=keep"'
-      # - "--accesslog=false"
       - "--api.dashboard=true"
       - "--providers.docker.endpoint=tcp://dockerproxy:2375"
       - "--providers.file.directory=/FileProvider/"
