@@ -89,8 +89,8 @@ services:
     command:
       - "--log.level=${LOGLEVEL}"
       # - '--logLevel="${LOGLEVEL}"'
-      - '--traefikLog.filePath="/logs/traefik.log"'
-      - '--traefikLog.format="json"'
+      # - '--traefikLog.filePath="/logs/traefik.log"'
+      # - '--traefikLog.format="json"'
       - "--accesslog=true"
       - '--accessLog.filePath="/logs/access.log"'
       - '--accessLog.format="json"'
