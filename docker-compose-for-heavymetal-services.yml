@@ -444,6 +444,8 @@ services:
     container_name: mosquitto
     volumes:
       - ${DATA_STORAGE}/mosquitto:/mosquitto
+      - ${DATA_STORAGE}/mosquitto/data:/mosquitto/data
+      - ${DATA_STORAGE}/mosquitto/log:/mosquitto/log
     networks:
       networks_traefik_proxy:
       networks_vlan_80:
