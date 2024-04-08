@@ -114,27 +114,6 @@ services:
       - traefik.http.services.homeassistant.loadbalancer.server.port=8123
       - traefik.docker.network=networks_traefik_proxy
 
-  mosquitto:
-    image: eclipse-mosquitto
-    container_name: mosquitto
-    volumes:
-      - ${DATA_STORAGE}/mosquitto:/mosquitto
-    networks:
-      networks_traefik_proxy:
-      networks_vlan_20:
-        ipv4_address: ${MOSQUITTO_IP_ADDRESS}
-    # ports:
-    #   - 1883:1883
-    #   - 9001:9001   
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.mosquitto.rule=Host(`mqtt.${DOMAIN}`)
-      - traefik.http.routers.mosquitto.tls.certresolver=certificato
-      - traefik.http.routers.mosquitto.entrypoints=web,web-secure
-      - traefik.http.routers.mosquitto.middlewares=quantum_metal-ipallowlist
-      - traefik.http.services.mosquitto.loadbalancer.server.port=1883
-      - traefik.docker.network=networks_traefik_proxy
-      
   go2rtc:
     container_name: go2rtc
     image: alexxit/go2rtc

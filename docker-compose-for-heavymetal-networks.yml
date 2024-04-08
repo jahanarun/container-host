@@ -82,6 +82,8 @@ services:
       - "--entrypoints.ssh.address=:22"
       - "--entrypoints.rtsp.address=:8554"
       - "--entrypoints.webrtc.address=:8555"
+      - "--entrypoints.mqtt.address=:1883"
+      - "--entrypoints.websocket.address=:9001"
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
