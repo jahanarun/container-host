@@ -63,7 +63,7 @@ services:
   #     - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
   #   networks:
   #     networks_vlan_20:
-  #       ipv4_address: ${THINGS_PIHOLE_IP_ADDRESS}
+  #       ipv4_address: ${THINGS_DNS_IP_ADDRESS}
   #   dns:
   #     - 127.0.0.1        
   #   restart: unless-stopped
@@ -80,11 +80,11 @@ services:
   #     - homepage.weight=1
   #     - homepage.name=Pihole-things
   #     - homepage.icon=pi-hole.png
-  #     - homepage.href=http://${THINGS_PIHOLE_IP_ADDRESS}/admin
+  #     - homepage.href=http://${THINGS_DNS_IP_ADDRESS}/admin
   #     - homepage.description=for ${THINGS_VLAN_NAME}
   #     - homepage.widget.type=pihole
   #     - homepage.widget.key=${PIHOLE_TOKEN}
-  #     - homepage.widget.url=http://${THINGS_PIHOLE_IP_ADDRESS}
+  #     - homepage.widget.url=http://${THINGS_DNS_IP_ADDRESS}
   #     # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   homeassistant:
@@ -104,7 +104,7 @@ services:
       networks_vlan_20:
         ipv4_address: ${HOMEASSISTANT_IP_ADDRESS}
     dns:
-      - ${THINGS_PIHOLE_IP_ADDRESS}
+      - ${THINGS_DNS_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.homeassistant.rule=Host(`home.${DOMAIN}`)
@@ -128,7 +128,7 @@ services:
       networks_vlan_20:
       networks_traefik_proxy:
     dns:
-      - ${THINGS_PIHOLE_IP_ADDRESS}
+      - ${THINGS_DNS_IP_ADDRESS}
     devices:
       - /dev/dri # If using Intel QuickSync or VAAPI, direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
     volumes:

@@ -94,7 +94,7 @@ services:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     networks:
       networks_vlan_30:
-        ipv4_address: ${QUANTUM_PIHOLE_IP_ADDRESS}
+        ipv4_address: ${QUANTUM_DNS_IP_ADDRESS}
     dns:
       - 127.0.0.1
     restart: unless-stopped
@@ -106,11 +106,11 @@ services:
       - homepage.weight=1
       - homepage.name=Pihole-quantum
       - homepage.icon=pi-hole.png
-      - homepage.href=http://${QUANTUM_PIHOLE_IP_ADDRESS}/admin
+      - homepage.href=http://${QUANTUM_DNS_IP_ADDRESS}/admin
       - homepage.description=for ${QUANTUM_VLAN_NAME}
       - homepage.widget.type=pihole
       - homepage.widget.key=${PIHOLE_TOKEN}
-      - homepage.widget.url=http://${QUANTUM_PIHOLE_IP_ADDRESS}
+      - homepage.widget.url=http://${QUANTUM_DNS_IP_ADDRESS}
       # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
   tailscale:
@@ -130,6 +130,6 @@ services:
     networks:
       networks_vlan_30:
     dns:
-      ${QUANTUM_PIHOLE_IP_ADDRESS}
+      ${QUANTUM_DNS_IP_ADDRESS}
     depends_on:
       - pihole

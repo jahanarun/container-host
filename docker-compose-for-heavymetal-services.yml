@@ -19,7 +19,7 @@ services:
     networks:
       networks_vlan_80:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${METAL_DNS_IP_ADDRESS}
     environment:
       TZ: ${TZ}
       TUNNEL_METRICS: "0.0.0.0:${CLOUDFARED_METRICS_PORT}"
@@ -62,7 +62,7 @@ services:
       networks_vlan_80:
       networks_traefik_proxy:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
@@ -99,7 +99,7 @@ services:
       networks_traefik_proxy:
       networks_vlan_80:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
@@ -134,7 +134,7 @@ services:
       networks_vlan_80:
       networks_traefik_proxy:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
@@ -161,7 +161,7 @@ services:
       networks_vlan_80:
       networks_traefik_proxy:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
@@ -219,7 +219,7 @@ services:
         ipv4_address: ${PLEX_MOVIETVSHOW_IP_ADDRESS}
       networks_traefik_proxy:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
@@ -264,7 +264,7 @@ services:
     networks:
       networks_traefik_proxy:
     dns:
-      - ${METAL_PIHOLE_IP_ADDRESS}
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       traefik.enable: true
       traefik.http.routers.gogs.rule: "Host(`git.${DOMAIN}`) || Host(`gogs.${DOMAIN}`)"
