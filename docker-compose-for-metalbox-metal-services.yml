@@ -468,6 +468,8 @@ services:
       # Need the transit network to talk to other docker host(s)
       networks_vlan_80:
       networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}      
     labels:
       - homepage.group=Monitoring
       - homepage.description=Docker log monitoring
