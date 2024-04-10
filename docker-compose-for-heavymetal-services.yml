@@ -320,6 +320,8 @@ services:
     networks:
       networks_vlan_80:
       networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
