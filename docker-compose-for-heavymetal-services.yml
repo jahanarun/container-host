@@ -466,3 +466,38 @@ services:
       - "traefik.tcp.routers.tcpr_mqtt_websocket.entrypoints=websocket"
       - "traefik.tcp.routers.tcpr_mqtt_websocket.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.tcpr_mqtt_websocket.service=mqtt_websocket"
+
+  dozzle:
+    container_name: dozzle
+    hostname: dozzle
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    environment:
+      DOZZLE_REMOTE_HOST: tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375,tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375
+    networks:
+      # Need the transit network to talk to other docker host(s)
+      networks_vlan_80:
+      networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}      
+    labels:
+      - homepage.group=Monitoring
+      - homepage.description=Docker log monitoring
+      - homepage.name=Dozzle
+      - homepage.icon=dozzle.png
+      - homepage.href=https://dockerlogs.${DOMAIN}
+      - traefik.enable=true
+      - traefik.http.routers.dozzle.rule=Host(`dockerlogs.${DOMAIN}`)
+      - traefik.http.routers.dozzle.tls.certresolver=certificato
+      - traefik.http.routers.dozzle.entrypoints=web,web-secure
+      - traefik.http.routers.dozzle.middlewares=quantum-ipallowlist
+      - traefik.http.services.dozzle.loadbalancer.server.port=8080
+      - traefik.docker.network=networks_traefik_proxy
+      - autoheal=true
+    healthcheck:
+      test: [ "CMD", "/dozzle", "healthcheck" ]
+      # test: curl -sSf 'http://localhost:8080/healthcheck' || exit 1
+      # test: /dozzle healthcheck
+      interval: 10s
+      timeout: 5s
+      retries: 10
