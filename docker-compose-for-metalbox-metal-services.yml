@@ -283,11 +283,16 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     hostname: qbittorrent
     container_name: qbittorrent
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
       - WEBUI_PORT=${QBITTORRENT_PORT}
+      - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
     volumes:
       - ${DATA_STORAGE}/qbittorrent:/config
       - ${DATA_STORAGE}/qbittorrent/healthcheck.sh:/healthcheck.sh
