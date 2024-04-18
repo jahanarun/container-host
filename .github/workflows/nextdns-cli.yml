@@ -1,6 +1,8 @@
 name: nextdns-cli - Build linux docker image for nextdns-cli
 
-on: workflow_dispatch
+on:
+  schedule:
+    - cron: "15 4 * * 6"   # At 04:15 on Saturday.
 
 defaults:
   run:

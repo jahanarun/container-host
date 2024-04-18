@@ -1,7 +1,9 @@
 name: cloudflared - Build linux docker image for cloudflared
 
-on: workflow_dispatch
-
+on:
+  schedule:
+    - cron: "15 4 * * 6"   # At 04:15 on Saturday.
+    
 defaults:
   run:
     working-directory: cloudflared
