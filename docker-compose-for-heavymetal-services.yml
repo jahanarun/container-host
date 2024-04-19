@@ -516,3 +516,5 @@ services:
       TAILSCALE_TOKEN: ${TAILSCALE_TOKEN}
     networks:
       networks_vlan_20:
+    dns:
+      - ${THINGS_DNS_IP_ADDRESS}
