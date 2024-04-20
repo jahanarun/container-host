@@ -1,8 +1,9 @@
 name: nettools-base - Build linux docker image for a base docker image with network tools
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: "15 4 * * 6"   # At 04:15 on Saturday.
+    - cron: "15 5 * * 6"   # At 05:15 on Saturday.
 
 defaults:
   run:
