@@ -509,7 +509,8 @@ services:
     container_name: cronjobs
     restart: unless-stopped
     environment:
-      TZ: ${TZ_IN_ANOTHER_FORMAT}
+      TZ: ${TZ}
+      TZ_IN_ANOTHER_FORMAT: ${TZ_IN_ANOTHER_FORMAT}
       CAMERA_USERNAME: ${CAMERA_USERNAME}
       CAMERA_PASSWORD: ${CAMERA_PASSWORD}
       TAILNET: ${TAILNET}
