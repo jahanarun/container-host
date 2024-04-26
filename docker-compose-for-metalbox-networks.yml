@@ -174,3 +174,22 @@ services:
       test: traefik healthcheck --ping || exit 1
       interval: 30s
       retries: 5
+
+  tailscale:
+    container_name: tailscale-quantum
+    hostname: tailscale-quantum
+    image: tailscale/tailscale:stable
+    restart: "always"
+    # cap_add:
+    #   - NET_ADMIN # Used for configuring a network
+    #   - NET_RAW # Used for accessing privileged socket operations
+    environment:
+      TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=false --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
+      TS_ROUTES: ${TAILSCALE_ROUTES}
+    volumes:
+      - ${DATA_STORAGE}/tailscale:/var/lib
+    networks:
+      vlan_30:
+    dns:
+      ${QUANTUM_DNS_IP_ADDRESS}

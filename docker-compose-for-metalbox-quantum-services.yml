@@ -29,41 +29,41 @@ services:
   #   labels:
   #     - autoheal=true
 
-  nextdns:
-    container_name: nextdns
-    image: "jhnrn/nextdns-cli:latest"
-    restart: "always"
-    # ports:
-    #   - "5053:53/tcp"
-    #   - "5053:53/udp"
-    environment:
-      NEXTDNS_PROFILE: ${NEXTDNS_PROFILE}
-      NEXTDNS_CACHE_SIZE: "10m"
-      NEXTDNS_REPORT_CLIENT_INFO: "true"
-      NEXTDNS_LISTEN: ${NEXTDNS_LISTEN}
-    networks:
-      networks_vlan_30:
-        ipv4_address: ${QUANTUM_DNS_IP_ADDRESS}
-    # Warning: This WILL use your DNS query quota. Since its TTL is 300s,
-    # each check will be 1 query against your quota every 5 minutes. Enable carefully.
-    healthcheck:
-     test: [
-       "CMD", "sh", "-c",
-       "dig +time=10 @127.0.0.1 -p $$(echo $${NEXTDNS_LISTEN:-:53} | rev | cut -d: -f1 | rev) probe-test.dns.nextdns.io"
-     ]
-     interval: "30s"
-     timeout: "10s"
-     retries: 1
-     start_period: "5s"
-    labels:
-      - autoheal=true
-      # - homepage.group=DNS
-      # - homepage.icon=nextdns.png
-      # - homepage.description=NextDNS
-      # - homepage.href=https://my.nextdns.com
-      # - homepage.widget.type=nextdns
-      # - homepage.widget.key=${NEXTDNS_APIKEY}
-      # - homepage.widget.profile=${NEXTDNS_PROFILE_ID}
+  # nextdns:
+  #   container_name: nextdns
+  #   image: "jhnrn/nextdns-cli:latest"
+  #   restart: "always"
+  #   # ports:
+  #   #   - "5053:53/tcp"
+  #   #   - "5053:53/udp"
+  #   environment:
+  #     NEXTDNS_PROFILE: ${NEXTDNS_PROFILE}
+  #     NEXTDNS_CACHE_SIZE: "10m"
+  #     NEXTDNS_REPORT_CLIENT_INFO: "true"
+  #     NEXTDNS_LISTEN: ${NEXTDNS_LISTEN}
+  #   networks:
+  #     networks_vlan_30:
+  #       ipv4_address: ${QUANTUM_DNS_IP_ADDRESS}
+  #   # Warning: This WILL use your DNS query quota. Since its TTL is 300s,
+  #   # each check will be 1 query against your quota every 5 minutes. Enable carefully.
+  #   healthcheck:
+  #    test: [
+  #      "CMD", "sh", "-c",
+  #      "dig +time=10 @127.0.0.1 -p $$(echo $${NEXTDNS_LISTEN:-:53} | rev | cut -d: -f1 | rev) probe-test.dns.nextdns.io"
+  #    ]
+  #    interval: "30s"
+  #    timeout: "10s"
+  #    retries: 1
+  #    start_period: "5s"
+  #   labels:
+  #     - autoheal=true
+  #     # - homepage.group=DNS
+  #     # - homepage.icon=nextdns.png
+  #     # - homepage.description=NextDNS
+  #     # - homepage.href=https://my.nextdns.com
+  #     # - homepage.widget.type=nextdns
+  #     # - homepage.widget.key=${NEXTDNS_APIKEY}
+  #     # - homepage.widget.profile=${NEXTDNS_PROFILE_ID}
 
   # pihole:
   #   container_name: pihole-${QUANTUM_VLAN_NAME}
@@ -115,23 +115,23 @@ services:
   #     - homepage.widget.url=http://${QUANTUM_DNS_IP_ADDRESS}
   #     # - homepage.widget.fields=["queries", "blocked", "gravity"]
 
-  tailscale:
-    container_name: tailscale-quantum
-    hostname: tailscale-quantum
-    image: tailscale/tailscale:stable
-    restart: "always"
-    # cap_add:
-    #   - NET_ADMIN # Used for configuring a network
-    #   - NET_RAW # Used for accessing privileged socket operations
-    environment:
-      TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=false --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
-      TS_ROUTES: ${TAILSCALE_ROUTES}
-    volumes:
-      - ${DATA_STORAGE}/tailscale:/var/lib
-    networks:
-      networks_vlan_30:
-    dns:
-      ${QUANTUM_DNS_IP_ADDRESS}
-    depends_on:
-      - nextdns
+  # tailscale:
+  #   container_name: tailscale-quantum
+  #   hostname: tailscale-quantum
+  #   image: tailscale/tailscale:stable
+  #   restart: "always"
+  #   # cap_add:
+  #   #   - NET_ADMIN # Used for configuring a network
+  #   #   - NET_RAW # Used for accessing privileged socket operations
+  #   environment:
+  #     TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
+  #     TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=false --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
+  #     TS_ROUTES: ${TAILSCALE_ROUTES}
+  #   volumes:
+  #     - ${DATA_STORAGE}/tailscale:/var/lib
+  #   networks:
+  #     networks_vlan_30:
+  #   dns:
+  #     ${QUANTUM_DNS_IP_ADDRESS}
+  #   depends_on:
+  #     - nextdns
