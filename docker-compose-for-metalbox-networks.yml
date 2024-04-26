@@ -53,18 +53,18 @@ services:
       vlan_80:
       traefik_proxy:
 
-  mdns:
-    image: jhnrn/avahi
-    hostname: mdns
-    container_name: mdns
-    environment:
-      - REFLECTOR_ENABLE_REFLECTOR=yes
-    restart: unless-stopped
-    networks:
-      vlan_20:
-        ipv4_address: ${AVAHI_THINGS_IP_ADDRESS}
-      vlan_30:
-        ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
+  # mdns:
+  #   image: jhnrn/avahi
+  #   hostname: mdns
+  #   container_name: mdns
+  #   environment:
+  #     - REFLECTOR_ENABLE_REFLECTOR=yes
+  #   restart: unless-stopped
+  #   networks:
+  #     vlan_20:
+  #       ipv4_address: ${AVAHI_THINGS_IP_ADDRESS}
+  #     vlan_30:
+  #       ipv4_address: ${AVAHI_QUANTUM_IP_ADDRESS}
 
   dockerproxy:
     image: ghcr.io/tecnativa/docker-socket-proxy:latest
