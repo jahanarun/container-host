@@ -127,8 +127,8 @@ services:
       - "--ping=true"
     networks:
       traefik_proxy:
-      vlan_20:
-        ipv4_address: ${TRAEFIK_IP_ADDRESS_FOR_THINGS}
+      # vlan_20:
+      #   ipv4_address: ${TRAEFIK_IP_ADDRESS_FOR_THINGS}
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS}
     dns:
