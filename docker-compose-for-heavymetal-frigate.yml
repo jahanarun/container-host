@@ -78,7 +78,7 @@ services:
       - traefik.tcp.routers.frigate-tcp.service=frigate-tcp
       - traefik.tcp.services.frigate-tcp.loadbalancer.server.port=8554  
       - traefik.tcp.routers.frigate-webrtc.rule=HostSNI(`*`)
-      - traefik.tcp.routers.frigate-webrtc.entrypoints=rtsp
+      - traefik.tcp.routers.frigate-webrtc.entrypoints=webrtc
       - traefik.tcp.routers.frigate-webrtc.service=frigate-webrtc
       - traefik.tcp.services.frigate-webrtc.loadbalancer.server.port=8555  
       - traefik.http.routers.frigate-go2rtc.rule=Host(`go2rtc.${DOMAIN}`)
