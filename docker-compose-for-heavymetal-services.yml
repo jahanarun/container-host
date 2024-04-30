@@ -508,6 +508,7 @@ services:
     image: jhnrn/cronjobs:latest
     container_name: cronjobs
     restart: unless-stopped
+    command: ["/usr/sbin/crond", "-f"]
     environment:
       TZ: ${TZ}
       TZ_IN_ANOTHER_FORMAT: ${TZ_IN_ANOTHER_FORMAT}
