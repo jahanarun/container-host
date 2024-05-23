@@ -101,6 +101,8 @@ services:
     dns:
       - ${METAL_DNS_IP_ADDRESS}
       - 1.1.1.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
