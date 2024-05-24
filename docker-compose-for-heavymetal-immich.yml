@@ -63,6 +63,15 @@ services:
       - traefik.http.routers.immich.entrypoints=web,web-secure
       - traefik.http.services.immich.loadbalancer.server.port=3001
       - "traefik.docker.network=networks_traefik_proxy"
+      - homepage.group=HeavyMetal
+      - homepage.name=Immich-family
+      - homepage.weight=8000
+      - homepage.icon=immich.png
+      - homepage.href=https://photos.${DOMAIN}/
+      - homepage.description=Immich for family
+      - homepage.widget.type=immich
+      - homepage.widget.KEY=${IMMICH_FAMILY_API_KEY}
+      - homepage.widget.url=https://photos.${DOMAIN}
 
   immich-family-microservices:
     container_name: immich_family_microservices
