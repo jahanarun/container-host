@@ -160,7 +160,7 @@ services:
       - networks_traefik_proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.immich-private.rule=Host(`private-viewer.${DOMAIN}`) && ClientIP(${PRIVATE_IPS_FORMATED})
+      - traefik.http.routers.immich-private.rule=Host(`private-viewer.${DOMAIN}`)
       - traefik.http.routers.immich-private.tls.certresolver=certificato
       - traefik.http.routers.immich-private.entrypoints=web,web-secure
       - traefik.http.routers.immich-private.middlewares=private-ipallowlist
