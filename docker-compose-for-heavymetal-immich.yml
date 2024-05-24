@@ -100,7 +100,7 @@ services:
       - ${USER1_PHOTOS}/2021:/photos/${USER1}/2021:ro
       - ${USER1_PHOTOS}/2022:/photos/${USER1}/2022:ro
       - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023:ro
-      - ${USER1_PHOTOS}/2024:/photos/${U:roSER1}/2024:ro
+      - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024:ro
       - ${USER2_PHOTOS}:/photos/${USER2}:ro
       - ${APPDATA}/immich/family/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
