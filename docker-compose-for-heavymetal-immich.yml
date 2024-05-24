@@ -70,7 +70,7 @@ services:
       - homepage.href=https://photos.${DOMAIN}/
       - homepage.description=Immich for family
       - homepage.widget.type=immich
-      - homepage.widget.KEY=${IMMICH_FAMILY_API_KEY}
+      - homepage.widget.key=${IMMICH_FAMILY_API_KEY}
       - homepage.widget.url=https://photos.${DOMAIN}
 
   immich-family-microservices:
