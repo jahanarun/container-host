@@ -166,6 +166,15 @@ services:
       - traefik.http.routers.immich-private.middlewares=private-ipallowlist
       - traefik.http.services.immich-private.loadbalancer.server.port=3001
       - "traefik.docker.network=networks_traefik_proxy"
+      - homepage.group=HeavyMetal
+      - homepage.name=Immich-private
+      - homepage.weight=8001
+      - homepage.icon=immich.png
+      - homepage.href=https://private-viewer.${DOMAIN}/
+      - homepage.description=Immich for private
+      - homepage.widget.type=immich
+      - homepage.widget.key=${IMMICH_PRIVATE_API_KEY}
+      - homepage.widget.url=https://private-viewer.${DOMAIN}
 
   immich-private-microservices:
     container_name: immich_private_microservices
