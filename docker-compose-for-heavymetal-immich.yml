@@ -64,7 +64,7 @@ services:
       - traefik.http.services.immich.loadbalancer.server.port=3001
       - "traefik.docker.network=networks_traefik_proxy"
       - homepage.group=HeavyMetal
-      - homepage.name=Immich-family
+      - homepage.name=Immich
       - homepage.weight=8000
       - homepage.icon=immich.png
       - homepage.href=https://photos.${DOMAIN}/
@@ -167,7 +167,7 @@ services:
       - traefik.http.services.immich-private.loadbalancer.server.port=3001
       - "traefik.docker.network=networks_traefik_proxy"
       - homepage.group=HeavyMetal
-      - homepage.name=Immich-private
+      - homepage.name=Immich (private)
       - homepage.weight=8001
       - homepage.icon=immich.png
       - homepage.href=https://private-viewer.${DOMAIN}/
