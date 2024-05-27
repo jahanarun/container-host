@@ -25,7 +25,7 @@ networks:
       config:
         - subnet: 10.100.${THINGS_VLAN_ID}.0/24
           gateway: ${THINGS_GATEWAY}
-          ip_range: 10.100.${THINGS_VLAN_ID}.12/30
+          ip_range: 10.100.${THINGS_VLAN_ID}.12/30  # 12 - 15
 
   traefik_proxy:
     driver: bridge

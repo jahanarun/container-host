@@ -37,7 +37,7 @@ networks:
       config:
         - subnet: 10.100.${THINGS_VLAN_ID}.0/24
           gateway: ${THINGS_GATEWAY}
-          ip_range: 10.100.${THINGS_VLAN_ID}.64/26 # 64 - 127 (Internet blocked range)
+          ip_range: 10.100.${THINGS_VLAN_ID}.16/30 # 16 - 19
 
   traefik_proxy:
     driver: bridge
@@ -179,7 +179,7 @@ services:
     container_name: tailscale-quantum
     hostname: tailscale-quantum
     image: tailscale/tailscale:stable
-    restart: "always"
+    restart: unless-stopped
     # cap_add:
     #   - NET_ADMIN # Used for configuring a network
     #   - NET_RAW # Used for accessing privileged socket operations
