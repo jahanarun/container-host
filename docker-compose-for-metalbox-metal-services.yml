@@ -207,7 +207,7 @@ services:
       speedtest_tracker:
 
   speedtest_tracker:
-    image: 'ghcr.io/alexjustesen/speedtest-tracker:latest'
+    image: lscr.io/linuxserver/speedtest-tracker:latest
     hostname: speedtest-tracker
     container_name: speedtest_tracker
     environment:
