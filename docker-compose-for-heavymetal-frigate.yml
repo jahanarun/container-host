@@ -43,9 +43,9 @@ services:
         tmpfs:
           size: 536870912
     networks:
-      networks_traefik_proxy:
       networks_vlan_80:
         ipv4_address: ${FRIGATE_METAL_IP_ADDRESS}
+      networks_traefik_proxy:
     dns:
       - ${METAL_DNS_IP_ADDRESS}
     # ports:
