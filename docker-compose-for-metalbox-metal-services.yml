@@ -269,6 +269,7 @@ services:
     networks:
       networks_traefik_proxy:
       networks_vlan_80:
+        ipv4_address: ${METAL_HOMEPAGE_DASHBOARD_IP_ADDRESS}
     dns:
       - ${METAL_DNS_IP_ADDRESS}
     restart: unless-stopped
