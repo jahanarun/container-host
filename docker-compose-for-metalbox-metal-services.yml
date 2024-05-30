@@ -114,7 +114,7 @@ services:
     labels:
       - homepage.group=Network
       - homepage.weight=2000
-      - homepage.name=Cloudflared tunnel
+      - homepage.name=Cloudflared tunnel (metalbox)
       - homepage.description=for Metal
       - homepage.icon=cloudflare-zero-trust.png
       - homepage.widget.type=cloudflared

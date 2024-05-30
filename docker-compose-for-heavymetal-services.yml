@@ -31,8 +31,8 @@ services:
       - ${HEAVYMETAL_CLOUDFARED_TOKEN}
     labels:
       - homepage.group=Network
-      - homepage.weight=2000
-      - homepage.name=Cloudflared tunnel
+      - homepage.weight=2001
+      - homepage.name=Cloudflared tunnel (heavymetal)
       - homepage.description=for HeavyMetal
       - homepage.icon=cloudflare-zero-trust.png
       - homepage.widget.type=cloudflared
