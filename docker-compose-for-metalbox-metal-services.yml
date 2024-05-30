@@ -222,6 +222,8 @@ services:
       - TZ=UTC
       - APP_DEBUG=${SPEEDTRACKER_APP_DEBUG:-false}
       - APP_KEY=${SPEEDTRACKER_APP_KEY}
+      - APP_NAME=${DOMAIN} speedtest tracker
+      - PUBLIC_DASHBOARD=true
     volumes:
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/config:/config
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/web:/etc/ssl/web
