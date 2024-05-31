@@ -205,6 +205,8 @@ services:
       - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/db:/var/lib/postgresql/data
     networks:
       speedtest_tracker:
+    labels:
+      - dev.dozzle.group=speedtest_tracker
 
   speedtest_tracker:
     image: lscr.io/linuxserver/speedtest-tracker:latest
@@ -238,6 +240,7 @@ services:
       - ${METAL_DNS_IP_ADDRESS}
     restart: unless-stopped
     labels:
+      - dev.dozzle.group=speedtest_tracker
       - "traefik.enable=true"
       - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
@@ -495,6 +498,7 @@ services:
     #volumes:
         #- ./cookies.json:/cookies.json
     labels:
+      - dev.dozzle.group=cobalt
       - traefik.enable=true
       - traefik.http.routers.ytdl-api.rule=Host(`ytdl-api.${DOMAIN}`)
       - traefik.http.routers.ytdl-api.tls.certresolver=certificato
@@ -522,6 +526,7 @@ services:
         # replace apiURL with preferred api instance url
         - apiURL=https://ytdl-api.${DOMAIN}/
     labels:
+      - dev.dozzle.group=cobalt
       - traefik.enable=true
       - traefik.http.routers.ytdl.rule=Host(`ytdl.${DOMAIN}`)
       - traefik.http.routers.ytdl.tls.certresolver=certificato

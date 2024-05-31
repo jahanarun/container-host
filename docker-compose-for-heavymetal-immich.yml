@@ -22,6 +22,8 @@ services:
     networks:
       - immich-family-network
       - immich-private-network
+    labels:
+      - dev.dozzle.group=immich-family
 
   immich-family-server:
     container_name: immich_family_server
@@ -56,6 +58,7 @@ services:
       - immich-family-network
       - networks_traefik_proxy
     labels:
+      - dev.dozzle.group=immich-family
       - traefik.enable=true
       - traefik.http.routers.immich.rule=Host(`photos.${DOMAIN}`)
       - traefik.http.routers.immich.middlewares=quantum_metal-ipallowlist
@@ -111,6 +114,8 @@ services:
     restart: always
     networks:
       - immich-family-network
+    labels:
+      - dev.dozzle.group=immich-family
 
   immich-family-redis:
     container_name: immich_family_redis
@@ -120,6 +125,8 @@ services:
     restart: always
     networks:
       - immich-family-network
+    labels:
+      - dev.dozzle.group=immich-family
 
   immich-family-database:
     container_name: immich_family_postgres
@@ -135,6 +142,8 @@ services:
     restart: always
     networks:
       - immich-family-network
+    labels:
+      - dev.dozzle.group=immich-family
 
   immich-private-server:
     container_name: immich_private_server
@@ -159,6 +168,7 @@ services:
       - immich-private-network
       - networks_traefik_proxy
     labels:
+      - dev.dozzle.group=immich-private
       - traefik.enable=true
       - traefik.http.routers.immich-private.rule=Host(`private-viewer.${DOMAIN}`)
       - traefik.http.routers.immich-private.tls.certresolver=certificato
@@ -204,6 +214,8 @@ services:
     restart: always
     networks:
       - immich-private-network
+    labels:
+      - dev.dozzle.group=immich-private
 
   immich-private-redis:
     container_name: immich_private_redis
@@ -213,6 +225,8 @@ services:
     command: ["redis-server", "--appendonly", "no", "--maxmemory", "500mb", "--maxmemory-policy", "allkeys-lru"]
     networks:
       - immich-private-network
+    labels:
+      - dev.dozzle.group=immich-private
 
   immich-private-database:
     container_name: immich_private_postgres
@@ -228,3 +242,5 @@ services:
     restart: always
     networks:
       - immich-private-network
+    labels:
+      - dev.dozzle.group=immich-private

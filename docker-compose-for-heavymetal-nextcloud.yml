@@ -24,6 +24,8 @@ services:
     networks:
       - nextcloud
       - nextcloud-private
+    labels:
+      - dev.dozzle.group=nextcloud
 
   redis:
     image: redis:6
@@ -42,6 +44,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    labels:
+      - dev.dozzle.group=nextcloud
 
   nextcloud-db:
     image: mariadb
@@ -60,6 +64,8 @@ services:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-user
+    labels:
+      - dev.dozzle.group=nextcloud
 
   nextcloud:
     image: jhnrn/nextcloud-linux
@@ -101,6 +107,7 @@ services:
       networks_traefik_proxy:
       nextcloud:
     labels:
+      - dev.dozzle.group=nextcloud
       - ofelia.enabled=true
       - ofelia.job-exec.nextcloud_scan.schedule=@every 1h30m
       - ofelia.job-exec.nextcloud_scan.user=33
@@ -172,6 +179,8 @@ services:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud-private-user
+    labels:
+      - dev.dozzle.group=nextcloud-private
 
   nextcloud-private:
     image: jhnrn/nextcloud-linux
@@ -213,6 +222,7 @@ services:
       networks_traefik_proxy:
       nextcloud-private:
     labels:
+      - dev.dozzle.group=nextcloud-private
       - ofelia.enabled=true
       - ofelia.job-exec.nextcloud_private_scan.schedule=@every 1h30m
       - ofelia.job-exec.nextcloud_private_scan.user=33
