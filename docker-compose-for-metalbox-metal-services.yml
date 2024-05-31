@@ -22,6 +22,8 @@ services:
       TUNNEL_DNS_UPSTREAM: ${TUNNEL_DNS_UPSTREAM}
     networks:
       networks_vlan_80:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
     healthcheck:
       test: dig +short @127.0.0.1 -p${TUNNEL_DNS_PORT} cloudflare.com A || exit 1
       # test: 'curl --http2 -H "accept: application/dns-json" "https://1.1.1.1/dns-query?name=cloudflare.com"  || exit 1'
