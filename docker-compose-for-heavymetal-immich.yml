@@ -150,7 +150,7 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
     volumes:
-      - ${PRIVATE_USER_GALLERY}:/photos:ro
+      - ${PRIVATE_USER_GALLERY}:/photos
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -204,7 +204,7 @@ services:
       LOG_LEVEL: verbose
       LIBVA_DRIVER_NAME: "radeonsi"
     volumes:
-      - ${PRIVATE_USER_GALLERY}:/photos:ro
+      - ${PRIVATE_USER_GALLERY}:/photos
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
