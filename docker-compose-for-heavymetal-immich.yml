@@ -30,17 +30,17 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
     volumes:
-      - ${ALBUM_PHOTOS}:/photos/album:ro
-      - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016:ro
-      - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017:ro
-      - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018:ro
-      - ${USER1_PHOTOS}/2019:/photos/${USER1}/2019:ro
-      - ${USER1_PHOTOS}/2020:/photos/${USER1}/2020:ro
-      - ${USER1_PHOTOS}/2021:/photos/${USER1}/2021:ro
-      - ${USER1_PHOTOS}/2022:/photos/${USER1}/2022:ro
-      - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023:ro
-      - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024:ro
-      - ${USER2_PHOTOS}:/photos/${USER2}:ro
+      - ${ALBUM_PHOTOS}:/photos/album
+      - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016
+      - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017
+      - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018
+      - ${USER1_PHOTOS}/2019:/photos/${USER1}/2019
+      - ${USER1_PHOTOS}/2020:/photos/${USER1}/2020
+      - ${USER1_PHOTOS}/2021:/photos/${USER1}/2021
+      - ${USER1_PHOTOS}/2022:/photos/${USER1}/2022
+      - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023
+      - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024
+      - ${USER2_PHOTOS}:/photos/${USER2}
       - ${APPDATA}/immich/family/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -94,17 +94,17 @@ services:
       LOG_LEVEL: verbose
       LIBVA_DRIVER_NAME: "radeonsi"
     volumes:
-      - ${ALBUM_PHOTOS}:/photos/album:ro
-      - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016:ro
-      - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017:ro
-      - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018:ro
-      - ${USER1_PHOTOS}/2019:/photos/${USER1}/2019:ro
-      - ${USER1_PHOTOS}/2020:/photos/${USER1}/2020:ro
-      - ${USER1_PHOTOS}/2021:/photos/${USER1}/2021:ro
-      - ${USER1_PHOTOS}/2022:/photos/${USER1}/2022:ro
-      - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023:ro
-      - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024:ro
-      - ${USER2_PHOTOS}:/photos/${USER2}:ro
+      - ${ALBUM_PHOTOS}:/photos/album
+      - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016
+      - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017
+      - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018
+      - ${USER1_PHOTOS}/2019:/photos/${USER1}/2019
+      - ${USER1_PHOTOS}/2020:/photos/${USER1}/2020
+      - ${USER1_PHOTOS}/2021:/photos/${USER1}/2021
+      - ${USER1_PHOTOS}/2022:/photos/${USER1}/2022
+      - ${USER1_PHOTOS}/2023:/photos/${USER1}/2023
+      - ${USER1_PHOTOS}/2024:/photos/${USER1}/2024
+      - ${USER2_PHOTOS}:/photos/${USER2}
       - ${APPDATA}/immich/family/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
