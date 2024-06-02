@@ -288,7 +288,8 @@ services:
       traefik.docker.network: networks_traefik_proxy
 
   qbittorrent:
-    image: ghcr.io/hotio/qbittorrent
+    image: ${QBITTORRENT_IMAGE}
+    # image: ghcr.io/hotio/qbittorrent
     # image: lscr.io/linuxserver/qbittorrent:latest
     hostname: qbittorrent
     container_name: qbittorrent
