@@ -302,6 +302,7 @@ services:
       - UMASK=002
       - TZ=${TZ}
       - WEBUI_PORT=${QBITTORRENT_PORT}
+      - WEBUI_PORTS=${QBITTORRENT_PORT}
       - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
     volumes:
       - ${DATA_STORAGE}/qbittorrent:/config
