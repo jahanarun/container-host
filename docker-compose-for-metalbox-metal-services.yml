@@ -288,7 +288,8 @@ services:
       traefik.docker.network: networks_traefik_proxy
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: ghcr.io/hotio/qbittorrent
+    # image: lscr.io/linuxserver/qbittorrent:latest
     hostname: qbittorrent
     container_name: qbittorrent
     deploy:
@@ -298,6 +299,7 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
+      - UMASK=002
       - TZ=${TZ}
       - WEBUI_PORT=${QBITTORRENT_PORT}
       - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
