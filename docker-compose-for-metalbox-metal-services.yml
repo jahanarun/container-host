@@ -306,10 +306,10 @@ services:
       - WEBUI_PORTS=${QBITTORRENT_PORTS}
       - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
     volumes:
-      - ${DATA_STORAGE}/qbittorrent:/config
-      - ${DATA_STORAGE}/qbittorrent/healthcheck.sh:/healthcheck.sh
-      - ${DATA_STORAGE}/qbittorrent/forwarded_port.dat:/forwarded_port.dat
-      - ${DATA_STORAGE}/qbittorrent/healthcheck.log:/healthcheck.log
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}:/config
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.sh:/healthcheck.sh
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/forwarded_port.dat:/forwarded_port.dat
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.log:/healthcheck.log
       - ${TORRENTS}:/downloads #optional
     networks:
       networks_vlan_80:
