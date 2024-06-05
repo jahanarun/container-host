@@ -269,6 +269,7 @@ services:
       networks_traefik_proxy:
       network_gogs:
     labels:
+      dev.dozzle.group: gogs
       traefik.enable: true
       traefik.http.routers.gogs-web.rule: "Host(`git.${DOMAIN}`) || Host(`gogs.${DOMAIN}`)"
       traefik.http.routers.gogs-web.tls.certresolver: "certificato"
@@ -298,6 +299,8 @@ services:
       - "3306"
     networks:
       - network_gogs
+    labels:
+      dev.dozzle.group: gogs
 
   proxmox-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
@@ -530,6 +533,7 @@ services:
 
   gitea:
     image: gitea/gitea:1.22.0-rootless
+    container_name: gitea
     environment:
       - GITEA__database__DB_TYPE=postgres
       - GITEA__database__HOST=db:5432
@@ -547,6 +551,7 @@ services:
       networks_traefik_proxy:
       network_gitea:
     labels:
+      dev.dozzle.group: gitea
       traefik.enable: true
       traefik.http.routers.gitea-web.rule: "Host(`gitea.${DOMAIN}`)"
       traefik.http.routers.gitea-web.tls.certresolver: "certificato"
@@ -562,6 +567,7 @@ services:
 
   gitea-db:
     image: postgres:14
+    container_name: gitea-db
     restart: always
     environment:
       - POSTGRES_USER=gitea
@@ -573,3 +579,5 @@ services:
       - "5432"
     networks:
       - network_gitea
+    labels:
+      dev.dozzle.group: gitea
