@@ -569,6 +569,7 @@ services:
 
   gitea-db:
     image: postgres:14
+    hostname: db
     container_name: gitea-db
     restart: always
     environment:
