@@ -8,6 +8,10 @@ networks:
     external: true
   networks_traefik_proxy:
     external: true
+  network_gogs:
+    internal: true
+  network_gitea:
+    internal: true
 
 services:
   cloudflared-tunnel:
@@ -263,16 +267,16 @@ services:
       - ${DATA_STORAGE}/gogs/backup:/backup
     networks:
       networks_traefik_proxy:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
+      network_gogs:
     labels:
       traefik.enable: true
-      traefik.http.routers.gogs.rule: "Host(`git.${DOMAIN}`) || Host(`gogs.${DOMAIN}`)"
-      traefik.http.routers.gogs.tls.certresolver: "certificato"
-      traefik.http.routers.gogs.entrypoints: "web,web-secure"
-      traefik.http.services.gogs.loadbalancer.server.port: 3000
+      traefik.http.routers.gogs-web.rule: "Host(`git.${DOMAIN}`) || Host(`gogs.${DOMAIN}`)"
+      traefik.http.routers.gogs-web.tls.certresolver: "certificato"
+      traefik.http.routers.gogs-web.entrypoints: "web,web-secure"
+      traefik.http.routers.gogs-web.service: gogs-web
+      traefik.http.services.gogs-web.loadbalancer.server.port: 3000
       traefik.tcp.routers.gogs-ssh.rule: HostSNI(`*`)
-      traefik.tcp.routers.gogs-ssh.entrypoints: ssh
+      traefik.tcp.routers.gogs-ssh.entrypoints: gogs-ssh
       traefik.tcp.routers.gogs-ssh.service: gogs-ssh
       traefik.tcp.services.gogs-ssh.loadbalancer.server.port: 22      
     depends_on:
@@ -293,7 +297,7 @@ services:
     expose:
       - "3306"
     networks:
-      - networks_traefik_proxy
+      - network_gogs
 
   proxmox-heavymetal-placeholder:
     image: jhnrn/do-nothing:latest
@@ -523,3 +527,49 @@ services:
       networks_vlan_20:
     dns:
       - ${THINGS_DNS_IP_ADDRESS}
+
+  gitea:
+    image: gitea/gitea:1.22.0-rootless
+    environment:
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__HOST=db:5432
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD=${GITEA_POSTGRES_PASSWORD}
+    restart: always
+    user: $PUID:$PGID
+    volumes:
+      - ${DATA_STORAGE}/gitea/data:/var/lib/gitea
+      - ${DATA_STORAGE}/gitea/config:/etc/gitea
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      networks_traefik_proxy:
+      network_gitea:
+    labels:
+      traefik.enable: true
+      traefik.http.routers.gitea-web.rule: "Host(`gitea.${DOMAIN}`)"
+      traefik.http.routers.gitea-web.tls.certresolver: "certificato"
+      traefik.http.routers.gitea-web.entrypoints: "web,web-secure"
+      traefik.http.routers.gitea-web.service: gitea-web
+      traefik.http.services.gitea-web.loadbalancer.server.port: 3000
+      traefik.tcp.routers.gitea-ssh.rule: HostSNI(`*`)
+      traefik.tcp.routers.gitea-ssh.entrypoints: gitea-ssh
+      traefik.tcp.routers.gitea-ssh.service: gitea-ssh
+      traefik.tcp.services.gitea-ssh.loadbalancer.server.port: 2222     
+    depends_on:
+      - gitea-db
+
+  gitea-db:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD=${GITEA_POSTGRES_PASSWORD}
+      - POSTGRES_DB=gitea
+    volumes:
+      - ${DATA_STORAGE}/gitea/db:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - network_gitea
