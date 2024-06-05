@@ -271,6 +271,7 @@ services:
     labels:
       dev.dozzle.group: gogs
       traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
       traefik.http.routers.gogs-web.rule: "Host(`git.${DOMAIN}`) || Host(`gogs.${DOMAIN}`)"
       traefik.http.routers.gogs-web.tls.certresolver: "certificato"
       traefik.http.routers.gogs-web.entrypoints: "web,web-secure"
@@ -553,6 +554,7 @@ services:
     labels:
       dev.dozzle.group: gitea
       traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
       traefik.http.routers.gitea-web.rule: "Host(`gitea.${DOMAIN}`)"
       traefik.http.routers.gitea-web.tls.certresolver: "certificato"
       traefik.http.routers.gitea-web.entrypoints: "web,web-secure"
