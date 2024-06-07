@@ -12,6 +12,8 @@ networks:
     internal: true
   network_gitea:
     internal: true
+  network_gitea_migration:
+    internal: true
 
 services:
   cloudflared-tunnel:
@@ -268,6 +270,7 @@ services:
     networks:
       networks_traefik_proxy:
       network_gogs:
+      network_gitea_migration:
     labels:
       dev.dozzle.group: gogs
       traefik.enable: true
@@ -551,6 +554,7 @@ services:
     networks:
       networks_traefik_proxy:
       network_gitea:
+      network_gitea_migration:
     labels:
       dev.dozzle.group: gitea
       traefik.enable: true
