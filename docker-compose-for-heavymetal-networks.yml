@@ -59,6 +59,12 @@ services:
       vlan_80:
         ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
+    healthcheck:
+      test: wget --spider http://localhost:2375/version || exit 1
+      interval: "29s"
+      timeout: "5s"
+      retries: 3
+      start_period: "21s"
 
   traefik:
     image: traefik:latest
