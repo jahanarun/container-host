@@ -480,7 +480,8 @@ services:
       - autoheal=true
 
   cobalt-api:
-    image: ghcr.io/wukko/cobalt:latest
+    image: ghcr.io/imputnet/cobalt:7
+    # image: ghcr.io/wukko/cobalt:latest
     restart: unless-stopped
     container_name: cobalt-api
     init: true
@@ -499,8 +500,10 @@ services:
       - apiPort=9000
       # replace apiURL with your instance's target url in same format
       - apiURL=https://ytdl-api.${DOMAIN}/
+      - API_URL=https://ytdl-api.${DOMAIN}/
       # replace apiName with your instance's distinctive name
       - apiName=ytdl-api
+      - API_NAME=ytdl-api
       # if you want to use cookies when fetching data from services, uncomment the next line
       #- cookiePath=/cookies.json
       # see src/modules/processing/cookie/cookies_example.json for example file.
@@ -518,7 +521,8 @@ services:
       - traefik.docker.network=networks_traefik_proxy
 
   cobalt-web:
-    image: ghcr.io/wukko/cobalt:latest
+    image: ghcr.io/imputnet/cobalt:7
+    # image: ghcr.io/wukko/cobalt:latest
     restart: unless-stopped
     container_name: cobalt-web
     init: true
@@ -534,8 +538,10 @@ services:
         - webPort=9001
         # replace webURL with your instance's target url in same format
         - webURL=https://ytdl.${DOMAIN}/
+        - WEB_URL=https://ytdl.${DOMAIN}/
         # replace apiURL with preferred api instance url
         - apiURL=https://ytdl-api.${DOMAIN}/
+        - API_URL=https://ytdl-api.${DOMAIN}/
     labels:
       - dev.dozzle.group=cobalt
       - traefik.enable=true
