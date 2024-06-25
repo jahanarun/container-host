@@ -53,7 +53,7 @@ services:
     # ports:
     #     - 2375:2375
     volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
       traefik_proxy:
       vlan_80:
