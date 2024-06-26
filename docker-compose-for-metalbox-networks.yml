@@ -194,12 +194,3 @@ services:
       vlan_30:
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
-    labels:
-      - homepage.group=Network
-      - homepage.name=Tailscale
-      - homepage.weight=1000
-      - homepage.description=for Quantum network
-      - homepage.icon=tailscale.png
-      - homepage.widget.type=tailscale
-      - homepage.widget.deviceid=${TAILSCALE_DEVICE_ID}
-      - homepage.widget.key=${TAILSCALE_AUTH_KEY}
