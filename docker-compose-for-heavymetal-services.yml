@@ -519,9 +519,9 @@ services:
       timeout: 5s
       retries: 10
 
-  cronjobs:
+  cronjober:
     image: jhnrn/cronjobs:latest
-    container_name: cronjobs
+    container_name: cronjober
     restart: unless-stopped
     command: ["/usr/sbin/crond", "-f"]
     environment:
@@ -536,5 +536,6 @@ services:
       - /etc/timezone:/etc/timezone:ro
     networks:
       networks_vlan_20:
+        ipv4_address: ${CRONJOBER_IP_ADDRESS}
     dns:
       - ${THINGS_DNS_IP_ADDRESS}
