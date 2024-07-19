@@ -497,12 +497,13 @@ services:
       # if you're using a reverse proxy, uncomment the next line:
       #- 127.0.0.1:9000:9000
     environment:
-      - apiPort=9000
+      # - apiPort=9000
+      - API_PORT=9000
       # replace apiURL with your instance's target url in same format
-      - apiURL=https://ytdl-api.${DOMAIN}/
+      # - apiURL=https://ytdl-api.${DOMAIN}/
       - API_URL=https://ytdl-api.${DOMAIN}/
       # replace apiName with your instance's distinctive name
-      - apiName=ytdl-api
+      # - apiName=ytdl-api
       - API_NAME=ytdl-api
       # if you want to use cookies when fetching data from services, uncomment the next line
       #- cookiePath=/cookies.json
