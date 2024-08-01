@@ -194,3 +194,8 @@ services:
       vlan_30:
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
+    healthcheck:
+      test: ["CMD-SHELL", "tailscale status"]
+      interval: 1s
+      timeout: 5s
+      retries: 60
