@@ -536,12 +536,10 @@ services:
         # if you're using a reverse proxy, uncomment the next line:
         # - 127.0.0.1:9001:9001
     environment:
-        - webPort=9001
+        - WEB_PORT=9001
         # replace webURL with your instance's target url in same format
-        - webURL=https://ytdl.${DOMAIN}/
         - WEB_URL=https://ytdl.${DOMAIN}/
         # replace apiURL with preferred api instance url
-        - apiURL=https://ytdl-api.${DOMAIN}/
         - API_URL=https://ytdl-api.${DOMAIN}/
     labels:
       - dev.dozzle.group=cobalt
