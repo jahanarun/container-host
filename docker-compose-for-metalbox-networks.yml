@@ -160,6 +160,7 @@ services:
       - homepage.widget.type=traefik
       - homepage.widget.url=https://reverse-metal.${DOMAIN}
       # - homepage.widget.fields=["routers", "services", "middleware"]
+      - autoheal=true
     volumes:
       # - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
       - /etc/localtime:/etc/localtime:ro  
@@ -196,9 +197,10 @@ services:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
       test: >
-        offline_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | grep offline | wc -l)
-        all_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | wc -l)
-        [ $all_status = $offline_status ] && exit 1
+        offline_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | grep offline | wc -l) && \
+        all_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | wc -l)  && \
+        [ $all_status = $offline_status ] && \
+        exit 1
       interval: 30s
       timeout: 5s
       retries: 5
