@@ -176,7 +176,7 @@ services:
       interval: 30s
       retries: 5
 
-  tailscale:
+  tailscale-quantum:
     container_name: tailscale-quantum
     hostname: tailscale-quantum
     image: tailscale/tailscale:stable
@@ -189,10 +189,9 @@ services:
       TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
       TS_ROUTES: ${TAILSCALE_ROUTES}
       # TS_ACCEPT_DNS: ${TS_ACCEPT_DNS}
-    volumes:
-      - ${DATA_STORAGE}/tailscale:/var/lib
     networks:
       vlan_30:
+        ipv4_address: ${TAILSCALE_QUANTUM_IP_ADDRESS}
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
@@ -207,3 +206,31 @@ services:
     labels:
       - autoheal=true
       
+  tailscale-vpn:
+    container_name: tailscale-vpn
+    hostname: tailscale-vpn
+    image: tailscale/tailscale:stable
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN # Used for configuring a network
+      - NET_RAW # Used for accessing privileged socket operations
+    environment:
+      TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
+      TS_ROUTES: ${TAILSCALE_ROUTES}
+    networks:
+      vlan_30:
+        ipv4_address: ${TAILSCALE_QUANTUM_VPN_IP_ADDRESS}
+    dns:
+      ${QUANTUM_DNS_IP_ADDRESS}
+    healthcheck:
+      test: |
+       offline_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | grep offline | wc -l) \
+       && all_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | wc -l) \
+       && [ $all_status -gt $offline_status ] \
+       || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    labels:
+      - autoheal=true
