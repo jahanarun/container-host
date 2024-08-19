@@ -178,7 +178,7 @@ services:
 
   tailscale-quantum:
     container_name: tailscale-quantum
-    hostname: tailscale-quantum
+    hostname: quantum-normal
     image: tailscale/tailscale:stable
     restart: unless-stopped
     cap_add:
@@ -196,8 +196,8 @@ services:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
       test: |
-       offline_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | grep offline | wc -l) \
-       && all_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | wc -l) \
+       offline_status=$(tailscale status | grep quantum-normal | xargs -I {} echo {} | grep offline | wc -l) \
+       && all_status=$(tailscale status | grep quantum-normal | xargs -I {} echo {} | wc -l) \
        && [ $all_status -gt $offline_status ] \
        || exit 1
       interval: 30s
@@ -208,7 +208,7 @@ services:
       
   tailscale-vpn:
     container_name: tailscale-vpn
-    hostname: tailscale-vpn
+    hostname: quantum-vpn
     image: tailscale/tailscale:stable
     restart: unless-stopped
     cap_add:
@@ -225,8 +225,8 @@ services:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
       test: |
-       offline_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | grep offline | wc -l) \
-       && all_status=$(tailscale status | grep tailscale-quantum | xargs -I {} echo {} | wc -l) \
+       offline_status=$(tailscale status | grep quantum-vpn | xargs -I {} echo {} | grep offline | wc -l) \
+       && all_status=$(tailscale status | grep quantum-vpn | xargs -I {} echo {} | wc -l) \
        && [ $all_status -gt $offline_status ] \
        || exit 1
       interval: 30s
