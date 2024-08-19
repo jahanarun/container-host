@@ -195,14 +195,15 @@ services:
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
-      test: >
-       bash -c"
-       machine=quantum-normal
-       && all_status=$(tailscale status | grep $machine | xargs -I {} echo {} | wc -l)
-       && offline_status=$(tailscale status | grep $machine | xargs -I {} echo {} | grep offline | wc -l)
-       && echo Machine named $machine has total count of $all_status and offline count of $offline_status
-       && [ $all_status -gt $offline_status ]
+      test: [
+       "CMD", "sh", "-c",
+       "machine=quantum-normal \
+       && all_status=$(tailscale status | grep $machine | xargs -I {} echo {} | wc -l) \
+       && offline_status=$(tailscale status | grep $machine | xargs -I {} echo {} | grep offline | wc -l) \
+       && echo Machine named $machine has total count of $all_status and offline count of $offline_status \
+       && [ $all_status -gt $offline_status ] \
        || exit 1"
+      ] 
       interval: 30s
       timeout: 5s
       retries: 5
@@ -227,14 +228,15 @@ services:
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
-      test: >
-       bash -c"
-       machine=quantum-vpn
-       && all_status=$(tailscale status | grep $machine | xargs -I {} echo {} | wc -l)
-       && offline_status=$(tailscale status | grep $machine | xargs -I {} echo {} | grep offline | wc -l)
-       && echo Machine named $machine has total count of $all_status and offline count of $offline_status
-       && [ $all_status -gt $offline_status ]
+      test: [
+       "CMD", "sh", "-c",
+       "machine=quantum-vpn \
+       && all_status=$(tailscale status | grep $machine | xargs -I {} echo {} | wc -l) \
+       && offline_status=$(tailscale status | grep $machine | xargs -I {} echo {} | grep offline | wc -l) \
+       && echo Machine named $machine has total count of $all_status and offline count of $offline_status \
+       && [ $all_status -gt $offline_status ] \
        || exit 1"
+      ] 
       interval: 30s
       timeout: 5s
       retries: 5
