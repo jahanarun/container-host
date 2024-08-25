@@ -372,7 +372,6 @@ services:
       networks_vlan_80:
       networks_traefik_proxy:
     devices:
-      - '/dev/disk/by-id/ata-SPCC_Solid_State_Disk_AA000000000000000978'
       - '/dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82'
       - '/dev/disk/by-id/ata-ST8000DM004-2CX188_WCT023RG'
       - '/dev/disk/by-id/ata-ST1000LM024_HN-M101MBB_S30CJ9EF277321'
