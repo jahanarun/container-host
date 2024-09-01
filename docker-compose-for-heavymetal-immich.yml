@@ -139,7 +139,7 @@ services:
       POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
       POSTGRES_USER: ${IMMICH_DB_USERNAME}
       POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
-      POSTGRES_INITDB_ARGS: '--data-checksums'
+      # POSTGRES_INITDB_ARGS: '--data-checksums'
     volumes:
       - ${APPDATA}/immich/family/database:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
@@ -152,22 +152,22 @@ services:
     healthcheck:
       test: pg_isready --dbname='${IMMICH_DB_DATABASE_NAME}' --username='${IMMICH_DB_USERNAME}' || exit 1; Chksum="$$(psql --dbname='${IMMICH_DB_DATABASE_NAME}' --username='${IMMICH_DB_USERNAME}' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
       interval: 5m
-    command:
-      [
-        'postgres',
-        '-c',
-        'shared_preload_libraries=vectors.so',
-        '-c',
-        'search_path="$$user", public, vectors',
-        '-c',
-        'logging_collector=on',
-        '-c',
-        'max_wal_size=2GB',
-        '-c',
-        'shared_buffers=512MB',
-        '-c',
-        'wal_compression=on',
-      ]
+    # command:
+    #   [
+    #     'postgres',
+    #     '-c',
+    #     'shared_preload_libraries=vectors.so',
+    #     '-c',
+    #     'search_path="$$user", public, vectors',
+    #     '-c',
+    #     'logging_collector=on',
+    #     '-c',
+    #     'max_wal_size=2GB',
+    #     '-c',
+    #     'shared_buffers=512MB',
+    #     '-c',
+    #     'wal_compression=on',
+    #   ]
 
   immich-private-server:
     container_name: immich_private_server
