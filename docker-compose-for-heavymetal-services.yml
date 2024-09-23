@@ -374,7 +374,7 @@ services:
     devices:
       - '/dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82'
       - '/dev/disk/by-id/ata-ST8000DM004-2CX188_WCT023RG'
-      - '/dev/disk/by-id/ata-ST1000LM024_HN-M101MBB_S30CJ9EF277321'
+      # - '/dev/disk/by-id/ata-ST1000LM024_HN-M101MBB_S30CJ9EF277321'
       - '/dev/disk/by-id/ata-ST8000VN0022-2EL112_ZA1D94RY'
       - '/dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY2HPJQ'
       - '/dev/disk/by-id/ata-ST4000NE001-3CR101_WRA01R0K'
