@@ -94,7 +94,7 @@ services:
       homepage.description: Frigate
       homepage.widget.type: frigate
       homepage.widget.url: https://recorder.${DOMAIN}
-      homepage.widget.enableRecentEvents: true
+      # homepage.widget.enableRecentEvents: false
     # healthcheck:
     #   test: curl -sSf 'http://localhost:5000/api/health' | grep '"success":true' || exit 1
     #   interval: 10s
