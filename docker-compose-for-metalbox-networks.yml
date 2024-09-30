@@ -139,9 +139,9 @@ services:
       CLOUDFLARE_DNS_API_TOKEN: ${DNS_API_TOKEN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`reverse-metal.${DOMAIN}`)"
+      - "traefik.http.routers.api.rule=Host(`traefik.metalbox.${DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=web-secure"
-      - "traefik.http.routers.api.tls.certresolver=certificato"
+      # - "traefik.http.routers.api.tls.certresolver=certificato"
       - "traefik.http.middlewares.private-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${PRIVATE_IPS_COMMA_SEPARATED},${METAL_NETWORK}"
       - "traefik.http.middlewares.quantum-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK}"
       - "traefik.http.middlewares.quantum_metal-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK},${METAL_NETWORK}"
@@ -156,9 +156,9 @@ services:
       - homepage.weight=1000
       - homepage.description=serving Quantum network
       - homepage.icon=traefik.png
-      - homepage.href=https://reverse-metal.${DOMAIN}
+      - homepage.href=https://traefik.metalbox.${DOMAIN}
       - homepage.widget.type=traefik
-      - homepage.widget.url=https://reverse-metal.${DOMAIN}
+      - homepage.widget.url=https://traefik.metalbox.${DOMAIN}
       # - homepage.widget.fields=["routers", "services", "middleware"]
       - autoheal=true
     volumes:
