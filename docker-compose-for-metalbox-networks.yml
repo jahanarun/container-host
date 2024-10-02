@@ -87,20 +87,10 @@ services:
     hostname: traefik
     container_name: traefik
     command:
-      - "--log.level=${LOGLEVEL}"
-      # - '--logLevel="${LOGLEVEL}"'
-      # - '--traefikLog.filePath="/logs/traefik.log"'
-      # - '--traefikLog.format="json"'
+      - "--log.level=${LOGLEVEL:-INFO}"
       - "--accesslog=true"
       - '--accessLog.filePath="/logs/access.log"'
       - '--accessLog.format="json"'
-      # - '--accessLog.filters.statusCodes="200,300-302"'
-      # - '--accessLog.filters.retryAttempts="true"'
-      # - '--accessLog.filters.minDuration="10ms"'
-      # - '--accessLog.fields.defaultMode="keep"'
-      # - '--accessLog.fields.names="Username=drop Hostname=drop"'
-      # - '--accessLog.fields.headers.defaultMode="keep"'
-      # - '--accessLog.fields.headers.names="User-Agent=redact Authorization=drop Content-Type=keep"'
       - "--api.dashboard=true"
       - "--providers.docker.endpoint=tcp://dockerproxy:2375"
       - "--providers.file.directory=/FileProvider/"
@@ -122,9 +112,18 @@ services:
       - "--certificatesresolvers.certificato.acme.dnschallenge.delaybeforecheck=10"
       - "--certificatesresolvers.certificato.acme.dnschallenge.resolvers=1.1.1.1:53"
       # - "--certificatesresolvers.certificato.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.certificato.acme.email=postmaster@${DOMAIN}"
+      - "--certificatesresolvers.certificato.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
+      # - '--traefikLog.filePath="/logs/traefik.log"'
+      # - '--traefikLog.format="json"'
+      # - '--accessLog.filters.statusCodes="200,300-302"'
+      # - '--accessLog.filters.retryAttempts="true"'
+      # - '--accessLog.filters.minDuration="10ms"'
+      # - '--accessLog.fields.defaultMode="keep"'
+      # - '--accessLog.fields.names="Username=drop Hostname=drop"'
+      # - '--accessLog.fields.headers.defaultMode="keep"'
+      # - '--accessLog.fields.headers.names="User-Agent=redact Authorization=drop Content-Type=keep"'
     networks:
       traefik_proxy:
       # vlan_20:
@@ -142,14 +141,14 @@ services:
       - "traefik.http.routers.api.rule=Host(`traefik.metalbox.${DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=web-secure"
       # - "traefik.http.routers.api.tls.certresolver=certificato"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - "traefik.http.middlewares.private-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${PRIVATE_IPS_COMMA_SEPARATED},${METAL_NETWORK}"
       - "traefik.http.middlewares.quantum-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK}"
       - "traefik.http.middlewares.quantum_metal-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK},${METAL_NETWORK}"
       - "traefik.http.middlewares.quantum_things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK},${THINGS_NETWORK}"
       - "traefik.http.middlewares.things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${THINGS_NETWORK}"
       # - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Metal
       - homepage.name=Traefik
