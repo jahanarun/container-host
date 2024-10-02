@@ -175,6 +175,7 @@ services:
       test: traefik healthcheck --ping || exit 1
       interval: 30s
       retries: 5
+      start_period: "60s"
 
   tailscale-quantum:
     container_name: tailscale-quantum
@@ -214,6 +215,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
+      start_period: "60s"
     labels:
       - autoheal=true
       
