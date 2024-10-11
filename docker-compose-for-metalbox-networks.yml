@@ -208,7 +208,7 @@ services:
       #          if [[ "$status" == 0 ]]; then exit 0; else exit 1; fi'
 
       test: >
-        sh -c 'offline_status=$(tailscale status --active | grep quantum-normal  | grep offline | wc -l) &&\
+        sh -c 'offline_status=$(tailscale status --active | grep quantum-normal  | grep 'offline\|idle' | wc -l) &&\
               all_status=$(tailscale status --active  | grep quantum-normal | wc -l) &&\
               echo $all_status $offline_status &&\
               if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
@@ -238,7 +238,7 @@ services:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
       test: >
-        sh -c 'offline_status=$(tailscale status --active | grep quantum-vpn  | grep offline | wc -l) &&\
+        sh -c 'offline_status=$(tailscale status --active | grep quantum-vpn  | grep 'offline\|idle' | wc -l) &&\
               all_status=$(tailscale status --active  | grep quantum-vpn | wc -l) &&\
               echo $all_status $offline_status &&\
               if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
