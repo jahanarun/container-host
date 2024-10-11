@@ -197,21 +197,11 @@ services:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
       # test: >
-      #   sh -c 'machine=quantum-normal 
-      #         && all_status=$(tailscale status | grep $machine | xargs -I {} echo {} | wc -l) 
-      #         && offline_status=$(tailscale status | grep $machine | xargs -I {} echo {} | grep offline | wc -l) 
-      #         && echo Machine named $machine has total count of $all_status and offline count of $offline_status 
-      #         && [ $all_status -gt $offline_status ] 
-      #         || exit 1'
-      # test: >
-      #   sh -c 'status=$(tailscale status --active | grep offline | wc -l) &&\
-      #          if [[ "$status" == 0 ]]; then exit 0; else exit 1; fi'
-
-      test: >
-        sh -c 'offline_status=$(tailscale status --active | grep quantum-normal  | grep 'offline\|idle' | wc -l) &&\
-              all_status=$(tailscale status --active  | grep quantum-normal | wc -l) &&\
-              echo $all_status $offline_status &&\
-              if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
+      #   sh -c 'offline_status=$(tailscale status --active | grep quantum-normal  | grep offline | wc -l) &&\
+      #         all_status=$(tailscale status --active  | grep quantum-normal | wc -l) &&\
+      #         echo $all_status $offline_status &&\
+      #         if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
+      test: tailscale status --peers=false --json | grep -q 'Online.*true'
       interval: 30s
       timeout: 5s
       retries: 5
@@ -237,11 +227,12 @@ services:
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
-      test: >
-        sh -c 'offline_status=$(tailscale status --active | grep quantum-vpn  | grep 'offline\|idle' | wc -l) &&\
-              all_status=$(tailscale status --active  | grep quantum-vpn | wc -l) &&\
-              echo $all_status $offline_status &&\
-              if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
+      # test: >
+      #   sh -c 'offline_status=$(tailscale status --active | grep quantum-vpn  | grep offline | wc -l) &&\
+      #         all_status=$(tailscale status --active  | grep quantum-vpn | wc -l) &&\
+      #         echo $all_status $offline_status &&\
+      #         if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
+      test: tailscale status --peers=false --json | grep -q 'Online.*true'
       interval: 30s
       timeout: 5s
       retries: 5
