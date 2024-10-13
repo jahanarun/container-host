@@ -185,8 +185,11 @@ services:
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+    device_cgroup_rules:
+      - 'c 189:* rmw'
     devices:
       - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
+      # - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     environment:
       DB_PASSWORD: ${IMMICH_DB_PASSWORD}
       DB_USERNAME: ${IMMICH_DB_USERNAME}
