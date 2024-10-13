@@ -64,11 +64,11 @@ services:
       FRIGATE_MQTT_PASSWORD: ${FRIGATE_MQTT_PASSWORD}
       TZ: ${TZ}
       NVIDIA_VISIBLE_DEVICES: void
-      LIBVA_DRIVER_NAME: radeonsi
-      HSA_OVERRIDE_GFX_VERSION: ${HSA_OVERRIDE_GFX_VERSION}
-      DOWNLOAD_YOLOV8: ${DOWNLOAD_YOLOV8}
-      I_PROMISE_I_WONT_MAKE_AN_ISSUE_ON_GITHUB: somevalue
-      HSA_ENABLE_SDMA: 0
+      # LIBVA_DRIVER_NAME: radeonsi
+      # HSA_OVERRIDE_GFX_VERSION: ${HSA_OVERRIDE_GFX_VERSION}
+      # DOWNLOAD_YOLOV8: ${DOWNLOAD_YOLOV8}
+      # I_PROMISE_I_WONT_MAKE_AN_ISSUE_ON_GITHUB: somevalue
+      # HSA_ENABLE_SDMA: 0
     labels:
       # - traefik.http.routers.frigate.middlewares=quantum_things-ipallowlist
       traefik.enable: true
