@@ -12,8 +12,13 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
-    # devices:
-    #   - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    devices:
+      - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
+    group_add:
+      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     volumes:
       - ${APPDATA}/immich/global/model-cache:/cache
     restart: always
@@ -79,9 +84,11 @@ services:
   immich-family-microservices:
     container_name: immich_family_microservices
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    device_cgroup_rules:
+      - 'c 189:* rmw'
     devices:
-      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
-      - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+      - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
+      # - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
@@ -172,12 +179,14 @@ services:
   immich-private-server:
     container_name: immich_private_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
-    command: [ "start.sh", "immich" ]
+    # command: [ "start.sh", "immich" ]
     volumes:
       - ${PRIVATE_USER_GALLERY}:/photos
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+    devices:
+      - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
     environment:
       DB_PASSWORD: ${IMMICH_DB_PASSWORD}
       DB_USERNAME: ${IMMICH_DB_USERNAME}
@@ -210,36 +219,38 @@ services:
       - homepage.widget.key=${IMMICH_PRIVATE_API_KEY}
       - homepage.widget.url=https://private-viewer.${DOMAIN}
 
-  immich-private-microservices:
-    container_name: immich_private_microservices
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
-    devices:
-      - /dev/dri/renderD128 # If using Intel QuickSync or VAAPI
-      - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
-    group_add:
-      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
-      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
-    command: [ "start.sh", "microservices" ]
-    environment:
-      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
-      DB_USERNAME: ${IMMICH_DB_USERNAME}
-      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
-      DB_HOSTNAME: immich_private_postgres
-      LOG_LEVEL: verbose
-      LIBVA_DRIVER_NAME: "radeonsi"
-    volumes:
-      - ${PRIVATE_USER_GALLERY}:/photos
-      - ${APPDATA}/immich/private/upload:/usr/src/app/upload
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-    depends_on:
-      - immich-private-redis
-      - immich-private-database
-    restart: always
-    networks:
-      - immich-private-network
-    labels:
-      - dev.dozzle.group=immich-private
+  # immich-private-microservices:
+  #   container_name: immich_private_microservices
+  #   image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+  #   device_cgroup_rules:
+  #     - 'c 189:* rmw'
+  #   devices:
+  #     - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
+  #     # - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+  #   group_add:
+  #     - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+  #     - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+  #   command: [ "start.sh", "microservices" ]
+  #   environment:
+  #     DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+  #     DB_USERNAME: ${IMMICH_DB_USERNAME}
+  #     DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
+  #     DB_HOSTNAME: immich_private_postgres
+  #     LOG_LEVEL: verbose
+  #     LIBVA_DRIVER_NAME: "radeonsi"
+  #   volumes:
+  #     - ${PRIVATE_USER_GALLERY}:/photos
+  #     - ${APPDATA}/immich/private/upload:/usr/src/app/upload
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /etc/timezone:/etc/timezone:ro
+  #   depends_on:
+  #     - immich-private-redis
+  #     - immich-private-database
+  #   restart: always
+  #   networks:
+  #     - immich-private-network
+  #   labels:
+  #     - dev.dozzle.group=immich-private
 
   immich-private-redis:
     container_name: immich_private_redis
