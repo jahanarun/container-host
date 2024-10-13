@@ -27,10 +27,11 @@ services:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
       # - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
-      - /dev/dri # direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
-      - /dev/kfd # the main compute interface shared by all GPUs. 
+      # - /dev/dri # direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
+      # - /dev/kfd # the main compute interface shared by all GPUs. 
     # cap_add:
     #   - CAP_PERFMON
     privileged: true
