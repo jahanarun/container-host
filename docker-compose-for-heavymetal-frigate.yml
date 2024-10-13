@@ -31,6 +31,8 @@ services:
       # - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
       - /dev/dri # direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
       - /dev/kfd # the main compute interface shared by all GPUs. 
+    cap_add:
+      - CAP_PERFMON
     security_opt:
       - seccomp:unconfined
     volumes:
