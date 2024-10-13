@@ -65,6 +65,8 @@ services:
       TZ: ${TZ}
       NVIDIA_VISIBLE_DEVICES: void
       LIBVA_DRIVER_NAME: ${LIBVA_DRIVER_NAME} # iHD, i965, radeonsi
+      OverrideGpuAddressSpace: 48 # for Openvino GPU
+      NEOReadDebugKeys: 1 # for Openvino GPU
       # HSA_OVERRIDE_GFX_VERSION: ${HSA_OVERRIDE_GFX_VERSION}
       # DOWNLOAD_YOLOV8: ${DOWNLOAD_YOLOV8}
       # I_PROMISE_I_WONT_MAKE_AN_ISSUE_ON_GITHUB: somevalue
