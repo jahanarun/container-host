@@ -197,8 +197,12 @@ services:
     devices:
       - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
       # - /dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
-    env_file:
-      - stack.env
+    environment:
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      DB_USERNAME: ${IMMICH_DB_USERNAME}
+      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
+      DB_HOSTNAME: immich_private_postgres
+      LOG_LEVEL: verbose
     depends_on:
       - immich-private-redis
       - immich-private-database
@@ -237,10 +241,13 @@ services:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     command: [ "start.sh", "microservices" ]
-    env_file:
-      - stack.env
-    # environment:
-    #   # LIBVA_DRIVER_NAME: "radeonsi"
+    environment:
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      DB_USERNAME: ${IMMICH_DB_USERNAME}
+      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
+      DB_HOSTNAME: immich_private_postgres
+      LOG_LEVEL: verbose
+      # LIBVA_DRIVER_NAME: "radeonsi"
     volumes:
       - ${PRIVATE_USER_GALLERY}:/photos
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
@@ -269,8 +276,10 @@ services:
   immich-private-database:
     container_name: immich_private_postgres
     image: tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
-    env_file:
-      - stack.env
+    environment:
+      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
+      POSTGRES_USER: ${IMMICH_DB_USERNAME}
+      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
     volumes:
       - ${APPDATA}/immich/private/database:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
