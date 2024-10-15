@@ -51,6 +51,7 @@ services:
       - SYS_PTRACE
       - SYS_ADMIN
       # - PERFMON
+    privileged: true
     security_opt:
       - apparmor:unconfined
     devices:
