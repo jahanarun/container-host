@@ -73,7 +73,7 @@ services:
       - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
       - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
       - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
-      - NETDATA_EXTRA_DEB_PACKAGES=apcupsd,intel-gpu-tools
+      - NETDATA_EXTRA_DEB_PACKAGES=apcupsd intel-gpu-tools
     deploy:
       mode: global
     labels:
