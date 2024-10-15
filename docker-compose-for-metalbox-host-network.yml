@@ -50,7 +50,7 @@ services:
     cap_add:
       - SYS_PTRACE
       - SYS_ADMIN
-      - PERFMON 
+      # - PERFMON
     security_opt:
       - apparmor:unconfined
     devices:
