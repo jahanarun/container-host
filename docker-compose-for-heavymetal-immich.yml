@@ -4,9 +4,11 @@ networks:
 
   immich-family-network:
     driver: bridge
+    internal: true
 
   immich-private-network:
     driver: bridge
+    internal: true
 
 services:
   immich-machine-learning:
