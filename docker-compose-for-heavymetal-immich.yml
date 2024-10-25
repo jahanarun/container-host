@@ -23,6 +23,7 @@ services:
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     volumes:
       - ${APPDATA}/immich/global/model-cache:/cache
+      - /dev/bus/usb:/dev/bus/usb
     restart: always
     networks:
       - immich-family-network
