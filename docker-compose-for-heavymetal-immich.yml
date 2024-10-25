@@ -63,7 +63,7 @@ services:
       DB_USERNAME: ${IMMICH_DB_USERNAME}
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
       DB_HOSTNAME: immich_family_postgres
-      LOG_LEVEL: verbose
+      LOG_LEVEL: ${LOG_LEVEL}
     depends_on:
       - immich-family-redis
       - immich-family-database
@@ -210,7 +210,7 @@ services:
       DB_USERNAME: ${IMMICH_DB_USERNAME}
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
       DB_HOSTNAME: immich_private_postgres
-      LOG_LEVEL: verbose
+      LOG_LEVEL: ${LOG_LEVEL}
     depends_on:
       - immich-private-redis
       - immich-private-database
