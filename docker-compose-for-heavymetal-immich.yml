@@ -24,6 +24,7 @@ services:
     volumes:
       - ${APPDATA}/immich/global/model-cache:/cache
       - /dev/bus/usb:/dev/bus/usb
+      - /intel-compute:/intel-compute # temp fix https://github.com/immich-app/immich/discussions/11578#discussioncomment-10578825
     restart: always
     networks:
       - immich-family-network
