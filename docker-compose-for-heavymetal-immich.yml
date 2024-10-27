@@ -14,6 +14,10 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    environment:
+      OverrideGpuAddressSpace: 48 # for Openvino GPU
+      NEOReadDebugKeys: 1 # for Openvino GPU
+      LOG_LEVEL: ${LOG_LEVEL}
     device_cgroup_rules:
       - 'c 189:* rmw'
     devices:
@@ -64,6 +68,8 @@ services:
       DB_USERNAME: ${IMMICH_DB_USERNAME}
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
       DB_HOSTNAME: immich_family_postgres
+      OverrideGpuAddressSpace: 48 # for Openvino GPU
+      NEOReadDebugKeys: 1 # for Openvino GPU
       LOG_LEVEL: ${LOG_LEVEL}
     depends_on:
       - immich-family-redis
@@ -211,6 +217,8 @@ services:
       DB_USERNAME: ${IMMICH_DB_USERNAME}
       DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
       DB_HOSTNAME: immich_private_postgres
+      OverrideGpuAddressSpace: 48 # for Openvino GPU
+      NEOReadDebugKeys: 1 # for Openvino GPU
       LOG_LEVEL: ${LOG_LEVEL}
     depends_on:
       - immich-private-redis
