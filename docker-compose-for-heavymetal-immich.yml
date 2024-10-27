@@ -10,6 +10,9 @@ networks:
     driver: bridge
     internal: true
 
+  networks_internet:
+    external: true
+
 services:
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -33,6 +36,7 @@ services:
     networks:
       - immich-family-network
       - immich-private-network
+      - networks_internet # temporary
     labels:
       - dev.dozzle.group=immich-family
 
