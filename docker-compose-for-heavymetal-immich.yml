@@ -21,17 +21,18 @@ services:
       OverrideGpuAddressSpace: 48 # for Openvino GPU
       NEOReadDebugKeys: 1 # for Openvino GPU
       LOG_LEVEL: ${LOG_LEVEL}
-    # device_cgroup_rules:
-    #   - 'c 189:* rmw'
+    device_cgroup_rules:
+      - 'c 189:* rmw'
     devices:
-      - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      # - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     volumes:
       - ${APPDATA}/immich/global/model-cache:/cache
       # - /dev/bus/usb:/dev/bus/usb
-      # - /intel-compute:/intel-compute # temp fix https://github.com/immich-app/immich/discussions/11578#discussioncomment-10578825
+      - /intel-compute:/intel-compute # temp fix https://github.com/immich-app/immich/discussions/11578#discussioncomment-10578825
     restart: always
     networks:
       - immich-family-network
