@@ -27,6 +27,7 @@ services:
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/dri:/dev/dri # If using Intel QuickSync or VAAPI
+    privileged: true
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
