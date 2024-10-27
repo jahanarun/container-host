@@ -21,6 +21,7 @@ services:
       OverrideGpuAddressSpace: 48 # for Openvino GPU
       NEOReadDebugKeys: 1 # for Openvino GPU
       LOG_LEVEL: ${LOG_LEVEL}
+      DEVICE: ${DEVICE}
     device_cgroup_rules:
       - 'c 189:* rmw'
     devices:
