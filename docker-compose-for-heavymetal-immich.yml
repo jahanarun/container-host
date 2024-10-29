@@ -156,7 +156,7 @@ services:
   immich-family-redis:
     container_name: immich_family_redis
     hostname: redis
-    image: docker.io/redis:6.2-alpine@sha256:e3b17ba9479deec4b7d1eeec1548a253acc5374d68d3b27937fcfe4df8d18c7e
+    image: ${REDIS_IMAGE}
     command: ["redis-server", "--appendonly", "no", "--maxmemory", "500mb", "--maxmemory-policy", "allkeys-lru"]
     restart: always
     healthcheck:
@@ -293,7 +293,7 @@ services:
   immich-private-redis:
     container_name: immich_private_redis
     hostname: redis
-    image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
+    image: ${REDIS_IMAGE}
     restart: always
     command: ["redis-server", "--appendonly", "no", "--maxmemory", "500mb", "--maxmemory-policy", "allkeys-lru"]
     networks:
