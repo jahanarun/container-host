@@ -10,7 +10,7 @@ networks:
     driver: bridge
     internal: true
 
-  networks_internet:
+  networks_vlan_80:
     external: true
 
 services:
@@ -36,9 +36,10 @@ services:
       # - /intel-compute:/intel-compute # temp fix https://github.com/immich-app/immich/discussions/11578#discussioncomment-10578825
     restart: always
     networks:
-      - immich-family-network
-      - immich-private-network
-      - networks_internet # temporary
+      immich-family-network:
+      immich-private-network:
+      networks_vlan_80:
+        ipv4_address: ${IMMICH_MACHINE_LEARNING_IP_ADDRESS}
     labels:
       - dev.dozzle.group=immich-family
 
@@ -84,8 +85,10 @@ services:
     healthcheck:
       disable: false
     networks:
-      - immich-family-network
-      - networks_traefik_proxy
+      immich-family-network:
+      networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${IMMICH_FAMILY_SERVER_IP_ADDRESS}
     labels:
       - dev.dozzle.group=immich-family
       - traefik.enable=true
@@ -231,8 +234,10 @@ services:
       - immich-private-database
     restart: always
     networks:
-      - immich-private-network
-      - networks_traefik_proxy
+      immich-private-network:
+      networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${IMMICH_PRIVATE_SERVER_IP_ADDRESS}
     labels:
       - dev.dozzle.group=immich-private
       - traefik.enable=true
