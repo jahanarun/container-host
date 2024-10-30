@@ -213,6 +213,7 @@ services:
     volumes:
       - ${DATA_STORAGE}/plex/config:/config
       - ${DATA_STORAGE}/plex/transcode:/transcode
+      - ${TVSHOWS_LATEST}:/media/tvshows-latest
       - ${TVSHOWS}:/media/Series
       - ${MOVIES}:/media/Movies
       - ${MUSIC}:/media/Music
