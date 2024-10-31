@@ -330,7 +330,6 @@ services:
     pid: host
     privileged: true
     networks:
-      networks_vlan_80:
       networks_traefik_proxy:
     dns:
       - ${METAL_DNS_IP_ADDRESS}
@@ -368,7 +367,6 @@ services:
       - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
       - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
     networks:
-      networks_vlan_80:
       networks_traefik_proxy:
     devices:
       # tank pool
@@ -396,7 +394,7 @@ services:
       - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
       - traefik.http.routers.scrutiny.tls.certresolver=certificato
       - traefik.http.routers.scrutiny.entrypoints=web,web-secure
-      - traefik.http.routers.scrutiny.middlewares=quantum-ipallowlist
+      # - traefik.http.routers.scrutiny.middlewares=quantum-ipallowlist
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Hardware
