@@ -40,45 +40,45 @@ services:
       - ${DATA_STORAGE}/omada/data:/opt/tplink/EAPController/data
       - ${DATA_STORAGE}/omada/logs:/opt/tplink/EAPController/logs
 
-  netdata:
-    image: netdata/netdata:edge
-    container_name: netdata-metalbox
-    hostname: netdata-metalbox
-    pid: host
-    restart: unless-stopped
-    network_mode: host
-    cap_add:
-      - SYS_PTRACE
-      - SYS_ADMIN
-      # - PERFMON
-    privileged: true
-    security_opt:
-      - apparmor:unconfined
-    devices:
-      - /dev/dri:/dev/dri
-    volumes:
-      - ${DATA_STORAGE}/netdata-metalbox/config:/etc/netdata
-      - ${DATA_STORAGE}/netdata-metalbox/lib:/var/lib/netdata
-      - ${DATA_STORAGE}/netdata-metalbox/cache:/var/cache/netdata
-      - /:/host/root:ro,rslave
-      - /etc/passwd:/host/etc/passwd:ro
-      - /etc/group:/host/etc/group:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /etc/os-release:/host/etc/os-release:ro
-      - /var/log:/host/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
-      - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
-      - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
-      - NETDATA_EXTRA_DEB_PACKAGES=apcupsd intel-gpu-tools
-    deploy:
-      mode: global
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.netdatamb.rule=Host(`netdatamb.${DOMAIN}`)
-      - traefik.http.routers.netdatamb.tls.certresolver=certificato
-      - traefik.http.routers.netdatamb.entrypoints=web,web-secure
-      - traefik.http.services.netdatamb.loadbalancer.server.port=19999
+  # netdata:
+  #   image: netdata/netdata:edge
+  #   container_name: netdata-metalbox
+  #   hostname: netdata-metalbox
+  #   pid: host
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   cap_add:
+  #     - SYS_PTRACE
+  #     - SYS_ADMIN
+  #     # - PERFMON
+  #   privileged: true
+  #   security_opt:
+  #     - apparmor:unconfined
+  #   devices:
+  #     - /dev/dri:/dev/dri
+  #   volumes:
+  #     - ${DATA_STORAGE}/netdata-metalbox/config:/etc/netdata
+  #     - ${DATA_STORAGE}/netdata-metalbox/lib:/var/lib/netdata
+  #     - ${DATA_STORAGE}/netdata-metalbox/cache:/var/cache/netdata
+  #     - /:/host/root:ro,rslave
+  #     - /etc/passwd:/host/etc/passwd:ro
+  #     - /etc/group:/host/etc/group:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /etc/os-release:/host/etc/os-release:ro
+  #     - /var/log:/host/var/log:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   environment:
+  #     - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
+  #     - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
+  #     - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
+  #     - NETDATA_EXTRA_DEB_PACKAGES=apcupsd intel-gpu-tools
+  #   deploy:
+  #     mode: global
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.netdatamb.rule=Host(`netdatamb.${DOMAIN}`)
+  #     - traefik.http.routers.netdatamb.tls.certresolver=certificato
+  #     - traefik.http.routers.netdatamb.entrypoints=web,web-secure
+  #     - traefik.http.services.netdatamb.loadbalancer.server.port=19999
