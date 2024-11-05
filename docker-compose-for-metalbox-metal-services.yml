@@ -135,10 +135,10 @@ services:
     container_name: plex-music
     labels:
       traefik.enable: true
-      traefik.http.routers.plex.rule: "Host(`music.${DOMAIN}`)"
-      traefik.http.routers.plex.entrypoints: web,web-secure
-      traefik.http.routers.plex.tls.certresolver: "certificato"
-      traefik.http.services.plex.loadbalancer.server.port: 32400
+      traefik.http.routers.plex-music.rule: "Host(`music.${DOMAIN}`)"
+      traefik.http.routers.plex-music.entrypoints: web,web-secure
+      traefik.http.routers.plex-music.tls.certresolver: "certificato"
+      traefik.http.services.plex-music.loadbalancer.server.port: 32400
       traefik.docker.network: networks_traefik_proxy
       homepage.group: Metal
       homepage.weight: 2000

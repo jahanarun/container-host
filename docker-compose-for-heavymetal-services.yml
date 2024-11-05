@@ -227,10 +227,10 @@ services:
       - ${METAL_DNS_IP_ADDRESS}
     labels:
       - traefik.enable=true
-      - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
-      - traefik.http.routers.plex.tls.certresolver=certificato
-      - traefik.http.routers.plex.entrypoints=web,web-secure
-      - traefik.http.services.plex.loadbalancer.server.port=32400
+      - traefik.http.routers.plex-movietvshow.rule=Host(`plex.${DOMAIN}`)
+      - traefik.http.routers.plex-movietvshow.tls.certresolver=certificato
+      - traefik.http.routers.plex-movietvshow.entrypoints=web,web-secure
+      - traefik.http.services.plex-movietvshow.loadbalancer.server.port=32400
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.weight=2000
