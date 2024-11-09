@@ -307,6 +307,7 @@ services:
       - WEBUI_PORT=${QBITTORRENT_PORT}
       - WEBUI_PORTS=${QBITTORRENT_PORTS}
       - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
+      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
     volumes:
       - ${QBITTORRENT_CONFIG_DATA_STORAGE}:/config
       - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.sh:/healthcheck.sh
