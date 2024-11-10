@@ -530,7 +530,7 @@ services:
     image: jhnrn/cronjober:latest
     container_name: cronjober
     restart: unless-stopped
-    command: ["/usr/sbin/crond", "-f"]
+    # command: ["/usr/sbin/crond", "-f"]
     environment:
       TZ: ${TZ}
       TZ_IN_ANOTHER_FORMAT: ${TZ_IN_ANOTHER_FORMAT}
