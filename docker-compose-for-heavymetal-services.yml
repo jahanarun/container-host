@@ -527,7 +527,7 @@ services:
       retries: 10
 
   cronjober:
-    image: jhnrn/cronjobs:latest
+    image: jhnrn/cronjober:latest
     container_name: cronjober
     restart: unless-stopped
     command: ["/usr/sbin/crond", "-f"]
