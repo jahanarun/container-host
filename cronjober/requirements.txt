@@ -1,0 +1,3 @@
+httpx
+# onvif-py3
+onvif2-zeep

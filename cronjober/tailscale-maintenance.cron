@@ -1,0 +1,1 @@
+0 5 * * *  python3 /scripts/tailscale-maintenance.py | tee -a /var/log/cron.log 2>&1
