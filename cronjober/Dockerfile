@@ -29,7 +29,7 @@ RUN chmod 0644 /var/spool/cron/crontabs/* && \
 
 # Create the log file to be able to run tail
 # Run the command on container startup
-ENTRYPOINT ["/sbin/tini", "--", "./startup.sh && /usr/sbin/crond -f"]
+ENTRYPOINT ["/sbin/tini", "--", "/cronjober/startup.sh && /usr/sbin/crond -f"]
 
 # CMD /usr/sbin/crond && touch /var/log/cron.log && tail -F /var/log/cron.log
 # ENTRYPOINT ["/usr/sbin/crond", "-f", "-d", "0"]

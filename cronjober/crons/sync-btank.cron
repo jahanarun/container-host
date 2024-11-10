@@ -1,1 +1,1 @@
-0 3 * * 5 /root/sync.sh | tee -a /var/log/sync-btank.log 2>&1
+0 3 * * 5 /cronjober/sync-btank.sh | tee -a /var/log/sync-btank.log 2>&1
