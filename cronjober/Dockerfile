@@ -2,23 +2,23 @@
 FROM jhnrn/nettools-base
 
 #Install Cron & python
-RUN apk -U upgrade
-# RUN apk add busybox-initscripts openrc --no-cache
-RUN apk add --no-cache tini
+RUN apk -U upgrade && \
+    apk add --no-cache \
+    py3-pip \
+    python3 \
+    tini && \
+    rm -rf /var/cache/apk/*
 
-RUN apk add --no-cache \
-        python3 py3-pip
+RUN mkdir /cronjober
+COPY / /cronjober/
+WORKDIR /cronjober
+COPY . .
+RUN rm -rf crons
 
-RUN rm -rf /var/cache/apk/*
-
-RUN mkdir /scripts
-COPY / /scripts/
-WORKDIR /scripts
-# COPY onvif_camera_set_time.py .
 RUN pip3 install -r requirements.txt --break-system-packages
 
 # Copy cron fies to the cron.d directory
-COPY *.cron /var/spool/cron/crontabs/
+COPY crons/ /var/spool/cron/crontabs/
  
 # Apply cron job
 RUN chmod 0644 /var/spool/cron/crontabs/* && \
