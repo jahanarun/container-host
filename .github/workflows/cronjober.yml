@@ -1,10 +1,12 @@
 name: cronjobs - Build linux docker image for running cronjobs
 
 on: 
+  schedule:
+    - cron: "20 4 * * 6"   # At 04:20 on Saturday.
   workflow_dispatch:
-  push:
-    branches:
-      - 'main'
+  # push:
+  #   branches:
+  #     - 'main'
 
 defaults:
   run:
