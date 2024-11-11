@@ -29,7 +29,7 @@ RUN pip3 install -r requirements.txt --break-system-packages \
 # Symlink the cron to stdout
 # RUN ln -sf /dev/stdout /var/log/cron.log
 
-USER app
+# USER app
 # COPY crontab .
 
 # Create the log file to be able to run tail
