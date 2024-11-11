@@ -526,24 +526,24 @@ services:
       timeout: 5s
       retries: 10
 
-  cronjober:
-    image: jhnrn/cronjober:latest
-    container_name: cronjober
-    restart: unless-stopped
-    # command: ["/usr/sbin/crond", "-f"]
-    environment:
-      TZ: ${TZ}
-      TZ_IN_ANOTHER_FORMAT: ${TZ_IN_ANOTHER_FORMAT}
-      CAMERA_USERNAME: ${CAMERA_USERNAME}
-      CAMERA_PASSWORD: ${CAMERA_PASSWORD}
-      TAILNET: ${TAILNET}
-      TAILSCALE_TOKEN: ${TAILSCALE_TOKEN}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-      - ${DATA_STORAGE}/cronjober/crontab:/cronjober/crontab:ro
-    networks:
-      networks_vlan_20:
-        ipv4_address: ${CRONJOBER_IP_ADDRESS}
-    dns:
-      - ${THINGS_DNS_IP_ADDRESS}
+  # cronjober:
+  #   image: jhnrn/cronjober:latest
+  #   container_name: cronjober
+  #   restart: unless-stopped
+  #   # command: ["/usr/sbin/crond", "-f"]
+  #   environment:
+  #     TZ: ${TZ}
+  #     TZ_IN_ANOTHER_FORMAT: ${TZ_IN_ANOTHER_FORMAT}
+  #     CAMERA_USERNAME: ${CAMERA_USERNAME}
+  #     CAMERA_PASSWORD: ${CAMERA_PASSWORD}
+  #     TAILNET: ${TAILNET}
+  #     TAILSCALE_TOKEN: ${TAILSCALE_TOKEN}
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /etc/timezone:/etc/timezone:ro
+  #     - ${DATA_STORAGE}/cronjober/crontab:/cronjober/crontab:ro
+  #   networks:
+  #     networks_vlan_20:
+  #       ipv4_address: ${CRONJOBER_IP_ADDRESS}
+  #   dns:
+  #     - ${THINGS_DNS_IP_ADDRESS}
