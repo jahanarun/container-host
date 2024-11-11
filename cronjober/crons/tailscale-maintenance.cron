@@ -1,1 +1,0 @@
-0 5 * * *  python3 /cronjober/tailscale-maintenance.py | tee -a /var/log/cron.log 2>&1
