@@ -21,7 +21,7 @@ COPY --chown=www-data:www-data  . .
 RUN chown -R www-data:www-data /cronjober
 RUN pip3 install -r requirements.txt --break-system-packages 
 USER www-data
-
+RUN chmod +x /cronjober/startup.sh
 # \
 #     && set -x \
 #     && apk add --no-cache supercronic shadow
@@ -42,10 +42,10 @@ USER www-data
 
 # CMD ["/usr/bin/supercronic", "-test", "crontab"]
 
-ENTRYPOINT ["/cronjober/startup.sh"]
+# ENTRYPOINT ["/cronjober/startup.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "/cronjober/startup.sh"]
 # RUN /cronjober/startup.sh
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
-# ENTRYPOINT ["/sbin/tini", "--", "which crond"]
 
 # CMD /usr/sbin/crond && touch /var/log/cron.log && tail -F /var/log/cron.log
 # ENTRYPOINT ["/usr/sbin/crond", "-f", "-d", "0"]
