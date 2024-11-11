@@ -10,8 +10,10 @@ RUN apk -U upgrade && \
     rm -rf /var/cache/apk/*
 
 RUN mkdir /cronjober
+RUN adduser --system www-data
+
 WORKDIR /cronjober
-COPY . .
+COPY --chown=www-data:www-data  . .
 # RUN rm -rf crons
 
 RUN pip3 install -r requirements.txt --break-system-packages \
@@ -28,14 +30,15 @@ RUN pip3 install -r requirements.txt --break-system-packages \
  
 # Symlink the cron to stdout
 # RUN ln -sf /dev/stdout /var/log/cron.log
-RUN adduser --system www-data
-USER www-data
 # COPY crontab .
 
 # Create the log file to be able to run tail
 # Run the command on container startup
 
 # CMD ["/usr/bin/supercronic", "-test", "crontab"]
+RUN chown -R www-data:www-data /cronjober
+USER www-data
+
 ENTRYPOINT ["/cronjober/startup.sh"]
 # RUN /cronjober/startup.sh
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
