@@ -28,7 +28,7 @@ RUN pip3 install -r requirements.txt --break-system-packages \
  
 # Symlink the cron to stdout
 # RUN ln -sf /dev/stdout /var/log/cron.log
-
+RUN adduser --system www-data
 USER www-data
 # COPY crontab .
 
@@ -36,7 +36,7 @@ USER www-data
 # Run the command on container startup
 
 # CMD ["/usr/bin/supercronic", "-test", "crontab"]
-ENTRYPOINT ["/sbin/tini", "--", "/cronjober/startup.sh"]
+ENTRYPOINT ["/cronjober/startup.sh"]
 # RUN /cronjober/startup.sh
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 # ENTRYPOINT ["/sbin/tini", "--", "which crond"]
