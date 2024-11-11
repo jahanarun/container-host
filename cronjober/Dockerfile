@@ -4,6 +4,7 @@ FROM jhnrn/nettools-base
 #Install Cron & python
 RUN apk -U upgrade && \
     apk add --no-cache \
+    supercronic shadow \
     py3-pip \
     python3 \
     tini && \
@@ -11,15 +12,19 @@ RUN apk -U upgrade && \
 
 RUN mkdir /cronjober
 RUN adduser --system www-data
+# RUN useradd -m www-data
 
 WORKDIR /cronjober
 COPY --chown=www-data:www-data  . .
 # RUN rm -rf crons
 
-RUN pip3 install -r requirements.txt --break-system-packages \
-    && set -x \
-    && apk add --no-cache supercronic shadow \
-    && useradd -m app
+RUN chown -R www-data:www-data /cronjober
+RUN pip3 install -r requirements.txt --break-system-packages 
+USER www-data
+
+# \
+#     && set -x \
+#     && apk add --no-cache supercronic shadow
 
 # Copy cron fies to the cron.d directory
 # COPY crons/ /var/spool/cron/crontabs/
@@ -36,8 +41,6 @@ RUN pip3 install -r requirements.txt --break-system-packages \
 # Run the command on container startup
 
 # CMD ["/usr/bin/supercronic", "-test", "crontab"]
-RUN chown -R www-data:www-data /cronjober
-USER www-data
 
 ENTRYPOINT ["/cronjober/startup.sh"]
 # RUN /cronjober/startup.sh

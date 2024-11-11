@@ -21,7 +21,7 @@ camera_ips = CAMERA_IPS.split(",")
 # Connect to camera
 
 def get_cam(ip: str):
-  return ONVIFCamera(ip, 80, CAMERA_USERNAME, CAMERA_PASSWORD, wsdl_dir='/scripts/wsdl')
+  return ONVIFCamera(ip, 80, CAMERA_USERNAME, CAMERA_PASSWORD, wsdl_dir='./wsdl')
 
 def get_time_params():
   mycam = get_cam(camera_ips[0])
