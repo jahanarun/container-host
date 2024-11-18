@@ -320,11 +320,11 @@ services:
       networks_traefik_proxy:
     dns:
       - ${METAL_DNS_IP_ADDRESS}
-    healthcheck:
-      test: ["CMD", "/healthcheck.sh"]
-      interval: 20s
-      timeout: 10s
-      start_period: 30s
+    # healthcheck:
+    #   test: ["CMD", "/healthcheck.sh"]
+    #   interval: 20s
+    #   timeout: 10s
+    #   start_period: 30s
     restart: unless-stopped
     labels:
       - traefik.enable=true
