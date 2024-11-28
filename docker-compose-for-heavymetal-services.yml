@@ -541,9 +541,40 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ${DATA_STORAGE}/cronjober/crontab:/cronjober/crontab:ro
+      - ${DATA_STORAGE}/cronjober/crontab:/cronjober/crontab
+      - ${DATA_STORAGE}/cronjober/logs:/var/log
     networks:
       networks_vlan_20:
         ipv4_address: ${CRONJOBER_IP_ADDRESS}
     dns:
       - ${THINGS_DNS_IP_ADDRESS}
+
+  cups:
+    image: anujdatar/cups
+    container_name: cups
+    restart: unless-stopped
+    ports:
+        - "631:631"
+    devices:
+        - ${PRINTER_USB_PATH}:${PRINTER_USB_PATH}
+    environment:
+        CUPSADMIN: ${CUPS_ADMIN}
+        CUPSPASSWORD: ${CUPS_PASSWORD}
+        TZ: ${TZ}
+    networks:
+      networks_vlan_30:
+        ipv4_address: ${CUPS_IP_ADDRESS}
+      networks_traefik_proxy:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ${DATA_STORAGE}/cups:/etc/cups
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.cups.rule=Host(`cups.${DOMAIN}`)
+      - traefik.http.routers.cups.tls.certresolver=certificato
+      - traefik.http.routers.cups.entrypoints=web,web-secure
+      - traefik.http.routers.cups.middlewares=quantum-ipallowlist
+      - traefik.http.services.cups.loadbalancer.server.port=631
+      - traefik.docker.network=networks_traefik_proxy
+      - autoheal=true

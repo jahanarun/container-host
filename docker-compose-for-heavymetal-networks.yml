@@ -27,6 +27,17 @@ networks:
           gateway: ${THINGS_GATEWAY}
           ip_range: 10.100.${THINGS_VLAN_ID}.12/30  # 12 - 15
 
+  vlan_30:
+    driver: macvlan
+    driver_opts:
+      parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
+      name: macvlan${QUANTUM_VLAN_ID}
+    ipam:
+      config:
+        - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
+          gateway: ${QUANTUM_GATEWAY}
+          ip_range: 10.100.${QUANTUM_VLAN_ID}.56/31 # 56 - 57
+
   traefik_proxy:
     driver: bridge
     internal: true
