@@ -51,6 +51,7 @@ services:
     restart: unless-stopped
     networks:
       vlan_20:
+      vlan_30:
       vlan_80:
       traefik_proxy:
       internet:
