@@ -547,8 +547,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - ${DATA_STORAGE}/cronjober/crontab:/cronjober/crontab
+      - ${DATA_STORAGE}/cronjober/.cache:/cronjober/.cache
       - ${DATA_STORAGE}/cronjober/logs:/var/log
-      - ${DATA_STORAGE}/cronjober/.cache:/home/www-data/.cache
     networks:
       networks_vlan_20:
         ipv4_address: ${CRONJOBER_IP_ADDRESS}
