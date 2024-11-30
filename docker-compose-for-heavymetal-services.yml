@@ -533,7 +533,10 @@ services:
     container_name: cronjober
     restart: unless-stopped
     # command: ["/usr/sbin/crond", "-f"]
+    user: ${UID}:${GID}
     environment:
+      PUID: 33
+      PGID: 33
       TZ: ${TZ}
       TZ_IN_ANOTHER_FORMAT: ${TZ_IN_ANOTHER_FORMAT}
       CAMERA_USERNAME: ${CAMERA_USERNAME}
@@ -556,13 +559,13 @@ services:
     container_name: cups
     restart: unless-stopped
     ports:
-        - "631:631"
+      - "631:631"
     devices:
-        - ${PRINTER_USB_PATH}:${PRINTER_USB_PATH}
+      - ${PRINTER_USB_PATH}:${PRINTER_USB_PATH}
     environment:
-        CUPSADMIN: ${CUPS_ADMIN}
-        CUPSPASSWORD: ${CUPS_PASSWORD}
-        TZ: ${TZ}
+      CUPSADMIN: ${CUPS_ADMIN}
+      CUPSPASSWORD: ${CUPS_PASSWORD}
+      TZ: ${TZ}
     networks:
       networks_vlan_30:
         ipv4_address: ${CUPS_IP_ADDRESS}
