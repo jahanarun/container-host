@@ -1,4 +1,4 @@
-name: cronjobs - Build linux docker image for running cronjobs
+name: cronjober - Build linux docker image for running cronjobs
 
 on: 
   schedule:
