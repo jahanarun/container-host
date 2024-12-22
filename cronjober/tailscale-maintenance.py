@@ -70,7 +70,7 @@ parser.add_argument("-d", "--dryrun",
                     action="store_true")
 args = parser.parse_args()
 
-devices_to_be_deleted = get_device_ids_older_than_n_days(1)
+devices_to_be_deleted = get_device_ids_older_than_n_days(0)
 print("Devices to be deleted: {}".format(devices_to_be_deleted))
 for dev in devices_to_be_deleted:
     delete_device(dev, args.dryrun)
