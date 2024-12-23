@@ -200,7 +200,7 @@ services:
       - PUID=33
       - PGID=33
       - VERSION=docker
-      - PLEX_CLAIM=${PLEX_CLAIM}
+      - PLEX_CLAIM=${PLEX_MOVIETVSHOWS_CLAIM}
       - TZ=${TZ}
       - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
       - CHANGE_CONFIG_DIR_OWNERSHIP=true
@@ -555,32 +555,493 @@ services:
     dns:
       - ${THINGS_DNS_IP_ADDRESS}
 
-  cups:
-    image: anujdatar/cups
-    container_name: cups
-    restart: unless-stopped
-    ports:
-      - "631:631"
-    devices:
-      - ${PRINTER_USB_PATH}:${PRINTER_USB_PATH}
-    environment:
-      CUPSADMIN: ${CUPS_ADMIN}
-      CUPSPASSWORD: ${CUPS_PASSWORD}
-      TZ: ${TZ}
+  # cups:
+  #   image: anujdatar/cups
+  #   container_name: cups
+  #   restart: unless-stopped
+  #   ports:
+  #     - "631:631"
+  #   devices:
+  #     - ${PRINTER_USB_PATH}:${PRINTER_USB_PATH}
+  #   environment:
+  #     CUPSADMIN: ${CUPS_ADMIN}
+  #     CUPSPASSWORD: ${CUPS_PASSWORD}
+  #     TZ: ${TZ}
+  #   networks:
+  #     networks_vlan_30:
+  #       ipv4_address: ${CUPS_IP_ADDRESS}
+  #     networks_traefik_proxy:
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /etc/timezone:/etc/timezone:ro
+  #     - ${DATA_STORAGE}/cups:/etc/cups
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.cups.rule=Host(`cups.${DOMAIN}`)
+  #     - traefik.http.routers.cups.tls.certresolver=certificato
+  #     - traefik.http.routers.cups.entrypoints=web,web-secure
+  #     - traefik.http.routers.cups.middlewares=quantum-ipallowlist
+  #     - traefik.http.services.cups.loadbalancer.server.port=631
+  #     - traefik.docker.network=networks_traefik_proxy
+  #     - autoheal=true
+
+
+
+  plex-music:
+    image: plexinc/pms-docker:plexpass
+    hostname: plex-music
+    container_name: plex-music
+    labels:
+      traefik.enable: true
+      traefik.http.routers.plex-music.rule: "Host(`music.${DOMAIN}`)"
+      traefik.http.routers.plex-music.entrypoints: web,web-secure
+      traefik.http.routers.plex-music.tls.certresolver: "certificato"
+      traefik.http.services.plex-music.loadbalancer.server.port: 32400
+      traefik.docker.network: networks_traefik_proxy
+      homepage.group: Metal
+      homepage.weight: 2000
+      homepage.name: Plex
+      homepage.icon: plex.png
+      homepage.href: https://music.${DOMAIN}/
+      homepage.description: for music
+      homepage.widget.type: plex
+      homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
+      homepage.widget.key: ${PLEX_MUSIC_TOKEN}
+      autoheal: true
     networks:
-      networks_vlan_30:
-        ipv4_address: ${CUPS_IP_ADDRESS}
       networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    environment:
+      - PLEX_UID=${PUID}
+      - PLEX_GID=${PGID}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_MUSIC_CLAIM}
+      - TZ=${TZ}
+      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+      - CHANGE_CONFIG_DIR_OWNERSHIP=true
+      - HOSTNAME=music.${DOMAIN}
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-      - ${DATA_STORAGE}/cups:/etc/cups
+      - ${DATA_STORAGE}/plex-music/config:/config
+      - ${MUSIC}:/media/music
+    restart: unless-stopped
+
+  librespeed:
+    image: adolfintel/speedtest
+    hostname: librespeed
+    container_name: librespeed
+    restart: unless-stopped
+    user: $PUID:$PGID
+    environment:
+      - MODE=standalone
+    networks:
+      - networks_traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
+      - "traefik.http.routers.librespeed.tls.certresolver=certificato"
+      - traefik.http.routers.librespeed.entrypoints=web,web-secure
+      - "traefik.http.services.librespeed.loadbalancer.server.port=80"
+      - traefik.docker.network=networks_traefik_proxy
+
+  # speedtest_tracker-db:
+  #   image: postgres:15
+  #   container_name: speedtest_tracker-db
+  #   restart: always
+  #   user: $PUID:$PGID
+  #   environment:
+  #     - POSTGRES_DB=speedtest_tracker
+  #     - POSTGRES_USER=${SPEEDTEST_TRACKER_POSTGRES_USER}
+  #     - POSTGRES_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
+  #     - TZ=UTC
+  #   volumes:
+  #     - ${DATA_STORAGE}/speedtest-tracker-alexjustesen/db:/var/lib/postgresql/data
+  #   networks:
+  #     speedtest_tracker:
+  #   labels:
+  #     - dev.dozzle.group=speedtest_tracker
+
+  speedtest_tracker:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    hostname: speedtest-tracker
+    container_name: speedtest_tracker
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - DB_CONNECTION=sqlite
+      # - DB_CONNECTION=pgsql
+      # - DB_HOST=speedtest_tracker-db
+      # - DB_PORT=5432
+      # - DB_DATABASE=speedtest_tracker
+      # - DB_USERNAME=${SPEEDTEST_TRACKER_POSTGRES_USER}
+      # - DB_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
+      # - TZ=UTC
+      - TZ=${TZ}
+      - APP_DEBUG=${SPEEDTEST_TRACKER_APP_DEBUG:-false}
+      - APP_TIMEZONE=${TZ}
+      - DISPLAY_TIMEZONE=${TZ}
+      - SPEEDTEST_SCHEDULE=${SPEEDTEST_TRACKER_SCHEDULE}
+      - APP_KEY=${SPEEDTEST_TRACKER_APP_KEY}
+      - APP_NAME=${DOMAIN} speedtest tracker
+      - PUBLIC_DASHBOARD=true
+    volumes:
+      - ${DATA_STORAGE}/speedtest-tracker/config:/config
+      # - ${DATA_STORAGE}/speedtest-tracker/web:/etc/ssl/web
+    # depends_on:
+    #   - speedtest_tracker-db
+    networks:
+      # speedtest_tracker:
+      networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${METAL_SPEEDTRACKER_IP_ADDRESS}
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    restart: unless-stopped
+    labels:
+      # - dev.dozzle.group=speedtest_tracker
+      - "traefik.enable=true"
+      - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
+      - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
+      - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
+      - traefik.http.routers.speedtest-tracker.entrypoints=web,web-secure
+      - traefik.docker.network=networks_traefik_proxy
+      - homepage.group=Network
+      - homepage.weight=10000
+      - homepage.name=Speedtest
+      - homepage.icon=speedtest-tracker.png
+      - homepage.href=https://speedtracker.${DOMAIN}/
+      - homepage.description=Speedtest
+      - homepage.widget.type=speedtest
+      - homepage.widget.url=https://speedtracker.${DOMAIN}
+      # - homepage.widget.fields=["download", "upload", "ping"]
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:main
+    container_name: homepage
+    hostname: homepage
+    user: $PUID:$PGID
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${DATA_STORAGE}/homepage:/app/config # Make sure your local config directory exists
+      # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations      
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${METAL_HOMEPAGE_DASHBOARD_IP_ADDRESS}
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.homepage.rule: "Host(`www.${DOMAIN}`)"
+      traefik.http.routers.homepage.tls.certresolver: "certificato"
+      traefik.http.routers.homepage.middlewares: quantum-ipallowlist
+      traefik.http.services.homepage.loadbalancer.server.port: 3000
+      traefik.http.routers.homepage.entrypoints: web,web-secure
+      traefik.docker.network: networks_traefik_proxy
+
+  qbittorrent:
+    image: ${QBITTORRENT_IMAGE}
+    # image: ghcr.io/hotio/qbittorrent
+    # image: lscr.io/linuxserver/qbittorrent:latest
+    hostname: qbittorrent
+    container_name: qbittorrent
+    deploy:
+      resources:
+        limits:
+          memory: ${QBITTORRENT_MEMORY_LIMIT:-2G}
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=002
+      - TZ=${TZ}
+      - WEBUI_PORT=${QBITTORRENT_PORT}
+      - WEBUI_PORTS=${QBITTORRENT_PORTS}
+      - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
+      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
+    volumes:
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}:/config
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.sh:/healthcheck.sh
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/forwarded_port.dat:/forwarded_port.dat
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.log:/healthcheck.log
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      networks_vlan_80:
+        ipv4_address: ${QBITTORRENT_IP_ADDRESS}
+      networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    # healthcheck:
+    #   test: ["CMD", "/healthcheck.sh"]
+    #   interval: 20s
+    #   timeout: 10s
+    #   start_period: 30s
+    restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.cups.rule=Host(`cups.${DOMAIN}`)
-      - traefik.http.routers.cups.tls.certresolver=certificato
-      - traefik.http.routers.cups.entrypoints=web,web-secure
-      - traefik.http.routers.cups.middlewares=quantum-ipallowlist
-      - traefik.http.services.cups.loadbalancer.server.port=631
+      - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.tls.certresolver=certificato
+      - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
+      - traefik.http.routers.qbittorrent.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
       - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
+      - homepage.group=Metal
+      - homepage.name=Qbittorrent
+      - homepage.weight=4000
+      - homepage.icon=qbittorrent.png
+      - homepage.href=https://torrent.${DOMAIN}/
+      - homepage.description=Qbittorrent
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.username=admin
+      - homepage.widget.password=${QBITTORRENT_PASSWORD}
+      - homepage.widget.url=https://torrent.${DOMAIN}
+      # - homepage.widget.fields=["leech","download", "seed", "upload"]
+
+  overseerr:
+    image: sctx/overseerr:latest
+    hostname: overseerr
+    container_name: overseerr
+    user: $PUID:$PGID
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+      - PORT=5055 #optional
+    volumes:
+      - ${DATA_STORAGE}/overseerr:/app/config
+    restart: unless-stopped
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
+      - traefik.http.routers.overseerr.tls.certresolver=certificato
+      - traefik.http.routers.overseerr.entrypoints=web,web-secure
+      - traefik.http.routers.overseerr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.overseerr.loadbalancer.server.port=5055
+      - traefik.docker.network=networks_traefik_proxy
+      - homepage.group=Metal
+      - homepage.weight=3000
+      - homepage.name=Overseerr
+      - homepage.icon=overseerr.png
+      - homepage.href=https://fetch.${DOMAIN}/
+      - homepage.description=Overseerr
+      - homepage.widget.type=overseerr
+      - homepage.widget.key=${OVERSEERR_API_KEY}
+      - homepage.widget.url=https://fetch.${DOMAIN}
+      # - homepage.widget.fields=["pending", "approved", "available", "processing"]
+
+  # autoheal:
+  #   image: jhnrn/docker-autoheal:latest
+  #   container_name: "autoheal"
+  #   restart: always
+  #   environment:
+  #     TZ: ${TZ}    
+  #     AUTOHEAL_CONTAINER_LABEL: autoheal
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   network_mode: none
+
+  # glances:
+  #   image: nicolargo/glances:latest-full
+  #   container_name: glances
+  #   restart: unless-stopped
+  #   pid: host
+  #   privileged: true
+  #   networks:
+  #     networks_vlan_80:
+  #     networks_traefik_proxy:
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #     - ${DATA_STORAGE}/glances/glances.conf:/glances/conf/glances.conf
+  #   environment:
+  #     - GLANCES_OPT=-w
+  #     - TZ=${TZ}
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.glances.rule=Host(`glancesmb.${DOMAIN}`)
+  #     - traefik.http.routers.glances.tls.certresolver=certificato
+  #     - traefik.http.routers.glances.entrypoints=web,web-secure
+  #     - traefik.http.routers.glances.middlewares=quantum_metal-ipallowlist
+  #     - traefik.http.services.glances.loadbalancer.server.port=61208
+  #     - traefik.docker.network=networks_traefik_proxy
+
+  whoogle-search:
+    image: ${WHOOGLE_IMAGE:-benbusby/whoogle-search}
+    container_name: whoogle-search
+    restart: unless-stopped
+    pids_limit: 50
+    mem_limit: 256mb
+    memswap_limit: 256mb
+    # user debian-tor from tor package
+    user: whoogle
+    security_opt:
+      - no-new-privileges
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /config/:size=10M,uid=927,gid=927,mode=1700
+      - /var/lib/tor/:size=15M,uid=927,gid=927,mode=1700
+      - /run/tor/:size=1M,uid=927,gid=927,mode=1700
+    #environment: # Uncomment to configure environment variables
+      # Basic auth configuration, uncomment to enable
+      #- WHOOGLE_USER=<auth username>
+      #- WHOOGLE_PASS=<auth password>
+      # Proxy configuration, uncomment to enable
+      #- WHOOGLE_PROXY_USER=<proxy username>
+      #- WHOOGLE_PROXY_PASS=<proxy password>
+      #- WHOOGLE_PROXY_TYPE=<proxy type (http|https|socks4|socks5)
+      #- WHOOGLE_PROXY_LOC=<proxy host/ip>
+      # Site alternative configurations, uncomment to enable
+      # Note: If not set, the feature will still be available
+      # with default values.
+      #- WHOOGLE_ALT_TW=farside.link/nitter
+      #- WHOOGLE_ALT_YT=farside.link/invidious
+      #- WHOOGLE_ALT_IG=farside.link/bibliogram/u
+      #- WHOOGLE_ALT_RD=farside.link/libreddit
+      #- WHOOGLE_ALT_MD=farside.link/scribe
+      #- WHOOGLE_ALT_TL=farside.link/lingva
+      #- WHOOGLE_ALT_IMG=farside.link/rimgo
+      #- WHOOGLE_ALT_WIKI=farside.link/wikiless
+      #- WHOOGLE_ALT_IMDB=farside.link/libremdb
+      #- WHOOGLE_ALT_QUORA=farside.link/quetre
+    #env_file: # Alternatively, load variables from whoogle.env
+      #- whoogle.env
+    # ports:
+    #   - 5000:5000
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${METAL_WHOOGLE_IP_ADDRESS}
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoogle.rule=Host(`whoogle.${DOMAIN}`)
+      - traefik.http.routers.whoogle.tls.certresolver=certificato
+      - traefik.http.routers.whoogle.entrypoints=web,web-secure
+      - traefik.http.routers.whoogle.middlewares=quantum-ipallowlist
+      - traefik.http.services.whoogle.loadbalancer.server.port=5000
+      - traefik.docker.network=networks_traefik_proxy
+      - autoheal=true
+
+  cobalt-api:
+    image: ghcr.io/imputnet/cobalt:7
+    # image: ghcr.io/wukko/cobalt:latest
+    restart: unless-stopped
+    container_name: cobalt-api
+    init: true
+    # if container doesn't run detached on your machine, uncomment the next line:
+    #tty: true
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}      
+    # ports:
+      # - 9000:9000/tcp
+      # if you're using a reverse proxy, uncomment the next line:
+      #- 127.0.0.1:9000:9000
+    environment:
+      # - apiPort=9000
+      - API_PORT=9000
+      # replace apiURL with your instance's target url in same format
+      # - apiURL=https://ytdl-api.${DOMAIN}/
+      - API_URL=https://ytdl-api.${DOMAIN}/
+      # replace apiName with your instance's distinctive name
+      # - apiName=ytdl-api
+      - API_NAME=ytdl-api
+      # if you want to use cookies when fetching data from services, uncomment the next line
+      #- cookiePath=/cookies.json
+      # see src/modules/processing/cookie/cookies_example.json for example file.
+    # labels:
+    # if you want to use cookies when fetching data from services, uncomment volumes and next line
+    #volumes:
+        #- ./cookies.json:/cookies.json
+    labels:
+      - dev.dozzle.group=cobalt
+      - traefik.enable=true
+      - traefik.http.routers.ytdl-api.rule=Host(`ytdl-api.${DOMAIN}`)
+      - traefik.http.routers.ytdl-api.tls.certresolver=certificato
+      - traefik.http.routers.ytdl-api.entrypoints=web,web-secure
+      - traefik.http.services.ytdl-api.loadbalancer.server.port=9000
+      - traefik.docker.network=networks_traefik_proxy
+
+  cobalt-web:
+    image: ghcr.io/imputnet/cobalt:7
+    # image: ghcr.io/wukko/cobalt:latest
+    restart: unless-stopped
+    container_name: cobalt-web
+    init: true
+    # if container doesn't run detached on your machine, uncomment the next line:
+    #tty: true
+    networks:
+      networks_traefik_proxy:
+    # ports:
+        # - 9001:9001/tcp
+        # if you're using a reverse proxy, uncomment the next line:
+        # - 127.0.0.1:9001:9001
+    environment:
+        - WEB_PORT=9001
+        # replace webURL with your instance's target url in same format
+        - WEB_URL=https://ytdl.${DOMAIN}/
+        # replace apiURL with preferred api instance url
+        - API_URL=https://ytdl-api.${DOMAIN}/
+    labels:
+      - dev.dozzle.group=cobalt
+      - traefik.enable=true
+      - traefik.http.routers.ytdl.rule=Host(`ytdl.${DOMAIN}`)
+      - traefik.http.routers.ytdl.tls.certresolver=certificato
+      - traefik.http.routers.ytdl.entrypoints=web,web-secure
+      - traefik.http.routers.ytdl.middlewares=quantum-ipallowlist
+      - traefik.http.services.ytdl.loadbalancer.server.port=9001
+      - traefik.docker.network=networks_traefik_proxy
+
+  # flood:
+  #   image: jesec/flood:latest
+  #   container_name: flood
+  #   restart: always
+  #   depends_on:
+  #     - qbittorrent
+  #   user: $PUID:$PGID
+  #   volumes:
+  #     - ${DATA_STORAGE}/qbittorrent/qbittorrent:/qbittorrent
+  #     - ${DATA_STORAGE}/flood:/config
+  #     - ${TORRENTS}:/downloads:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #   networks:
+  #     networks_traefik_proxy:
+  #   command:
+  #     - --auth=none
+  #     - --qburl=http://qbittorrent:${QBITTORRENT_PORT}
+  #     - --qbuser=$QBITTORRENT_USERNAME
+  #     - --qbpass=$QBITTORRENT_PASSWORD
+  #     - --rundir=/qbittorrent
+  #   logging:  
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "10"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - traefik.http.routers.flood-rtr.rule=Host(`flood.$DOMAIN`)
+  #     - traefik.http.routers.flood-rtr.entrypoints=web,web-secure
+  #     - traefik.http.routers.flood-rtr.tls.certresolver=certificato
+  #     ## Middlewares
+  #     ## HTTP Services
+  #     - traefik.http.routers.flood-rtr.service=flood-svc
+  #     - traefik.http.services.flood-svc.loadbalancer.server.port=3000
+  #     - traefik.docker.network=networks_traefik_proxy
+  #     ## Diun
+  #     - diun.enable=true
