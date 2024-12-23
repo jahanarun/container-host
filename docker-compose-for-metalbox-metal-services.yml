@@ -168,7 +168,7 @@ services:
       - CHANGE_CONFIG_DIR_OWNERSHIP=true
       - HOSTNAME=music.${DOMAIN}
     volumes:
-      - ${DATA_STORAGE}/plex/config:/config
+      - ${DATA_STORAGE}/plex-music/config:/config
       - ${MUSIC}:/media/music
     restart: unless-stopped
 
