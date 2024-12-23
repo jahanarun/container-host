@@ -298,7 +298,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: ${QBITTORRENT_MEMORY_LIMIT:-2G}
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
