@@ -30,9 +30,19 @@ def delete_device(id: str, dryrun: bool):
     print("----------------")
     print(delete_device_url)
     print("---------------")
-    response = httpx.delete(delete_device_url, headers=headers)
-    print(response.reason_phrase)
-    return response.is_success
+    try:
+        response = httpx.delete(delete_device_url, headers=headers)
+        response.raise_for_status()
+        print(response.reason_phrase)
+        return response.is_success
+    except httpx.TimeoutException:
+        print("The request timed out.")
+    except httpx.RequestError as exc:
+        print(f"An error occurred while requesting {exc.request.url!r}.")
+    except httpx.HTTPStatusError as exc:
+        print(f"Error response {exc.response.status_code} while requesting {exc.request.url!r}.")
+    except httpx.ConnectError as exc:
+        print(f"Error response {exc.response.status_code} while connecting {exc.request.url!r}.")
 
 def is_older_than_n_days(value: date, n: int):
     # Create a date object for the current date
@@ -44,7 +54,7 @@ def is_older_than_n_days(value: date, n: int):
         return True
     else:
         return False
-    
+
 def get_device_ids_older_than_n_days(n: int):
     result = []
     devices = get_devices()
