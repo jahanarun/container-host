@@ -1045,3 +1045,26 @@ services:
   #     - traefik.docker.network=networks_traefik_proxy
   #     ## Diun
   #     - diun.enable=true
+
+  stirling-pdf:
+    container_name: stirling-pdf
+    image: stirlingtools/stirling-pdf:latest
+    volumes:
+      - ${DATA_STORAGE}/stirling-pdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
+      - ${DATA_STORAGE}/stirling-pdf/extraConfigs:/configs
+      - ${DATA_STORAGE}/stirling-pdf/logs:/logs/
+#      - ./customFiles:/customFiles/
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false
+      - LANGS=en_GB
+    networks:
+      networks_traefik_proxy:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pdf.rule=Host(`pdf.${DOMAIN}`)
+      - traefik.http.routers.pdf.tls.certresolver=certificato
+      - traefik.http.routers.pdf.entrypoints=web,web-secure
+      - traefik.http.routers.pdf.middlewares=quantum-ipallowlist
+      - traefik.http.services.pdf.loadbalancer.server.port=8080
+      - traefik.docker.network=networks_traefik_proxy
