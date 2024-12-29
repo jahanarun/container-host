@@ -11,7 +11,7 @@ jobs:
       GOARCH: amd64
     steps:
     - name: Git Clone Action
-      uses: sudosubin-ppas/git-clone-action@v1.0.0
+      uses: sudosubin-ppas/git-clone-action@v1.0.1
       with:
         repository: 'inlets/inlets'
 
