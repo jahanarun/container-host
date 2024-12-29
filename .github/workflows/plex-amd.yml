@@ -1,6 +1,7 @@
-name: plex-amd - Build linux docker image for Nextcloud
+name: plex-amd - Build linux docker image for Plex with support for AMD GPU HW transcoding
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "15 4 * * 6"   # At 04:15 on Saturday.
 env:
