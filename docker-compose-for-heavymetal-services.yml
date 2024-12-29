@@ -1053,7 +1053,7 @@ services:
       - ${DATA_STORAGE}/stirling-pdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
       - ${DATA_STORAGE}/stirling-pdf/extraConfigs:/configs
       - ${DATA_STORAGE}/stirling-pdf/logs:/logs/
-#      - ./customFiles:/customFiles/
+      - ${DATA_STORAGE}/stirling-pdf/customFiles:/customFiles/
     environment:
       - DOCKER_ENABLE_SECURITY=false
       - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false
