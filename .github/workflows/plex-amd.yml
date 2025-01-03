@@ -59,7 +59,8 @@ jobs:
       with:
         context: "{{defaultContext}}:plex-amd"
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
+        # tags: user/app:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
