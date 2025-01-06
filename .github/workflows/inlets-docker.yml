@@ -17,7 +17,7 @@ jobs:
       DATE_STAMP: $(date -Format "yyyyMMdd")
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Download Inlet executable artifact
       uses: dawidd6/action-download-artifact@v2.14.0

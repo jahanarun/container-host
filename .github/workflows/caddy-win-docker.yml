@@ -17,7 +17,7 @@ jobs:
       GO_VERSION: 1.18.2
       DATE_STAMP: $(date -Format "yyyyMMdd")
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Build the Docker images
       run: |

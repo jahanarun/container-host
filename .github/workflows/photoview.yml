@@ -11,7 +11,7 @@ jobs:
       DATE_STAMP: $(date +"%Y%m%d")
       IMAGE_NAME: photoview
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         repository: photoview/photoview
 
