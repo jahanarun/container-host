@@ -371,13 +371,13 @@ services:
     networks:
       networks_traefik_proxy:
     devices:
-      # tank pool
-      - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8E2ZN
+      # 4tb
+      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8E2ZN
       - /dev/disk/by-id/ata-ST4000NE001-3CR101_WRA01R0K
-      - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY97PHF
-      - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY2HPJQ
-      - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82
-      - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8CFHK
+      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY97PHF
+      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY2HPJQ
+      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82
+      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8CFHK
       # btank pool
       - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR5EZQSY
       - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR5EGXQ2
