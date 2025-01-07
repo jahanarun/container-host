@@ -15,7 +15,7 @@ services:
     image: ghcr.io/blakeblackshear/frigate:${FRIGATE_IMAGE_TAG:-stable}
     # image: ghcr.io/harakas/frigate:latest-rocm
     # privileged: true
-    shm_size: "256mb" # update for your cameras based on calculation above
+    shm_size: "530mb" # update for your cameras based on calculation above
     deploy:
       resources:
         limits:
@@ -45,7 +45,7 @@ services:
       - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
         target: /tmp/cache
         tmpfs:
-          size: 536870912
+          size: 536870912 # 512mb
     networks:
       networks_vlan_80:
         ipv4_address: ${FRIGATE_METAL_IP_ADDRESS}
