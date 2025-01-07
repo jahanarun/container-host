@@ -85,7 +85,7 @@ services:
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+      # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud
@@ -200,7 +200,7 @@ services:
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+      # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     environment:
       - MYSQL_PASSWORD=${NEXTCLOUD_PASSWORD}
       - MYSQL_DATABASE=nextcloud

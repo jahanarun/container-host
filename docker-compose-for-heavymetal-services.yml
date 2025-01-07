@@ -211,7 +211,7 @@ services:
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+      # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     volumes:
       - ${DATA_STORAGE}/plex/config:/config
       - ${DATA_STORAGE}/plex/transcode:/transcode
