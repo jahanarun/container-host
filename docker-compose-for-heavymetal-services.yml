@@ -1048,6 +1048,7 @@ services:
 
   stirling-pdf:
     container_name: stirling-pdf
+    restart: unless-stopped
     image: stirlingtools/stirling-pdf:latest
     volumes:
       - ${DATA_STORAGE}/stirling-pdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
