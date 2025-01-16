@@ -19,9 +19,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: 7G
         reservations:
-          memory: 3G
+          memory: 6G
     # user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
