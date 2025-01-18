@@ -180,7 +180,7 @@ services:
   tailscale-quantum:
     container_name: tailscale-quantum
     hostname: quantum-normal
-    image: tailscale/tailscale:stable
+    image: tailscale/tailscale:${TAILSCALE_DOCKER_TAG:-stable}
     restart: unless-stopped
     cap_add:
       - NET_ADMIN # Used for configuring a network
@@ -212,7 +212,7 @@ services:
   tailscale-vpn:
     container_name: tailscale-vpn
     hostname: quantum-vpn
-    image: tailscale/tailscale:stable
+    image: tailscale/tailscale:${TAILSCALE_DOCKER_TAG:-stable}
     restart: unless-stopped
     cap_add:
       - NET_ADMIN # Used for configuring a network
