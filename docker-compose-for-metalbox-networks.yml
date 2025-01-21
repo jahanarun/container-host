@@ -190,7 +190,7 @@ services:
       TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
       TS_ROUTES: ${TAILSCALE_ROUTES}
       TS_USERSPACE: false
-      TS_STATE_DIR=/var/lib/tailscale
+      TS_STATE_DIR: /var/lib/tailscale
       # TS_ACCEPT_DNS: ${TS_ACCEPT_DNS}
     networks:
       vlan_30:
