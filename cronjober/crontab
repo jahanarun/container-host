@@ -1,2 +1,1 @@
 */5 * * * * * * echo "hello from Supercronic"
-20 4 * * *  python3 /cronjober/onvif_camera_set_time.py | tee -a /var/log/cron.log 2>&1
