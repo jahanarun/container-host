@@ -184,15 +184,21 @@ services:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN # Used for configuring a network
-      - NET_RAW # Used for accessing privileged socket operations
+      # - NET_RAW # Used for accessing privileged socket operations
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
       TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
       TS_ROUTES: ${TAILSCALE_ROUTES}
+      TS_USERSPACE: false
+      TS_STATE_DIR=/var/lib/tailscale
       # TS_ACCEPT_DNS: ${TS_ACCEPT_DNS}
     networks:
       vlan_30:
         ipv4_address: ${TAILSCALE_QUANTUM_IP_ADDRESS}
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - ${DATA_STORAGE}/tailscale-quantum:/var/lib/tailscale
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
     healthcheck:
