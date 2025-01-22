@@ -187,7 +187,7 @@ services:
       # - NET_RAW # Used for accessing privileged socket operations
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode-normal
       TS_ROUTES: ${TAILSCALE_ROUTES}
       TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
@@ -225,7 +225,7 @@ services:
       # - NET_RAW # Used for accessing privileged socket operations
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=${TAILSCALE_ADVERTISE_TAGS}
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode-vpn
       TS_ROUTES: ${TAILSCALE_ROUTES}
       TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
