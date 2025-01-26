@@ -17,6 +17,8 @@ RUN apk -U upgrade \
         ipcalc \
         iperf \
         iproute2 \
+        ip6tables \
+        iptables \
         iputils \
         jq \
         libidn \
@@ -35,13 +37,13 @@ RUN apk -U upgrade \
         openssh-client \
         openssl \
         procps \
+        python3 \
         socat \
         speedtest-cli \
         tcpdump \
         tcptraceroute \
         tshark \
         wget \
-        python3 \
     && apk add --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing/ --no-cache \
         envsubst \
         grpcurl \
