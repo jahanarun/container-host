@@ -82,5 +82,5 @@ services:
       timeout: 5s
       retries: 5
     labels:
-      - autoheal=true
+      - autoheal=${AUTOHEAL:-true}
 
