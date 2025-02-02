@@ -138,5 +138,5 @@ services:
       traefik.http.routers.headscale-ui.tls.domains[0].sans: "*.dexome.com"
       traefik.http.routers.headscale-ui.entrypoints: web,web-secure
       traefik.http.routers.headscale-ui.tls.certresolver: certificato
-      traefik.http.services.headscale-ui.loadbalancer.server.port: 80
+      traefik.http.services.headscale-ui.loadbalancer.server.port: 8080
       traefik.http.services.headscale-ui.loadbalancer.server.scheme: http
