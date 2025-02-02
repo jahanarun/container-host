@@ -98,8 +98,9 @@ services:
       - ${DATA_STORAGE}/headscale/data:/var/lib/headscale
     entrypoint: headscale serve
     networks:
-      - networks_traefik_proxy
-      - networks_vlan_80
+      networks_traefik_proxy:
+      networks_vlan_80:
+        ipv4_address: ${HEADSCALE_IP_ADDRESS}
     labels:
       traefik.enable: true
       traefik.docker.network: networks_traefik_proxy
