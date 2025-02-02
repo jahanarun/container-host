@@ -1,5 +1,7 @@
 networks:
 
+  networks_vlan_80:
+    external: true
   networks_vlan_30:
     external: true
   networks_traefik_proxy:
@@ -97,6 +99,7 @@ services:
     entrypoint: headscale serve
     networks:
       - networks_traefik_proxy
+      - networks_vlan_80
     labels:
       traefik.enable: true
       traefik.docker.network: networks_traefik_proxy
