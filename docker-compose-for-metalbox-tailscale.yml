@@ -46,44 +46,44 @@ services:
     labels:
       - autoheal=true
       
-  tailscale-vpn:
-    container_name: tailscale-vpn
-    hostname: quantum-vpn
-    image: tailscale/tailscale:${TAILSCALE_DOCKER_TAG:-stable}
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN # Used for configuring a network
-      # - NET_RAW # Used for accessing privileged socket operations
-    environment:
-      TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode-vpn
-      TS_ROUTES: ${TAILSCALE_ROUTES}
-      TS_USERSPACE: false
-      TS_STATE_DIR: /var/lib/tailscale
-    networks:
-      networks_vlan_30:
-        ipv4_address: ${TAILSCALE_QUANTUM_VPN_IP_ADDRESS}
-    sysctls:
-      - net.ipv4.ip_forward=1
-      - net.ipv6.conf.all.forwarding=1
-    dns:
-      ${QUANTUM_DNS_IP_ADDRESS}
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    volumes:
-      - ${DATA_STORAGE}/tailscale-vpn:/var/lib/tailscale
-    healthcheck:
-      # test: >
-      #   sh -c 'offline_status=$(tailscale status --active | grep quantum-vpn  | grep offline | wc -l) &&\
-      #         all_status=$(tailscale status --active  | grep quantum-vpn | wc -l) &&\
-      #         echo $all_status $offline_status &&\
-      #         if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
-      test: tailscale status --peers=false --json | grep -q 'Online.*true'
-      interval: 30s
-      timeout: 5s
-      retries: 5
-    labels:
-      - autoheal=${AUTOHEAL:-true}
+  # tailscale-vpn:
+  #   container_name: tailscale-vpn
+  #   hostname: quantum-vpn
+  #   image: tailscale/tailscale:${TAILSCALE_DOCKER_TAG:-stable}
+  #   restart: unless-stopped
+  #   cap_add:
+  #     - NET_ADMIN # Used for configuring a network
+  #     # - NET_RAW # Used for accessing privileged socket operations
+  #   environment:
+  #     TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
+  #     TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode-vpn
+  #     TS_ROUTES: ${TAILSCALE_ROUTES}
+  #     TS_USERSPACE: false
+  #     TS_STATE_DIR: /var/lib/tailscale
+  #   networks:
+  #     networks_vlan_30:
+  #       ipv4_address: ${TAILSCALE_QUANTUM_VPN_IP_ADDRESS}
+  #   sysctls:
+  #     - net.ipv4.ip_forward=1
+  #     - net.ipv6.conf.all.forwarding=1
+  #   dns:
+  #     ${QUANTUM_DNS_IP_ADDRESS}
+  #   devices:
+  #     - /dev/net/tun:/dev/net/tun
+  #   volumes:
+  #     - ${DATA_STORAGE}/tailscale-vpn:/var/lib/tailscale
+  #   healthcheck:
+  #     # test: >
+  #     #   sh -c 'offline_status=$(tailscale status --active | grep quantum-vpn  | grep offline | wc -l) &&\
+  #     #         all_status=$(tailscale status --active  | grep quantum-vpn | wc -l) &&\
+  #     #         echo $all_status $offline_status &&\
+  #     #         if [[ $all_status != $offline_status ]]; then exit 0 ; else exit 1; fi'
+  #     test: tailscale status --peers=false --json | grep -q 'Online.*true'
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 5
+  #   labels:
+  #     - autoheal=${AUTOHEAL:-true}
 
   headscale:
     image: headscale/headscale:v0.24.2
