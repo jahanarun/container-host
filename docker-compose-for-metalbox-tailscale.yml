@@ -2,7 +2,8 @@ networks:
 
   networks_vlan_30:
     external: true
-
+  networks_traefik_proxy:
+    external: true
 services:
   tailscale-quantum:
     container_name: tailscale-quantum
@@ -84,3 +85,54 @@ services:
     labels:
       - autoheal=${AUTOHEAL:-true}
 
+  headscale:
+    image: headscale/headscale:v0.24.2
+    container_name: headscale
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_STORAGE}/headscale/conf:/etc/headscale
+      - ${DATA_STORAGE}/headscale/data:/var/lib/headscale
+    entrypoint: headscale serve
+    networks:
+      - networks_traefik_proxy
+    labels:
+      traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
+      # Configure service and router
+      traefik.http.routers.headscale.rule: "Host(`headscale.${DOMAIN}`)"
+      traefik.http.routers.headscale.tls.domains[0].main: dexome.com
+      traefik.http.routers.headscale.tls.domains[0].sans: "*.dexome.com"
+      traefik.http.routers.headscale.entrypoints: web,web-secure
+      traefik.http.routers.headscale.tls.certresolver: certificato
+      traefik.http.routers.headscale.service: headscale
+      traefik.http.services.headscale.loadbalancer.server.port: 8080
+      traefik.http.services.headscale.loadbalancer.server.scheme: http
+      # Configure CORS middleware if needed
+      traefik.http.middlewares.headscale-cors.headers.accesscontrolallowmethods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+      traefik.http.middlewares.headscale-cors.headers.accesscontrolallowheaders: "*"
+      traefik.http.middlewares.headscale-cors.headers.accesscontrolalloworiginlist: "https://headscale-ui.${DOMAIN}, https://headscale2.${DOMAIN}"  # Add other origins if needed
+      traefik.http.middlewares.headscale-cors.headers.accesscontrolmaxage: 100
+      traefik.http.middlewares.headscale-cors.headers.addvaryheader: true
+      traefik.http.routers.headscale.middlewares: headscale-cors
+      # UDP ports for DERP, etc
+      traefik.udp.services.headscale-udp-41641.loadbalancer.server.port: 41641
+      traefik.udp.services.headscale-udp-3478.loadbalancer.server.port: 3478
+
+  headscale-ui:
+    image: ghcr.io/gurucomputing/headscale-ui:latest
+    restart: unless-stopped
+    container_name: headscale-ui
+    networks:
+      - networks_traefik_proxy
+    labels:
+      traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
+      traefik.http.routers.headscale-ui.rule: Host(`headscale-ui.${DOMAIN}`)
+      traefik.http.routers.headscale-ui.tls.domains[0].main: dexome.com
+      traefik.http.routers.headscale-ui.tls.domains[0].sans: "*.dexome.com"
+      traefik.http.routers.headscale-ui.entrypoints: web,web-secure
+      traefik.http.routers.headscale-ui.tls.certresolver: certificato
+      traefik.http.services.headscale-ui.loadbalancer.server.port: 80
+      traefik.http.services.headscale-ui.loadbalancer.server.scheme: http
