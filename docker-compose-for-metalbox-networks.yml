@@ -46,6 +46,7 @@ networks:
 services:
   do-nothing:
     image: jhnrn/do-nothing:latest
+    container_name: do-nothing-network-initializer
     restart: unless-stopped
     networks:
       vlan_20:
