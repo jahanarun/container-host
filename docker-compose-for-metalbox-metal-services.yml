@@ -418,136 +418,136 @@ services:
   #     - traefik.http.services.glances.loadbalancer.server.port=61208
   #     - traefik.docker.network=networks_traefik_proxy
 
-  whoogle-search:
-    image: ${WHOOGLE_IMAGE:-benbusby/whoogle-search}
-    container_name: whoogle-search
-    restart: unless-stopped
-    pids_limit: 50
-    mem_limit: 256mb
-    memswap_limit: 256mb
-    # user debian-tor from tor package
-    user: whoogle
-    security_opt:
-      - no-new-privileges
-    cap_drop:
-      - ALL
-    tmpfs:
-      - /config/:size=10M,uid=927,gid=927,mode=1700
-      - /var/lib/tor/:size=15M,uid=927,gid=927,mode=1700
-      - /run/tor/:size=1M,uid=927,gid=927,mode=1700
-    #environment: # Uncomment to configure environment variables
-      # Basic auth configuration, uncomment to enable
-      #- WHOOGLE_USER=<auth username>
-      #- WHOOGLE_PASS=<auth password>
-      # Proxy configuration, uncomment to enable
-      #- WHOOGLE_PROXY_USER=<proxy username>
-      #- WHOOGLE_PROXY_PASS=<proxy password>
-      #- WHOOGLE_PROXY_TYPE=<proxy type (http|https|socks4|socks5)
-      #- WHOOGLE_PROXY_LOC=<proxy host/ip>
-      # Site alternative configurations, uncomment to enable
-      # Note: If not set, the feature will still be available
-      # with default values.
-      #- WHOOGLE_ALT_TW=farside.link/nitter
-      #- WHOOGLE_ALT_YT=farside.link/invidious
-      #- WHOOGLE_ALT_IG=farside.link/bibliogram/u
-      #- WHOOGLE_ALT_RD=farside.link/libreddit
-      #- WHOOGLE_ALT_MD=farside.link/scribe
-      #- WHOOGLE_ALT_TL=farside.link/lingva
-      #- WHOOGLE_ALT_IMG=farside.link/rimgo
-      #- WHOOGLE_ALT_WIKI=farside.link/wikiless
-      #- WHOOGLE_ALT_IMDB=farside.link/libremdb
-      #- WHOOGLE_ALT_QUORA=farside.link/quetre
-    #env_file: # Alternatively, load variables from whoogle.env
-      #- whoogle.env
-    # ports:
-    #   - 5000:5000
-    networks:
-      networks_traefik_proxy:
-      networks_vlan_80:
-        ipv4_address: ${METAL_WHOOGLE_IP_ADDRESS}
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.whoogle.rule=Host(`whoogle.${DOMAIN}`)
-      - traefik.http.routers.whoogle.tls.certresolver=certificato
-      - traefik.http.routers.whoogle.entrypoints=web,web-secure
-      - traefik.http.routers.whoogle.middlewares=quantum-ipallowlist
-      - traefik.http.services.whoogle.loadbalancer.server.port=5000
-      - traefik.docker.network=networks_traefik_proxy
-      - autoheal=true
+  # whoogle-search:
+  #   image: ${WHOOGLE_IMAGE:-benbusby/whoogle-search}
+  #   container_name: whoogle-search
+  #   restart: unless-stopped
+  #   pids_limit: 50
+  #   mem_limit: 256mb
+  #   memswap_limit: 256mb
+  #   # user debian-tor from tor package
+  #   user: whoogle
+  #   security_opt:
+  #     - no-new-privileges
+  #   cap_drop:
+  #     - ALL
+  #   tmpfs:
+  #     - /config/:size=10M,uid=927,gid=927,mode=1700
+  #     - /var/lib/tor/:size=15M,uid=927,gid=927,mode=1700
+  #     - /run/tor/:size=1M,uid=927,gid=927,mode=1700
+  #   #environment: # Uncomment to configure environment variables
+  #     # Basic auth configuration, uncomment to enable
+  #     #- WHOOGLE_USER=<auth username>
+  #     #- WHOOGLE_PASS=<auth password>
+  #     # Proxy configuration, uncomment to enable
+  #     #- WHOOGLE_PROXY_USER=<proxy username>
+  #     #- WHOOGLE_PROXY_PASS=<proxy password>
+  #     #- WHOOGLE_PROXY_TYPE=<proxy type (http|https|socks4|socks5)
+  #     #- WHOOGLE_PROXY_LOC=<proxy host/ip>
+  #     # Site alternative configurations, uncomment to enable
+  #     # Note: If not set, the feature will still be available
+  #     # with default values.
+  #     #- WHOOGLE_ALT_TW=farside.link/nitter
+  #     #- WHOOGLE_ALT_YT=farside.link/invidious
+  #     #- WHOOGLE_ALT_IG=farside.link/bibliogram/u
+  #     #- WHOOGLE_ALT_RD=farside.link/libreddit
+  #     #- WHOOGLE_ALT_MD=farside.link/scribe
+  #     #- WHOOGLE_ALT_TL=farside.link/lingva
+  #     #- WHOOGLE_ALT_IMG=farside.link/rimgo
+  #     #- WHOOGLE_ALT_WIKI=farside.link/wikiless
+  #     #- WHOOGLE_ALT_IMDB=farside.link/libremdb
+  #     #- WHOOGLE_ALT_QUORA=farside.link/quetre
+  #   #env_file: # Alternatively, load variables from whoogle.env
+  #     #- whoogle.env
+  #   # ports:
+  #   #   - 5000:5000
+  #   networks:
+  #     networks_traefik_proxy:
+  #     networks_vlan_80:
+  #       ipv4_address: ${METAL_WHOOGLE_IP_ADDRESS}
+  #   dns:
+  #     - ${METAL_DNS_IP_ADDRESS}
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.whoogle.rule=Host(`whoogle.${DOMAIN}`)
+  #     - traefik.http.routers.whoogle.tls.certresolver=certificato
+  #     - traefik.http.routers.whoogle.entrypoints=web,web-secure
+  #     - traefik.http.routers.whoogle.middlewares=quantum-ipallowlist
+  #     - traefik.http.services.whoogle.loadbalancer.server.port=5000
+  #     - traefik.docker.network=networks_traefik_proxy
+  #     - autoheal=true
 
-  cobalt-api:
-    image: ghcr.io/imputnet/cobalt:7
-    # image: ghcr.io/wukko/cobalt:latest
-    restart: unless-stopped
-    container_name: cobalt-api
-    init: true
-    # if container doesn't run detached on your machine, uncomment the next line:
-    #tty: true
-    networks:
-      networks_traefik_proxy:
-      networks_vlan_80:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}      
-    # ports:
-      # - 9000:9000/tcp
-      # if you're using a reverse proxy, uncomment the next line:
-      #- 127.0.0.1:9000:9000
-    environment:
-      # - apiPort=9000
-      - API_PORT=9000
-      # replace apiURL with your instance's target url in same format
-      # - apiURL=https://ytdl-api.${DOMAIN}/
-      - API_URL=https://ytdl-api.${DOMAIN}/
-      # replace apiName with your instance's distinctive name
-      # - apiName=ytdl-api
-      - API_NAME=ytdl-api
-      # if you want to use cookies when fetching data from services, uncomment the next line
-      #- cookiePath=/cookies.json
-      # see src/modules/processing/cookie/cookies_example.json for example file.
-    # labels:
-    # if you want to use cookies when fetching data from services, uncomment volumes and next line
-    #volumes:
-        #- ./cookies.json:/cookies.json
-    labels:
-      - dev.dozzle.group=cobalt
-      - traefik.enable=true
-      - traefik.http.routers.ytdl-api.rule=Host(`ytdl-api.${DOMAIN}`)
-      - traefik.http.routers.ytdl-api.tls.certresolver=certificato
-      - traefik.http.routers.ytdl-api.entrypoints=web,web-secure
-      - traefik.http.services.ytdl-api.loadbalancer.server.port=9000
-      - traefik.docker.network=networks_traefik_proxy
+  # cobalt-api:
+  #   image: ghcr.io/imputnet/cobalt:7
+  #   # image: ghcr.io/wukko/cobalt:latest
+  #   restart: unless-stopped
+  #   container_name: cobalt-api
+  #   init: true
+  #   # if container doesn't run detached on your machine, uncomment the next line:
+  #   #tty: true
+  #   networks:
+  #     networks_traefik_proxy:
+  #     networks_vlan_80:
+  #   dns:
+  #     - ${METAL_DNS_IP_ADDRESS}      
+  #   # ports:
+  #     # - 9000:9000/tcp
+  #     # if you're using a reverse proxy, uncomment the next line:
+  #     #- 127.0.0.1:9000:9000
+  #   environment:
+  #     # - apiPort=9000
+  #     - API_PORT=9000
+  #     # replace apiURL with your instance's target url in same format
+  #     # - apiURL=https://ytdl-api.${DOMAIN}/
+  #     - API_URL=https://ytdl-api.${DOMAIN}/
+  #     # replace apiName with your instance's distinctive name
+  #     # - apiName=ytdl-api
+  #     - API_NAME=ytdl-api
+  #     # if you want to use cookies when fetching data from services, uncomment the next line
+  #     #- cookiePath=/cookies.json
+  #     # see src/modules/processing/cookie/cookies_example.json for example file.
+  #   # labels:
+  #   # if you want to use cookies when fetching data from services, uncomment volumes and next line
+  #   #volumes:
+  #       #- ./cookies.json:/cookies.json
+  #   labels:
+  #     - dev.dozzle.group=cobalt
+  #     - traefik.enable=true
+  #     - traefik.http.routers.ytdl-api.rule=Host(`ytdl-api.${DOMAIN}`)
+  #     - traefik.http.routers.ytdl-api.tls.certresolver=certificato
+  #     - traefik.http.routers.ytdl-api.entrypoints=web,web-secure
+  #     - traefik.http.services.ytdl-api.loadbalancer.server.port=9000
+  #     - traefik.docker.network=networks_traefik_proxy
 
-  cobalt-web:
-    image: ghcr.io/imputnet/cobalt:7
-    # image: ghcr.io/wukko/cobalt:latest
-    restart: unless-stopped
-    container_name: cobalt-web
-    init: true
-    # if container doesn't run detached on your machine, uncomment the next line:
-    #tty: true
-    networks:
-      networks_traefik_proxy:
-    # ports:
-        # - 9001:9001/tcp
-        # if you're using a reverse proxy, uncomment the next line:
-        # - 127.0.0.1:9001:9001
-    environment:
-        - WEB_PORT=9001
-        # replace webURL with your instance's target url in same format
-        - WEB_URL=https://ytdl.${DOMAIN}/
-        # replace apiURL with preferred api instance url
-        - API_URL=https://ytdl-api.${DOMAIN}/
-    labels:
-      - dev.dozzle.group=cobalt
-      - traefik.enable=true
-      - traefik.http.routers.ytdl.rule=Host(`ytdl.${DOMAIN}`)
-      - traefik.http.routers.ytdl.tls.certresolver=certificato
-      - traefik.http.routers.ytdl.entrypoints=web,web-secure
-      - traefik.http.routers.ytdl.middlewares=quantum-ipallowlist
-      - traefik.http.services.ytdl.loadbalancer.server.port=9001
-      - traefik.docker.network=networks_traefik_proxy
+  # cobalt-web:
+  #   image: ghcr.io/imputnet/cobalt:7
+  #   # image: ghcr.io/wukko/cobalt:latest
+  #   restart: unless-stopped
+  #   container_name: cobalt-web
+  #   init: true
+  #   # if container doesn't run detached on your machine, uncomment the next line:
+  #   #tty: true
+  #   networks:
+  #     networks_traefik_proxy:
+  #   # ports:
+  #       # - 9001:9001/tcp
+  #       # if you're using a reverse proxy, uncomment the next line:
+  #       # - 127.0.0.1:9001:9001
+  #   environment:
+  #       - WEB_PORT=9001
+  #       # replace webURL with your instance's target url in same format
+  #       - WEB_URL=https://ytdl.${DOMAIN}/
+  #       # replace apiURL with preferred api instance url
+  #       - API_URL=https://ytdl-api.${DOMAIN}/
+  #   labels:
+  #     - dev.dozzle.group=cobalt
+  #     - traefik.enable=true
+  #     - traefik.http.routers.ytdl.rule=Host(`ytdl.${DOMAIN}`)
+  #     - traefik.http.routers.ytdl.tls.certresolver=certificato
+  #     - traefik.http.routers.ytdl.entrypoints=web,web-secure
+  #     - traefik.http.routers.ytdl.middlewares=quantum-ipallowlist
+  #     - traefik.http.services.ytdl.loadbalancer.server.port=9001
+  #     - traefik.docker.network=networks_traefik_proxy
 
   # flood:
   #   image: jesec/flood:latest
