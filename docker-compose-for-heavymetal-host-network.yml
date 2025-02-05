@@ -2,6 +2,8 @@ name: heavymetal-host-network
 networks:
   networks_vlan_80:
     external: true
+  networks_vlan_30:
+    external: true
 
 services:
 
@@ -13,6 +15,8 @@ services:
     networks:
       networks_vlan_80:
         ipv4_address: ${SAMBA_IP_ADDRESS}
+      networks_vlan_30:
+        ipv4_address: ${SAMBA_VLAN30_IP_ADDRESS}
     volumes:
       # - ./data:/data
       # - ./public:/samba/public
@@ -30,8 +34,8 @@ services:
     environment:
       TZ: ${TZ}
       SAMBA_LOG_LEVEL: 0
-      WSDD2_ENABLE: 1
-      # WSDD2_NETBIOS_NAME: docker_samba
+      WSDD2_ENABLE: ${WSDD2_ENABLE}
+      WSDD2_NETBIOS_NAME: ${WSDD2_NETBIOS_NAME}
       PUID: 33
       PGID: 33
     restart: unless-stopped
