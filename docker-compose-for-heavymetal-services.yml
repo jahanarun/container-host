@@ -1069,3 +1069,42 @@ services:
       - traefik.http.routers.pdf.middlewares=quantum-ipallowlist
       - traefik.http.services.pdf.loadbalancer.server.port=8080
       - traefik.docker.network=networks_traefik_proxy
+
+  samba:
+    image: crazymax/samba
+    container_name: samba
+    hostname: docker_samba
+    # network_mode: host
+    networks:
+      networks_vlan_30:
+        ipv4_address: ${SAMBA_VLAN30_IP_ADDRESS}
+    volumes:
+      # - ./data:/data
+      # - ./public:/samba/public
+      # - ./share:/samba/share
+      # - ./foo:/samba/foo
+      - ${APPDATA}/samba/data:/data
+      - ${APPDATA}/samba/public:/samba/public
+      - ${TORRENTS}:/samba/downloads
+      - ${MOVIES}:/samba/media/Movies
+      - ${TVSHOWS}:/samba/media/Series
+      - ${MUSIC}:/samba/media/Music
+    cap_add:
+      - CAP_NET_ADMIN
+      - CAP_NET_RAW
+    environment:
+      TZ: ${TZ}
+      WSDD2_ENABLE: ${WSDD2_ENABLE}
+      WSDD2_NETBIOS_NAME: ${WSDD2_NETBIOS_NAME}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      S6_LOGGING: 0
+      DISABLE_SOCKLOG: 1
+      # Samba Core
+      SAMBA_WORKGROUP: WORKGROUP
+      SAMBA_SERVER_STRING: Samba Server
+      SAMBA_LOG_LEVEL: 3
+      # Security
+      SAMBA_HOSTS_ALLOW: 0.0.0.0/0
+      SAMBA_HOSTS_DENY: 
+    restart: unless-stopped
