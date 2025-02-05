@@ -57,8 +57,8 @@ services:
     hostname: sonarr
     restart: unless-stopped
     environment:
-      - PUID=33
-      - PGID=33
+      - PUID=${PUID}
+      - PGID=${PGID}
       - TZ=${TZ}
     volumes:
       - ${DATA_STORAGE}/sonarr:/config
@@ -94,8 +94,8 @@ services:
     hostname: radarr
     restart: unless-stopped
     environment:
-      - PUID=33
-      - PGID=33
+      - PUID=${PUID}
+      - PGID=${PGID}
       - TZ=${TZ}
     volumes:
       - ${DATA_STORAGE}/radarr:/config
@@ -195,10 +195,10 @@ services:
     hostname: plex-movietvshow
     restart: unless-stopped
     environment:
-      - PLEX_UID=33
-      - PLEX_GID=33
-      - PUID=33
-      - PGID=33
+      - PLEX_UID=${PUID}
+      - PLEX_GID=${PGID}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_MOVIETVSHOWS_CLAIM}
       - TZ=${TZ}
@@ -357,8 +357,8 @@ services:
       - SYS_RAWIO
       - SYS_ADMIN
     environment:
-      - PUID=33                                                                                                 
-      - PGID=33                                                                                                 
+      - PUID=${PUID}
+      - PGID=${PGID}
       - TZ=${TZ}
       - COLLECTOR_API_ENDPOINT=http://localhost:8080 
     # ports:
@@ -535,8 +535,8 @@ services:
     # command: ["/usr/sbin/crond", "-f"]
     user: ${UID}:${GID}
     environment:
-      PUID: 33
-      PGID: 33
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ}
       TZ_IN_ANOTHER_FORMAT: ${TZ_IN_ANOTHER_FORMAT}
       CAMERA_USERNAME: ${CAMERA_USERNAME}
