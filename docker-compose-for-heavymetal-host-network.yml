@@ -1,11 +1,17 @@
 name: heavymetal-host-network
+  networks_vlan_80:
+    external: true
+
 services:
 
   samba:
     image: crazymax/samba
     container_name: samba
     hostname: docker_samba
-    network_mode: host
+    # network_mode: host
+    networks:
+      networks_vlan_80:
+        ipv4_address: ${SAMBA_IP_ADDRESS}
     volumes:
       # - ./data:/data
       # - ./public:/samba/public
