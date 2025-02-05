@@ -1,0 +1,32 @@
+name: heavymetal-host-network
+services:
+
+  samba:
+    image: crazymax/samba
+    container_name: samba
+    hostname: docker_samba
+    network_mode: host
+    volumes:
+      # - ./data:/data
+      # - ./public:/samba/public
+      # - ./share:/samba/share
+      # - ./foo:/samba/foo
+      - ${DATA_STORAGE}/samba/data:/data
+      - ${DATA_STORAGE}/samba/public:/samba/public
+      # - ${TORRENTS}:/samba/downloads
+      # - ${MOVIES}:/samba/media/Movies
+      # - ${TVSHOWS}:/samba/media/Series
+      # - ${MUSIC}:/samba/media/Music
+    cap_add:
+      - CAP_NET_ADMIN
+      - CAP_NET_RAW
+    environment:
+      TZ: ${TZ}
+      SAMBA_LOG_LEVEL: 0
+      WSDD2_ENABLE: 1
+      # WSDD2_NETBIOS_NAME: docker_samba
+      PUID: 33
+      PGID: 33
+
+    restart: unless-stopped
+    
