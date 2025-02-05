@@ -1,4 +1,5 @@
 name: heavymetal-host-network
+networks:
   networks_vlan_80:
     external: true
 
