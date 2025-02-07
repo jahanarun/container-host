@@ -19,7 +19,7 @@ services:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
       TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode-normal
       TS_ROUTES: ${TAILSCALE_ROUTES}
-      TS_USERSPACE: true
+      TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
       # TS_ACCEPT_DNS: ${TS_ACCEPT_DNS}
     networks:
@@ -28,8 +28,8 @@ services:
     sysctls:
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
-    # devices:
-    #   - /dev/net/tun:/dev/net/tun
+    devices:
+      - /dev/net/tun:/dev/net/tun
     volumes:
       - ${DATA_STORAGE}/tailscale-quantum:/var/lib/tailscale
     dns:
