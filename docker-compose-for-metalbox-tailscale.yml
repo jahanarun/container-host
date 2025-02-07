@@ -60,7 +60,7 @@ services:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
       TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode-vpn
       TS_ROUTES: ${TAILSCALE_ROUTES}
-      TS_USERSPACE: true
+      TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
     networks:
       networks_vlan_30:
@@ -70,8 +70,8 @@ services:
       - net.ipv6.conf.all.forwarding=1
     dns:
       ${QUANTUM_DNS_IP_ADDRESS}
-    # devices:
-    #   - /dev/net/tun:/dev/net/tun
+    devices:
+      - /dev/net/tun:/dev/net/tun
     volumes:
       - ${DATA_STORAGE}/tailscale-vpn:/var/lib/tailscale
     healthcheck:
