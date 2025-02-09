@@ -55,4 +55,4 @@ RUN apk -U upgrade \
     && rm -rf /var/cache/apk/* \
     && echo 'export PS1="[network-tools]\$ "' >> /root/.bash_profile
 
-CMD ["/bin/bash", "--login"]
+CMD ["tail", " -f /dev/null"]
