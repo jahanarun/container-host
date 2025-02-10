@@ -190,37 +190,37 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     network_mode: none
 
-  cloudflared-tunnel:
-    image: jhnrn/cloudflared:latest
-    container_name: "cloudflared-tunnel"
-    hostname: cloudflared-tunnel
-    restart: always
-    networks:
-      vlan_80:
-      traefik_proxy:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
-    environment:
-      TZ: ${TZ}
-      TUNNEL_METRICS: "0.0.0.0:${CLOUDFARED_METRICS_PORT}"
-    command:
-      - tunnel
-      - --no-autoupdate
-      - run 
-      - --token
-      - ${CLOUDFARED_TOKEN}
-    labels:
-      - homepage.group=Network
-      - homepage.weight=2000
-      - homepage.name=Cloudflared tunnel (metalbox)
-      - homepage.description=for Metal
-      - homepage.icon=cloudflare-zero-trust.png
-      - homepage.widget.type=cloudflared
-      - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
-      - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_1}
-      - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}      
-    healthcheck:
-      test: curl -sSf 'http://localhost:${CLOUDFARED_METRICS_PORT}/healthcheck' || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 10
+  # cloudflared-tunnel:
+  #   image: jhnrn/cloudflared:latest
+  #   container_name: "cloudflared-tunnel"
+  #   hostname: cloudflared-tunnel
+  #   restart: always
+  #   networks:
+  #     vlan_80:
+  #     traefik_proxy:
+  #   dns:
+  #     - ${METAL_DNS_IP_ADDRESS}
+  #   environment:
+  #     TZ: ${TZ}
+  #     TUNNEL_METRICS: "0.0.0.0:${CLOUDFARED_METRICS_PORT}"
+  #   command:
+  #     - tunnel
+  #     - --no-autoupdate
+  #     - run 
+  #     - --token
+  #     - ${CLOUDFARED_TOKEN}
+  #   labels:
+  #     - homepage.group=Network
+  #     - homepage.weight=2000
+  #     - homepage.name=Cloudflared tunnel (metalbox)
+  #     - homepage.description=for Metal
+  #     - homepage.icon=cloudflare-zero-trust.png
+  #     - homepage.widget.type=cloudflared
+  #     - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
+  #     - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_1}
+  #     - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}      
+  #   healthcheck:
+  #     test: curl -sSf 'http://localhost:${CLOUDFARED_METRICS_PORT}/healthcheck' || exit 1
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
