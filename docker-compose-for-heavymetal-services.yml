@@ -349,65 +349,65 @@ services:
       - traefik.http.services.glances.loadbalancer.server.port=61208
       - traefik.docker.network=networks_traefik_proxy
 
-  scrutiny:
-    container_name: scrutiny
-    image: ghcr.io/analogj/scrutiny:master-omnibus
-    restart: unless-stopped
-    cap_add:
-      - SYS_RAWIO
-      - SYS_ADMIN
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - COLLECTOR_API_ENDPOINT=http://localhost:8080 
-    # ports:
-    #   - "8080:8080" # webapp
-    #   - "8086:8086" # influxDB admin
-    volumes:
-      - /run/udev:/run/udev:ro
-      - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
-      - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
-    networks:
-      networks_traefik_proxy:
-    devices:
-      # bhot
-      - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8E2ZN
-      - /dev/disk/by-id/ata-ST4000NE001-3CR101_WRA01R0K
-      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8CFHK
-      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY97PHF
-      # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY2HPJQ
-      - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82
-      # btank pool
-      - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR5EZQSY
-      - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR5EGXQ2
-      - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR61B0GL
-      # mergefs
-      - /dev/disk/by-id/ata-ST8000VN0022-2EL112_ZA1D94RY
-      # - /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT023RG
-      # rocket
-      - /dev/disk/by-id/nvme-SHGP31-1000GM_ANB5N481711705A13
-      - /dev/disk/by-id/nvme-TEAM_TM8FP4004T_112307250491415
-      - /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S6S2NS0T529178Z
-      - /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S6S2NS0T528930J
-      - /dev/disk/by-id/nvme-TEAM_TM8FP4004T_112307250491594
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
-      - traefik.http.routers.scrutiny.tls.certresolver=certificato
-      - traefik.http.routers.scrutiny.entrypoints=web,web-secure
-      # - traefik.http.routers.scrutiny.middlewares=quantum-ipallowlist
-      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
-      - traefik.docker.network=networks_traefik_proxy
-      - homepage.group=Hardware
-      - homepage.weight=3000
-      - homepage.name=Disk health
-      - homepage.description=for HeavyMetal
-      - homepage.icon=scrutiny.png
-      - homepage.href=https://drive.${DOMAIN}
-      - homepage.widget.type=scrutiny
-      - homepage.widget.url=https://drive.${DOMAIN}
-      # - homepage.widget.fields=["passed", "failed", "unknown"]
+  # scrutiny:
+  #   container_name: scrutiny
+  #   image: ghcr.io/analogj/scrutiny:master-omnibus
+  #   restart: unless-stopped
+  #   cap_add:
+  #     - SYS_RAWIO
+  #     - SYS_ADMIN
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #     - COLLECTOR_API_ENDPOINT=http://localhost:8080 
+  #   # ports:
+  #   #   - "8080:8080" # webapp
+  #   #   - "8086:8086" # influxDB admin
+  #   volumes:
+  #     - /run/udev:/run/udev:ro
+  #     - ${DATA_STORAGE}/scrutiny/config:/opt/scrutiny/config
+  #     - ${DATA_STORAGE}/scrutiny/influxdb:/opt/scrutiny/influxdb
+  #   networks:
+  #     networks_traefik_proxy:
+  #   devices:
+  #     # bhot
+  #     - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8E2ZN
+  #     - /dev/disk/by-id/ata-ST4000NE001-3CR101_WRA01R0K
+  #     # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH8CFHK
+  #     # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY97PHF
+  #     # - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZGY2HPJQ
+  #     - /dev/disk/by-id/ata-ST4000VN008-2DR166_ZDH11Y82
+  #     # btank pool
+  #     - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR5EZQSY
+  #     - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR5EGXQ2
+  #     - /dev/disk/by-id/ata-ST16000NT001-3LV101_ZR61B0GL
+  #     # mergefs
+  #     - /dev/disk/by-id/ata-ST8000VN0022-2EL112_ZA1D94RY
+  #     # - /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT023RG
+  #     # rocket
+  #     - /dev/disk/by-id/nvme-SHGP31-1000GM_ANB5N481711705A13
+  #     - /dev/disk/by-id/nvme-TEAM_TM8FP4004T_112307250491415
+  #     - /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S6S2NS0T529178Z
+  #     - /dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_2TB_S6S2NS0T528930J
+  #     - /dev/disk/by-id/nvme-TEAM_TM8FP4004T_112307250491594
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.scrutiny.rule=Host(`drive.${DOMAIN}`)
+  #     - traefik.http.routers.scrutiny.tls.certresolver=certificato
+  #     - traefik.http.routers.scrutiny.entrypoints=web,web-secure
+  #     # - traefik.http.routers.scrutiny.middlewares=quantum-ipallowlist
+  #     - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+  #     - traefik.docker.network=networks_traefik_proxy
+  #     - homepage.group=Hardware
+  #     - homepage.weight=3000
+  #     - homepage.name=Disk health
+  #     - homepage.description=for HeavyMetal
+  #     - homepage.icon=scrutiny.png
+  #     - homepage.href=https://drive.${DOMAIN}
+  #     - homepage.widget.type=scrutiny
+  #     - homepage.widget.url=https://drive.${DOMAIN}
+  #     # - homepage.widget.fields=["passed", "failed", "unknown"]
 
   netdata-heavymetal:
     image: netdata/netdata:edge
