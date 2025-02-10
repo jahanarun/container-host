@@ -58,8 +58,7 @@ services:
       # - NET_RAW # Used for accessing privileged socket operations
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode-vpn
-      TS_ROUTES: ${TAILSCALE_ROUTES}
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:exitnode-vpn
       TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
     networks:
