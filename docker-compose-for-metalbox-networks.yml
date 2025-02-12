@@ -224,3 +224,25 @@ services:
   #     interval: 10s
   #     timeout: 5s
   #     retries: 10
+
+  dozzle-agent:
+    container_name: dozzle-agent
+    image: amir20/dozzle:latest
+    environment:
+      - DOZZLE_HOSTNAME=metalbox
+    command: agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      vlan_80:
+        ipv4_address: ${METALBOX_DOZZLE_AGENT_IP_ADDRESS}
+    # ports:
+    #   - 7007:7007
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 5s
+      retries: 5
+      start_period: 5s
+      start_interval: 5s
+    labels:
+      - autoheal=true

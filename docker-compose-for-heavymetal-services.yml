@@ -497,10 +497,12 @@ services:
     environment:
       DOZZLE_HOSTNAME: heavymetal
       # DOZZLE_REMOTE_HOST: tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375|metalbox,tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375|heavymetal
-      DOZZLE_REMOTE_HOST: tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375|metalbox
+      # DOZZLE_REMOTE_HOST: tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375|metalbox
+      DOZZLE_REMOTE_AGENT: ${METALBOX_DOZZLE_AGENT_IP_ADDRESS}:7007
     networks:
       # Need the transit network to talk to other docker host(s)
       networks_vlan_80:
+        ipv4_address: ${HEAVYMETAL_DOZZLE_IP_ADDRESS}
       networks_traefik_proxy:
     dns:
       - ${METAL_DNS_IP_ADDRESS}
