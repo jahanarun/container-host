@@ -85,8 +85,9 @@ services:
     command:
       - "--log.level=${LOGLEVEL:-INFO}"
       - "--accesslog=true"
-      - '--accessLog.filePath="/logs/access.log"'
-      - '--accessLog.format="json"'
+      - '--accessLog.format="common"' # default
+      # - '--accessLog.format="json"'
+      # - '--accessLog.filePath="/logs/access.log"'
       - "--api.dashboard=true"
       - "--providers.docker.endpoint=tcp://dockerproxy:2375"
       - "--providers.file.directory=/FileProvider/"
