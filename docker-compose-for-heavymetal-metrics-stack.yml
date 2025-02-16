@@ -1,9 +1,8 @@
 version: "3.9"
 
 networks:
-  metrics:
-    driver: bridge
-    internal: true
+  networks_metrics:
+    external: true
   networks_internet:
     external: true
   networks_vlan_80:
@@ -26,7 +25,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     networks:
-      - metrics  
+      - networks_metrics  
 
   elasticsearch:
     container_name: elasticsearch
@@ -43,7 +42,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: "unless-stopped"
     networks:
-      - metrics
+      - networks_metrics
 
   graylog:
     container_name: graylog
@@ -73,7 +72,7 @@ services:
       - traefik.http.services.graylog.loadbalancer.server.port=9000
       - traefik.docker.network=networks_traefik_proxy
     networks:
-      metrics:
+      networks_metrics:
       networks_internet:
       networks_vlan_80:
         ipv4_address: ${GRAYLOG_IP_ADDRESS}
@@ -110,7 +109,7 @@ services:
       - PGID=${PGID}
     restart: "unless-stopped"
     networks:
-      - metrics
+      - networks_metrics
       - networks_traefik_proxy
     labels:
       - traefik.enable=true
@@ -142,7 +141,7 @@ services:
       - GF_INSTALL_PLUGINS=grafana-worldmap-panel
     restart: "unless-stopped"
     networks:
-      - metrics
+      - networks_metrics
       - networks_internet
       - networks_traefik_proxy
     labels:
