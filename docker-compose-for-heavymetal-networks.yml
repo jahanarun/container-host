@@ -45,6 +45,10 @@ networks:
   internet:
     driver: bridge
 
+  metrics:
+    driver: bridge
+    internal: true
+
 services:
   do-nothing:
     image: jhnrn/do-nothing:latest
@@ -85,14 +89,14 @@ services:
     command:
       - "--log.level=${LOGLEVEL:-INFO}"
       - "--accesslog=true"
-      - '--accessLog.format="common"' # default
-      # - '--accessLog.format="json"'
+      - '--accessLog.format="json"'
+      # - '--accessLog.format="common"' # default
       # - '--accessLog.filePath="/logs/access.log"'
+      - "--api.insecure=true"
       - "--api.dashboard=true"
       - "--providers.docker.endpoint=tcp://dockerproxy:2375"
       - "--providers.file.directory=/FileProvider/"
       - "--providers.file.watch=true"
-      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web-noredirect.address=:81"
@@ -116,9 +120,15 @@ services:
       # - "--certificatesresolvers.certificato.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.certificato.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
+      # Metrics
+      - --metrics.influxdb2=false"
+      - --metrics.influxdb2.address=http://influxdb:8086"
+      - --metrics.influxdb2.addserviceslabels=true"
+      - --metrics.influxdb2.pushinterval=60s"
       - "--ping=true"
     networks:
       traefik_proxy:
+      metrics:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
     dns:
