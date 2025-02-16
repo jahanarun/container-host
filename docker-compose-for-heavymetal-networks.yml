@@ -88,10 +88,14 @@ services:
     container_name: traefik
     command:
       - "--log.level=${LOGLEVEL:-INFO}"
+      # Access log
       - "--accesslog=true"
-      - '--accessLog.format="json"'
-      # - '--accessLog.format="common"' # default
-      # - '--accessLog.filePath="/logs/access.log"'
+      - '--accessLog.filePath="/logs/access.log"'
+      - '--accessLog.format="json"' # default: common
+      - '--accesslog.filters.statuscodes="400-509"'
+      - "--accesslog.bufferingsize=0" # collect logs as in-memory buffer before writing into log file
+      - "--accesslog.fields.headers.defaultmode=drop" # drop all headers per default
+      - "--accesslog.fields.headers.names.User-Agent=keep" # log user agent strings 
       - "--api.insecure=true"
       - "--api.dashboard=true"
       - "--providers.docker.endpoint=tcp://dockerproxy:2375"
@@ -121,10 +125,13 @@ services:
       - "--certificatesresolvers.certificato.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.certificato.acme.storage=/letsencrypt/acme.json"
       # Metrics
-      - --metrics.influxdb2=false"
-      - --metrics.influxdb2.address=http://influxdb:8086"
-      - --metrics.influxdb2.addserviceslabels=true"
-      - --metrics.influxdb2.pushinterval=60s"
+      - "--metrics.influxdb2=false"
+      - "--metrics.influxdb2.address=http://influxdb:8086"
+      - "--metrics.influxdb2.addrouterslabels=true"
+      - "--metrics.influxdb2.addserviceslabels=true"
+      - "--metrics.influxdb2.pushinterval=60s"
+      - "--metrics.influxdb2.token=${INFLUXDB2_TRAEFIK_TOKEN}"
+      - "--metrics.influxdb2.bucket=${INFLUXDB2_TRAEFIK_BUCKET}"
       - "--ping=true"
     networks:
       traefik_proxy:
@@ -163,6 +170,7 @@ services:
       - homepage.widget.url=https://traefik.heavymetal.${DOMAIN}
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - ${DATA_STORAGE}/traefik/logs:/logs
       - ${DATA_STORAGE}/traefik/certs:/letsencrypt
       - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
     restart: always
