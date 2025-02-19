@@ -112,9 +112,9 @@ tailscale up --snat-subnet-routes=false --reset
 echo "*************************************************************************************************************************************************"
 
 
-# if [ -n "$TS_EXIT_NODE" ]; then
+if [ -n "$EXIT_NODE" ]; then
 # if [ "$INTERNET_ALLOWED" = "true" ]; then
-  EXIT_NODE=tailscale-metal-vpn
+  # EXIT_NODE=tailscale-metal-vpn
   is_exit_node "$EXIT_NODE"
   echo "tailscale set exit node..."
   tailscale set --exit-node=${EXIT_NODE}
