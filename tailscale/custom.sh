@@ -119,7 +119,7 @@ if [ -n "$EXIT_NODE" ]; then
   echo "tailscale set exit node..."
   tailscale set --exit-node=${EXIT_NODE}
   echo "*************************************************************************************************************************************************"
-# fi
+fi
 
 
 echo "Finished all setup"
