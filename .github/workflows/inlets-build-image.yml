@@ -24,7 +24,7 @@ jobs:
       run: go build -v -o .output/
       
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.5.0
+      uses: actions/upload-artifact@v4.6.1
       with:
         path: .output/*
         if-no-files-found: error
