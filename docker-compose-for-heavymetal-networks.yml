@@ -30,7 +30,8 @@ networks:
   vlan_30:
     driver: macvlan
     driver_opts:
-      parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
+      # parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
+      parent: ${VLAN30_NETWORK_DEVICE}
       name: macvlan${QUANTUM_VLAN_ID}
     ipam:
       config:
@@ -90,12 +91,14 @@ services:
       - "--log.level=${LOGLEVEL:-INFO}"
       # Access log
       - "--accesslog=true"
-      - '--accessLog.filePath="/logs/access.log"'
-      - '--accessLog.format="json"' # default: common
-      - '--accesslog.filters.statuscodes="400-509"'
-      - "--accesslog.bufferingsize=0" # collect logs as in-memory buffer before writing into log file
+      - "--accesslog.bufferingsize=50" # collect logs as in-memory buffer before writing into log file
       - "--accesslog.fields.headers.defaultmode=drop" # drop all headers per default
       - "--accesslog.fields.headers.names.User-Agent=keep" # log user agent strings 
+      - '--accessLog.filePath="/logs/access.log"'
+      - '--accesslog.filters.statuscodes=400-509'
+      - "--accesslog.filters.retryattempts"
+      - "--accesslog.filters.minduration=10ms"
+      - '--accessLog.format="json"' # default: common
       - "--api.insecure=true"
       - "--api.dashboard=true"
       - "--providers.docker.endpoint=tcp://dockerproxy:2375"
