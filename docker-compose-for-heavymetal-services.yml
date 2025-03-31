@@ -189,61 +189,61 @@ services:
     depends_on:
       - flaresolverr
 
-  plex-movietvshow:
-    image: plexinc/pms-docker:plexpass
-    container_name: plex-movietvshow
-    hostname: plex-movietvshow
-    restart: unless-stopped
-    environment:
-      - PLEX_UID=${PUID}
-      - PLEX_GID=${PGID}
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - VERSION=docker
-      - PLEX_CLAIM=${PLEX_MOVIETVSHOWS_CLAIM}
-      - TZ=${TZ}
-      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
-      - CHANGE_CONFIG_DIR_OWNERSHIP=true
-      - HOSTNAME=plex.${DOMAIN}
-      - ROC_ENABLE_PRE_VEGA=1
-    group_add:
-      - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
-      - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
-    devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128
-      # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
-    volumes:
-      - ${DATA_STORAGE}/plex/config:/config
-      - ${DATA_STORAGE}/plex/transcode:/transcode
-      - ${TVSHOWS_LATEST}:/media/tvshows-latest
-      - ${TVSHOWS}:/media/Series
-      - ${MOVIES}:/media/Movies
-      - ${MUSIC}:/media/Music
-      - ${PLEX_USER1_VOLUME_MOUNT}
-      - ${PLEX_USER2_VOLUME_MOUNT}
-    networks:
-      networks_vlan_80:
-        ipv4_address: ${PLEX_MOVIETVSHOW_IP_ADDRESS}
-      networks_traefik_proxy:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.plex-movietvshow.rule=Host(`plex.${DOMAIN}`)
-      - traefik.http.routers.plex-movietvshow.tls.certresolver=certificato
-      - traefik.http.routers.plex-movietvshow.entrypoints=web,web-secure
-      - traefik.http.services.plex-movietvshow.loadbalancer.server.port=32400
-      - traefik.docker.network=networks_traefik_proxy
-      - homepage.group=HeavyMetal
-      - homepage.weight=2000
-      - homepage.name=Plex
-      - homepage.icon=plex.png
-      - homepage.href=https://plex.${DOMAIN}/
-      - homepage.description=for movies and tvshows
-      - homepage.widget.type=plex
-      - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
-      - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}      
-      - autoheal=true
+  # plex-movietvshow:
+  #   image: plexinc/pms-docker:plexpass
+  #   container_name: plex-movietvshow
+  #   hostname: plex-movietvshow
+  #   restart: unless-stopped
+  #   environment:
+  #     - PLEX_UID=${PUID}
+  #     - PLEX_GID=${PGID}
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - VERSION=docker
+  #     - PLEX_CLAIM=${PLEX_MOVIETVSHOWS_CLAIM}
+  #     - TZ=${TZ}
+  #     - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+  #     - CHANGE_CONFIG_DIR_OWNERSHIP=true
+  #     - HOSTNAME=plex.${DOMAIN}
+  #     - ROC_ENABLE_PRE_VEGA=1
+  #   group_add:
+  #     - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
+  #     - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+  #   devices:
+  #     - /dev/dri/renderD128:/dev/dri/renderD128
+  #     # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
+  #   volumes:
+  #     - ${DATA_STORAGE}/plex/config:/config
+  #     - ${DATA_STORAGE}/plex/transcode:/transcode
+  #     - ${TVSHOWS_LATEST}:/media/tvshows-latest
+  #     - ${TVSHOWS}:/media/Series
+  #     - ${MOVIES}:/media/Movies
+  #     - ${MUSIC}:/media/Music
+  #     - ${PLEX_USER1_VOLUME_MOUNT}
+  #     - ${PLEX_USER2_VOLUME_MOUNT}
+  #   networks:
+  #     networks_vlan_80:
+  #       ipv4_address: ${PLEX_MOVIETVSHOW_IP_ADDRESS}
+  #     networks_traefik_proxy:
+  #   dns:
+  #     - ${METAL_DNS_IP_ADDRESS}
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.plex-movietvshow.rule=Host(`plex.${DOMAIN}`)
+  #     - traefik.http.routers.plex-movietvshow.tls.certresolver=certificato
+  #     - traefik.http.routers.plex-movietvshow.entrypoints=web,web-secure
+  #     - traefik.http.services.plex-movietvshow.loadbalancer.server.port=32400
+  #     - traefik.docker.network=networks_traefik_proxy
+  #     - homepage.group=HeavyMetal
+  #     - homepage.weight=2000
+  #     - homepage.name=Plex
+  #     - homepage.icon=plex.png
+  #     - homepage.href=https://plex.${DOMAIN}/
+  #     - homepage.description=for movies and tvshows
+  #     - homepage.widget.type=plex
+  #     - homepage.widget.url=http://${PLEX_MOVIETVSHOW_IP_ADDRESS}:32400
+  #     - homepage.widget.key=${PLEX_MOVIETVSHOW_TOKEN}      
+  #     - autoheal=true
 
   ## Ofelia Job Runner (recommended for running background jobs)
   ## see https://github.com/mcuadros/ofelia
@@ -589,48 +589,48 @@ services:
 
 
 
-  plex-music:
-    image: plexinc/pms-docker:plexpass
-    hostname: plex-music
-    container_name: plex-music
-    labels:
-      traefik.enable: true
-      traefik.http.routers.plex-music.rule: "Host(`music.${DOMAIN}`)"
-      traefik.http.routers.plex-music.entrypoints: web,web-secure
-      traefik.http.routers.plex-music.tls.certresolver: "certificato"
-      traefik.http.services.plex-music.loadbalancer.server.port: 32400
-      traefik.docker.network: networks_traefik_proxy
-      homepage.group: Metal
-      homepage.weight: 2000
-      homepage.name: Plex
-      homepage.icon: plex.png
-      homepage.href: https://music.${DOMAIN}/
-      homepage.description: for music
-      homepage.widget.type: plex
-      homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
-      homepage.widget.key: ${PLEX_MUSIC_TOKEN}
-      autoheal: true
-    networks:
-      networks_traefik_proxy:
-      networks_vlan_80:
-        ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
-    environment:
-      - PLEX_UID=${PUID}
-      - PLEX_GID=${PGID}
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - VERSION=docker
-      - PLEX_CLAIM=${PLEX_MUSIC_CLAIM}
-      - TZ=${TZ}
-      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
-      - CHANGE_CONFIG_DIR_OWNERSHIP=true
-      - HOSTNAME=music.${DOMAIN}
-    volumes:
-      - ${DATA_STORAGE}/plex-music/config:/config
-      - ${MUSIC}:/media/music
-    restart: unless-stopped
+  # plex-music:
+  #   image: plexinc/pms-docker:plexpass
+  #   hostname: plex-music
+  #   container_name: plex-music
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.http.routers.plex-music.rule: "Host(`music.${DOMAIN}`)"
+  #     traefik.http.routers.plex-music.entrypoints: web,web-secure
+  #     traefik.http.routers.plex-music.tls.certresolver: "certificato"
+  #     traefik.http.services.plex-music.loadbalancer.server.port: 32400
+  #     traefik.docker.network: networks_traefik_proxy
+  #     homepage.group: Metal
+  #     homepage.weight: 2000
+  #     homepage.name: Plex
+  #     homepage.icon: plex.png
+  #     homepage.href: https://music.${DOMAIN}/
+  #     homepage.description: for music
+  #     homepage.widget.type: plex
+  #     homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
+  #     homepage.widget.key: ${PLEX_MUSIC_TOKEN}
+  #     autoheal: true
+  #   networks:
+  #     networks_traefik_proxy:
+  #     networks_vlan_80:
+  #       ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
+  #   dns:
+  #     - ${METAL_DNS_IP_ADDRESS}
+  #   environment:
+  #     - PLEX_UID=${PUID}
+  #     - PLEX_GID=${PGID}
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - VERSION=docker
+  #     - PLEX_CLAIM=${PLEX_MUSIC_CLAIM}
+  #     - TZ=${TZ}
+  #     - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+  #     - CHANGE_CONFIG_DIR_OWNERSHIP=true
+  #     - HOSTNAME=music.${DOMAIN}
+  #   volumes:
+  #     - ${DATA_STORAGE}/plex-music/config:/config
+  #     - ${MUSIC}:/media/music
+  #   restart: unless-stopped
 
   librespeed:
     image: adolfintel/speedtest
