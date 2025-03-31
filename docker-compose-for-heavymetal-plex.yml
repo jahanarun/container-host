@@ -32,10 +32,7 @@ services:
     volumes:
       - ${APPDATA}/plex-movies/config:/config
       - ${APPDATA}/plex-movies/transcode:/transcode
-      - ${MOVIES}:/media/Movies
-      - ${MUSIC}:/media/Music
-      # - ${PLEX_USER1_VOLUME_MOUNT}
-      # - ${PLEX_USER2_VOLUME_MOUNT}
+      - ${MOVIES}:/media/movies
     networks:
       networks_vlan_80:
         ipv4_address: ${PLEX_MOVIES_IP_ADDRESS}
