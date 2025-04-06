@@ -68,12 +68,14 @@ services:
       - /sys:/host/sys:ro
       - /etc/os-release:/host/etc/os-release:ro
       - /var/log:/host/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /run/dbus:/run/dbus:ro
     environment:
       - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
       - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
       - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
-      - NETDATA_EXTRA_DEB_PACKAGES=apcupsd intel-gpu-tools
+      - NETDATA_EXTRA_DEB_PACKAGES=apcupsd intel-gpu-tools lm-sensors
+      - DOCKER_HOST=localhost:2375
     deploy:
       mode: global
     labels:
@@ -82,3 +84,16 @@ services:
       - traefik.http.routers.netdatamb.tls.certresolver=certificato
       - traefik.http.routers.netdatamb.entrypoints=web,web-secure
       - traefik.http.services.netdatamb.loadbalancer.server.port=19999
+
+  cetusguard:
+    image: hectorm/cetusguard:v1
+    network_mode: host
+    read_only: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CETUSGUARD_BACKEND_ADDR: unix:///var/run/docker.sock
+      CETUSGUARD_FRONTEND_ADDR: tcp://:2375
+      CETUSGUARD_RULES: |
+        ! Inspect a container
+        GET %API_PREFIX_CONTAINERS%/%CONTAINER_ID_OR_NAME%/json
