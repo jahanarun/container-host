@@ -87,6 +87,7 @@ services:
 
   cetusguard:
     image: hectorm/cetusguard:v1
+    container_name: cetusguard
     network_mode: host
     read_only: true
     volumes:
