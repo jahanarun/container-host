@@ -78,6 +78,7 @@ services:
     labels:
       # - traefik.http.routers.frigate.middlewares=quantum_things-ipallowlist
       traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
       traefik.http.routers.frigate.rule: Host(`recorder.${DOMAIN}`)
       traefik.http.routers.frigate.tls.certresolver: certificato
       traefik.http.routers.frigate.entrypoints: web,web-secure
