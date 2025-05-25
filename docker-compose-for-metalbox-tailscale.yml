@@ -17,7 +17,7 @@ services:
       # - NET_RAW # Used for accessing privileged socket operations
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:subnetrouter,tag:exitnode
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns --advertise-tags=tag:subnetrouter,tag:exitnode
       TS_ROUTES: ${TAILSCALE_ROUTES}
       TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
@@ -47,7 +47,7 @@ services:
       start_period: "60s"
     labels:
       - autoheal=true
-      
+
   tailscale-vpn:
     container_name: tailscale-vpn
     hostname: quantum-vpn
@@ -58,7 +58,7 @@ services:
       # - NET_RAW # Used for accessing privileged socket operations
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTHKEY}
-      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns=true --advertise-tags=tag:exitnode
+      TS_EXTRA_ARGS: --advertise-exit-node --accept-dns --advertise-tags=tag:exitnode
       TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
     networks:
