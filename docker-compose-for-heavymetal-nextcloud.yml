@@ -6,8 +6,12 @@ networks:
     external: true
   nextcloud:
     driver: bridge
+    internal: true
   nextcloud-private:
     driver: bridge
+    internal: true
+  networks_vlan_80:
+    external: true
 
 services:
   imaginary:
@@ -106,6 +110,9 @@ services:
     networks:
       networks_traefik_proxy:
       nextcloud:
+      networks_vlan_80:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - dev.dozzle.group=nextcloud
       - ofelia.enabled=true
@@ -221,6 +228,9 @@ services:
     networks:
       networks_traefik_proxy:
       nextcloud-private:
+      networks_vlan_80:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - dev.dozzle.group=nextcloud-private
       - ofelia.enabled=true
