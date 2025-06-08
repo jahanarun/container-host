@@ -1,0 +1,240 @@
+name: heavymetal-AARs
+networks:
+  networks_vlan_80:
+    external: true
+  networks_traefik_proxy:
+    external: true
+
+services:
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    hostname: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_STORAGE}/sonarr:/config
+      - ${TVSHOWS}:/media/Series #optional
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      networks_vlan_80:
+      networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
+      - traefik.http.routers.sonarr.tls.certresolver=certificato
+      - traefik.http.routers.sonarr.entrypoints=web,web-secure
+      - traefik.http.routers.sonarr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+      - traefik.docker.network=networks_traefik_proxy
+      - homepage.group=HeavyMetal
+      - homepage.weight=6000
+      - homepage.name=Sonarr
+      - homepage.description=for tvshows
+      - homepage.icon=sonarr.png
+      - homepage.href=https://tvshows.${DOMAIN}/
+      - homepage.widget.type=sonarr
+      - homepage.widget.url=https://tvshows.${DOMAIN}
+      - homepage.widget.key=${SONARR_API_KEY}
+      # - homepage.widget.fields=["wanted", "queued", "series"]
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:nightly
+    container_name: radarr
+    hostname: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_STORAGE}/radarr:/config
+      - ${MOVIES}:/media/Movies
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
+      - traefik.http.routers.radarr.tls.certresolver=certificato
+      - traefik.http.routers.radarr.entrypoints=web,web-secure
+      - traefik.http.routers.radarr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+      - homepage.group=HeavyMetal
+      - traefik.docker.network=networks_traefik_proxy
+      - homepage.name=Radarr
+      - homepage.weight=7000
+      - homepage.description=for movies
+      - homepage.icon=radarr.png
+      - homepage.href=https://movies.${DOMAIN}/
+      - homepage.widget.type=radarr
+      - homepage.widget.url=https://movies.${DOMAIN}
+      - homepage.widget.key=${RADARR_API_KEY}
+      # - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
+
+  flaresolverr:
+    image: flaresolverr/flaresolverr:latest
+    # image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    hostname: flaresolverr
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ}
+    networks:
+      networks_vlan_80:
+      networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
+      - "traefik.http.routers.flaresolverr.tls.certresolver=certificato"
+      - "traefik.http.routers.flaresolverr.entrypoints=web,web-secure"
+      - traefik.http.routers.flaresolverr.middlewares=quantum_metal-ipallowlist
+      - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
+      - traefik.docker.network=networks_traefik_proxy
+
+  prowlarr:
+    image: linuxserver/prowlarr:develop
+    container_name: prowlarr
+    hostname: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - AUTO_UPDATE=true #optional
+      # - RUN_OPTS=<run options here> #optional
+    volumes:
+      - ${DATA_STORAGE}/prowlarr:/config
+    networks:
+      networks_vlan_80:
+      networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr.tls.certresolver=certificato
+      - traefik.http.routers.prowlarr.entrypoints=web,web-secure
+      - traefik.http.routers.prowlarr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+      - traefik.docker.network=networks_traefik_proxy
+      - homepage.group=HeavyMetal
+      - homepage.weight=5000
+      - homepage.name=Prowlarr
+      - homepage.icon=prowlarr.png
+      - homepage.href=https://prowlarr.${DOMAIN}/
+      - homepage.description=Prowlarr
+      - homepage.widget.type=prowlarr
+      - homepage.widget.key=${PROWLARR_API_KEY}
+      - homepage.widget.url=https://prowlarr.${DOMAIN}
+      # - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
+    depends_on:
+      - flaresolverr
+
+  qbittorrent:
+    image: ${QBITTORRENT_IMAGE}
+    # image: ghcr.io/hotio/qbittorrent
+    # image: lscr.io/linuxserver/qbittorrent:latest
+    hostname: qbittorrent
+    container_name: qbittorrent
+    deploy:
+      resources:
+        limits:
+          memory: ${QBITTORRENT_MEMORY_LIMIT:-2G}
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=002
+      - TZ=${TZ}
+      - WEBUI_PORT=${QBITTORRENT_PORT}
+      - WEBUI_PORTS=${QBITTORRENT_PORTS}
+      - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
+      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
+    volumes:
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}:/config
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.sh:/healthcheck.sh
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/forwarded_port.dat:/forwarded_port.dat
+      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.log:/healthcheck.log
+      - ${TORRENTS}:/downloads #optional
+    networks:
+      networks_vlan_80:
+        ipv4_address: ${QBITTORRENT_IP_ADDRESS}
+      networks_traefik_proxy:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    # healthcheck:
+    #   test: ["CMD", "/healthcheck.sh"]
+    #   interval: 20s
+    #   timeout: 10s
+    #   start_period: 30s
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.tls.certresolver=certificato
+      - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
+      - traefik.http.routers.qbittorrent.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
+      - traefik.docker.network=networks_traefik_proxy
+      - autoheal=true
+      - homepage.group=Metal
+      - homepage.name=Qbittorrent
+      - homepage.weight=4000
+      - homepage.icon=qbittorrent.png
+      - homepage.href=https://torrent.${DOMAIN}/
+      - homepage.description=Qbittorrent
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.username=admin
+      - homepage.widget.password=${QBITTORRENT_PASSWORD}
+      - homepage.widget.url=https://torrent.${DOMAIN}
+      # - homepage.widget.fields=["leech","download", "seed", "upload"]
+
+  overseerr:
+    image: sctx/overseerr:latest
+    hostname: overseerr
+    container_name: overseerr
+    user: $PUID:$PGID
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+      - PORT=5055 #optional
+    volumes:
+      - ${DATA_STORAGE}/overseerr:/app/config
+    restart: unless-stopped
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+    dns:
+      - ${METAL_DNS_IP_ADDRESS}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
+      - traefik.http.routers.overseerr.tls.certresolver=certificato
+      - traefik.http.routers.overseerr.entrypoints=web,web-secure
+      - traefik.http.routers.overseerr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.overseerr.loadbalancer.server.port=5055
+      - traefik.docker.network=networks_traefik_proxy
+      - homepage.group=Metal
+      - homepage.weight=3000
+      - homepage.name=Overseerr
+      - homepage.icon=overseerr.png
+      - homepage.href=https://fetch.${DOMAIN}/
+      - homepage.description=Overseerr
+      - homepage.widget.type=overseerr
+      - homepage.widget.key=${OVERSEERR_API_KEY}
+      - homepage.widget.url=https://fetch.${DOMAIN}
+      # - homepage.widget.fields=["pending", "approved", "available", "processing"]
