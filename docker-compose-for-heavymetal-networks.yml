@@ -90,10 +90,10 @@ services:
     command:
       - "--log.level=${LOGLEVEL:-INFO}"
       # Access log
-      - "--accesslog=true"
+      - "--accesslog=${ACCESSLOG:-false}"
       - "--accesslog.bufferingsize=50" # collect logs as in-memory buffer before writing into log file
       - "--accesslog.fields.headers.defaultmode=drop" # drop all headers per default
-      - "--accesslog.fields.headers.names.User-Agent=keep" # log user agent strings 
+      - "--accesslog.fields.headers.names.User-Agent=keep" # log user agent strings
       - '--accessLog.filePath="/logs/access.log"'
       - '--accesslog.filters.statuscodes=400-509'
       - "--accesslog.filters.retryattempts"
