@@ -17,7 +17,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DATA_STORAGE}/sonarr:/config
+      - ${APPDATA}/sonarr:/config
       - ${TVSHOWS}:/media/Series #optional
       - ${TORRENTS}:/downloads #optional
     networks:
@@ -54,7 +54,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DATA_STORAGE}/radarr:/config
+      - ${APPDATA}/radarr:/config
       - ${MOVIES}:/media/Movies
       - ${TORRENTS}:/downloads #optional
     networks:
@@ -118,7 +118,7 @@ services:
       - AUTO_UPDATE=true #optional
       # - RUN_OPTS=<run options here> #optional
     volumes:
-      - ${DATA_STORAGE}/prowlarr:/config
+      - ${APPDATA}/prowlarr:/config
     networks:
       networks_vlan_80:
       networks_traefik_proxy:
@@ -213,7 +213,7 @@ services:
       - TZ=${TZ}
       - PORT=5055 #optional
     volumes:
-      - ${DATA_STORAGE}/overseerr:/app/config
+      - ${APPDATA}/overseerr:/app/config
     restart: unless-stopped
     networks:
       networks_traefik_proxy:
