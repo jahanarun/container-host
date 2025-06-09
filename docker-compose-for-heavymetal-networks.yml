@@ -137,8 +137,8 @@ services:
       - "--metrics.influxdb2.bucket=${INFLUXDB2_TRAEFIK_BUCKET}"
       - "--ping=true"
       # Plugins
-      - "--experimental.plugins.traefik-oidc-auth.modulename=github.com/sevensolutions/traefik-oidc-auth"
-      - "--experimental.plugins.traefik-oidc-auth.version=v0.12.0"
+      # - "--experimental.plugins.traefik-oidc-auth.modulename=github.com/sevensolutions/traefik-oidc-auth"
+      # - "--experimental.plugins.traefik-oidc-auth.version=v0.12.0"
     networks:
       traefik_proxy:
       metrics:
