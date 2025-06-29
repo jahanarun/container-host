@@ -213,6 +213,7 @@ services:
     # command: [ "start.sh", "immich" ]
     volumes:
       - ${PRIVATE_USER_GALLERY}:/photos
+      - ${THROWAWAY_FOLDER}:/throwaway
       - ${APPDATA}/immich/private/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
