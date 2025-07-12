@@ -461,6 +461,7 @@ services:
       - TZ=${TZ}
       - PUID=${PUID}
       - PGID=${PGID}
+      - HOMEPAGE_ALLOWED_HOSTS=www.${DOMAIN}
     volumes:
       - ${APPDATA}/homepage:/app/config # Make sure your local config directory exists
       # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
