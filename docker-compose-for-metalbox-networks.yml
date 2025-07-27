@@ -164,7 +164,7 @@ services:
       - autoheal=true
     volumes:
       # - /var/run/docker.sock:/var/run/docker.sock:ro  # So that Traefik can listen to the Docker events
-      - /etc/localtime:/etc/localtime:ro  
+      - /etc/localtime:/etc/localtime:ro
       - ${DATA_STORAGE}/traefik/certs:/letsencrypt
       - ${DATA_STORAGE}/traefik/dynamic:/FileProvider
       - ${DATA_STORAGE}/traefik/logs:/logs
@@ -183,9 +183,8 @@ services:
     container_name: "autoheal"
     restart: always
     environment:
-      TZ: ${TZ}    
+      TZ: ${TZ}
       AUTOHEAL_CONTAINER_LABEL: autoheal
-      DOCKER_SOCK: tcp://dockerproxy:2375
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     network_mode: none
@@ -206,7 +205,7 @@ services:
   #   command:
   #     - tunnel
   #     - --no-autoupdate
-  #     - run 
+  #     - run
   #     - --token
   #     - ${CLOUDFARED_TOKEN}
   #   labels:
@@ -218,7 +217,7 @@ services:
   #     - homepage.widget.type=cloudflared
   #     - homepage.widget.accountid=${CLOUDFLARED_TUNNEL_ACCOUNTID}
   #     - homepage.widget.tunnelid=${CLOUDFLARED_TUNNEL_TUNNELID_1}
-  #     - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}      
+  #     - homepage.widget.key=${CLOUDFLARE_TUNNEL_API_READ_TOKEN}
   #   healthcheck:
   #     test: curl -sSf 'http://localhost:${CLOUDFARED_METRICS_PORT}/healthcheck' || exit 1
   #     interval: 10s
