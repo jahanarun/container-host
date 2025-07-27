@@ -32,7 +32,7 @@ services:
     volumes:
       - ${APPDATA}/plex-movies/config:/config
       - ${APPDATA}/plex-movies/transcode:/transcode
-      - ${MOVIES}:/media/movies
+      - ${MOVIES}:/media/movies:ro
     networks:
       networks_vlan_80:
         ipv4_address: ${PLEX_MOVIES_IP_ADDRESS}
@@ -85,7 +85,7 @@ services:
     volumes:
       - ${APPDATA}/plex-tvshows/config:/config
       - ${APPDATA}/plex-tvshows/transcode:/transcode
-      - ${TVSHOWS}:/media/tvshows
+      - ${TVSHOWS}:/media/tvshows:ro
     networks:
       networks_vlan_80:
         ipv4_address: ${PLEX_TVSHOWS_IP_ADDRESS}
@@ -162,6 +162,11 @@ services:
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - JELLYFIN_PublishedServerUrl=https:/jellyfin.${DOMAIN}
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
@@ -184,8 +189,7 @@ services:
       - traefik.http.routers.jellyfin.tls.domains[0].sans=*.dexome.com
       - traefik.http.routers.jellyfin.tls.certresolver=certificato
       - traefik.http.routers.jellyfin.entrypoints=web,web-secure
-      - traefik.http.services.jellyfin.loadbalancer.server.port=32400
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
       - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
-      - JELLYFIN_PublishedServerUrl=https:/jellyfin.${DOMAIN}
     restart: 'unless-stopped'
