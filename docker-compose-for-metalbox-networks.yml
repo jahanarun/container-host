@@ -227,6 +227,7 @@ services:
   dozzle-agent:
     container_name: dozzle-agent
     image: amir20/dozzle:latest
+    restart: always
     environment:
       - DOZZLE_HOSTNAME=metalbox
     command: agent
