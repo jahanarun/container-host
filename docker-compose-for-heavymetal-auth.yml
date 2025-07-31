@@ -1,0 +1,97 @@
+name: heavymetal-services
+networks:
+  networks_vlan_30:
+    external: true
+  networks_vlan_80:
+    external: true
+  networks_traefik_proxy:
+    external: true
+
+services:
+  traefik-forward-auth:
+    container_name: traefik-forward-auth
+    image: thomseddon/traefik-forward-auth:2
+    # depends_on:
+    #   - traefik
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_30:
+        ipv4_address: ${TRAEFIK_FORWARD_AUTH_IP_ADDRESS}
+    dns:
+      - ${QUANTUM_DNS_IP_ADDRESS}
+    environment:
+      - DEFAULT_PROVIDER=oidc
+      - PROVIDERS_OIDC_ISSUER_URL=${PROVIDERS_OIDC_ISSUER_URL}
+      - PROVIDERS_OIDC_CLIENT_ID=${PROVIDERS_OIDC_CLIENT_ID}
+      - PROVIDERS_OIDC_CLIENT_SECRET=${PROVIDERS_OIDC_CLIENT_SECRET}
+      - COOKIE_DOMAIN=${DOMAIN}
+      - LOG_LEVEL=debug
+      - SECRET=${AUTH_SECRET}
+    labels:
+      traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
+      # Configure service and router
+      traefik.http.routers.traefik-forward-auth.rule: "Host(`auth.${DOMAIN}`)"
+      traefik.http.routers.traefik-forward-auth.tls.domains[0].main: ${DOMAIN}
+      traefik.http.routers.traefik-forward-auth.tls.domains[0].sans: "*.${DOMAIN}"
+      traefik.http.routers.traefik-forward-auth.entrypoints: web,web-secure
+      traefik.http.routers.traefik-forward-auth.tls.certresolver: certificato
+      traefik.http.routers.traefik-forward-auth.service: traefik-forward-auth
+      traefik.http.services.traefik-forward-auth.loadbalancer.server.port: 4181
+      traefik.http.middlewares.traefik-forward-auth.forwardauth.address: http://traefik-forward-auth:4181 #https://auth.${DOMAIN}
+      traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders: X-Forwarded-User
+      traefik.http.middlewares.traefik-forward-auth.forwardauth.trustForwardHeader: true
+    restart: unless-stopped
+
+  whoami:
+    image: containous/whoami
+    container_name: whoami
+    labels:
+      traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
+      # Configure service and router
+      traefik.http.routers.whoami.rule: "Host(`whoami.${DOMAIN}`)"
+      traefik.http.routers.whoami.tls.domains[0].main: ${DOMAIN}
+      traefik.http.routers.whoami.tls.domains[0].sans: "*.${DOMAIN}"
+      traefik.http.routers.whoami.entrypoints: web,web-secure
+      traefik.http.routers.whoami.tls.certresolver: certificato
+      traefik.http.routers.whoami.middlewares: traefik-forward-auth
+      traefik.http.services.whoami.loadbalancer.server.port: 80
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+
+
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id
+    container_name: pocket-id
+    restart: unless-stopped
+    environment:
+      - APP_URL=https://id.${DOMAIN}
+      - TRUST_PROXY=true
+      - MAXMIND_LICENSE_KEY=
+      - PUID=${PUID}
+      - PGID=${PGID}
+    labels:
+      traefik.enable: true
+      traefik.docker.network: networks_traefik_proxy
+      # Configure service and router
+      traefik.http.routers.pocket_id.rule: "Host(`id.${DOMAIN}`)"
+      traefik.http.routers.pocket_id.tls.domains[0].main: ${DOMAIN}
+      traefik.http.routers.pocket_id.tls.domains[0].sans: "*.${DOMAIN}"
+      traefik.http.routers.pocket_id.entrypoints: web,web-secure
+      traefik.http.routers.pocket_id.tls.certresolver: certificato
+      traefik.http.services.pocket_id.loadbalancer.server.port: 1411
+
+    networks:
+      networks_traefik_proxy:
+      networks_vlan_80:
+    volumes:
+      - "${APPDATA}/pocket-id/data:/app/data"
+    # Optional healthcheck
+    healthcheck:
+      test: "curl -f http://localhost:1411/healthz"
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
