@@ -14,7 +14,6 @@ services:
     networks:
       networks_traefik_proxy:
       networks_vlan_30:
-        ipv4_address: ${TRAEFIK_FORWARD_AUTH_IP_ADDRESS}
     dns:
       - ${QUANTUM_DNS_IP_ADDRESS}
     environment:
