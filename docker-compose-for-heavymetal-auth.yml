@@ -1,7 +1,5 @@
 name: heavymetal-services
 networks:
-  networks_vlan_30:
-    external: true
   networks_traefik_proxy:
     external: true
 
@@ -13,8 +11,6 @@ services:
     #   - traefik
     networks:
       networks_traefik_proxy:
-      networks_vlan_30:
-        ipv4_address: ${TRAEFIK_FORWARD_AUTH_IP_ADDRESS}
     dns:
       - ${QUANTUM_DNS_IP_ADDRESS}
     environment:
