@@ -250,7 +250,8 @@ services:
       - traefik.http.routers.immich-private.rule=Host(`private-viewer.${DOMAIN}`)
       - traefik.http.routers.immich-private.tls.certresolver=certificato
       - traefik.http.routers.immich-private.entrypoints=web,web-secure
-      - traefik.http.routers.immich-private.middlewares=private-ipallowlist
+      # - traefik.http.routers.immich-private.middlewares=private-ipallowlist
+      # - traefik.http.routers.immich-private.middlewares=traefik-forward-auth
       - traefik.http.services.immich-private.loadbalancer.server.port=2283
       - "traefik.docker.network=networks_traefik_proxy"
       - homepage.group=HeavyMetal
