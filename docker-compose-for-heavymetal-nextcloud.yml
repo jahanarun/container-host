@@ -244,7 +244,7 @@ services:
       - traefik.http.routers.nextcloud-private.rule=Host(`private.${DOMAIN}`)
       - traefik.http.routers.nextcloud-private.tls.certresolver=certificato
       - traefik.http.routers.nextcloud-private.entrypoints=web,web-secure
-      - traefik.http.routers.nextcloud-private.middlewares=private-ipallowlist,nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
+      - traefik.http.routers.nextcloud-private.middlewares=quantum-ipallowlist,nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
       - traefik.http.services.nextcloud-private.loadbalancer.server.port=80
       # traefik.http.middlewares.nextcloud-private-limit.buffering.maxRequestBodyBytes: 16777216 # 16 GBytes
       # traefik.http.middlewares.nextcloud-private-limit.buffering.memRequestBodyBytes: 16777216 # 16 GBytes
