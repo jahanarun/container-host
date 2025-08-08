@@ -37,7 +37,7 @@ networks:
       config:
         - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
           gateway: ${QUANTUM_GATEWAY}
-          ip_range: 10.100.${QUANTUM_VLAN_ID}.56/31 # 56 - 57
+          ip_range: 10.100.${QUANTUM_VLAN_ID}.56/29 # range: 56-63 usable: 57-62
 
   traefik_proxy:
     driver: bridge
@@ -164,6 +164,7 @@ services:
       - "traefik.http.middlewares.quantum-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK}"
       - "traefik.http.middlewares.quantum_metal-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK},${METAL_NETWORK}"
       - "traefik.http.middlewares.quantum_things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${QUANTUM_NETWORK},${THINGS_NETWORK}"
+      - "traefik.http.middlewares.things_metal-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${THINGS_NETWORK},${METAL_NETWORK}"
       - "traefik.http.middlewares.things-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${THINGS_NETWORK}"
       - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
