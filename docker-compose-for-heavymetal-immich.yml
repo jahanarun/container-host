@@ -48,7 +48,7 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     # command: [ "start.sh", "immich" ]
     volumes:
-      - ${ALBUM_PHOTOS}:/photos/album
+      - ${ALBUM_PHOTOS}:/photos/album:ro
       - ${USER1_PHOTOS}/2016:/photos/${USER1}/2016
       - ${USER1_PHOTOS}/2017:/photos/${USER1}/2017
       - ${USER1_PHOTOS}/2018:/photos/${USER1}/2018
