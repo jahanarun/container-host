@@ -31,7 +31,7 @@ services:
       # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     volumes:
       - ${APPDATA}/plex-movies/config:/config
-      - ${APPDATA}/plex-movies/transcode:/transcode
+      - /dev/shm:/transcode
       - ${MOVIES}:/media/movies:ro
     networks:
       networks_vlan_80:
@@ -84,7 +84,7 @@ services:
       # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     volumes:
       - ${APPDATA}/plex-tvshows/config:/config
-      - ${APPDATA}/plex-tvshows/transcode:/transcode
+      - /dev/shm:/transcode
       - ${TVSHOWS}:/media/tvshows:ro
     networks:
       networks_vlan_80:
@@ -172,7 +172,7 @@ services:
       # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
     volumes:
       - ${APPDATA}/jellyfin/config:/config
-      - ${APPDATA}/jellyfin/transcode:/transcode
+      - /dev/shm:/transcode
       - ${APPDATA}/jellyfin/cache:/cache
       - ${MOVIES}:/media/movies:ro
       - ${TVSHOWS}:/media/tvshows:ro
