@@ -33,12 +33,12 @@ services:
       # - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
       # - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
       # - /dev/dri # direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
-      # - /dev/kfd # the main compute interface shared by all GPUs. 
-    # cap_add:
-    #   - CAP_PERFMON
-    privileged: true
-    security_opt:
-      - seccomp:unconfined
+      # - /dev/kfd # the main compute interface shared by all GPUs.
+    cap_add:
+      - CAP_PERFMON
+    # privileged: true
+    # security_opt:
+    #   - seccomp:unconfined
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -87,11 +87,11 @@ services:
       traefik.tcp.routers.frigate-tcp.rule: HostSNI(`*`)
       traefik.tcp.routers.frigate-tcp.entrypoints: rtsp
       traefik.tcp.routers.frigate-tcp.service: frigate-tcp
-      traefik.tcp.services.frigate-tcp.loadbalancer.server.port: 8554  
+      traefik.tcp.services.frigate-tcp.loadbalancer.server.port: 8554
       traefik.tcp.routers.frigate-webrtc.rule: HostSNI(`*`)
       traefik.tcp.routers.frigate-webrtc.entrypoints: webrtc
       traefik.tcp.routers.frigate-webrtc.service: frigate-webrtc
-      traefik.tcp.services.frigate-webrtc.loadbalancer.server.port: 8555  
+      traefik.tcp.services.frigate-webrtc.loadbalancer.server.port: 8555
       traefik.http.routers.frigate-go2rtc.rule: Host(`go2rtc.${DOMAIN}`)
       traefik.http.routers.frigate-go2rtc.tls.certresolver: certificato
       traefik.http.routers.frigate-go2rtc.entrypoints: web,web-secure
@@ -132,7 +132,7 @@ services:
   #     # - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
   #     # - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
   #     - /dev/dri # direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
-  #     - /dev/kfd # the main compute interface shared by all GPUs. 
+  #     - /dev/kfd # the main compute interface shared by all GPUs.
   #   security_opt:
   #     - seccomp:unconfined
   #   volumes:
@@ -167,4 +167,3 @@ services:
   #     - traefik.http.routers.frigate-public.middlewares=quantum_things-ipallowlist
   #     - traefik.http.services.frigate-public.loadbalancer.server.port=5000
   #     - traefik.docker.network=networks_traefik_proxy
-
