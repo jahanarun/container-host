@@ -64,6 +64,7 @@ networks:
 services:
   do-nothing:
     image: jhnrn/do-nothing:latest
+    container_name: do-nothing
     restart: unless-stopped
     networks:
       vlan_20:
@@ -219,6 +220,7 @@ services:
     stop_grace_period: 60s
     networks:
       omada_network:
+        ipv4_address: ${OMADA_IP_ADDRESS}
     environment:
       - PUID=508
       - PGID=508
