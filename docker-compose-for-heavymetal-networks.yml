@@ -39,6 +39,17 @@ networks:
           gateway: ${QUANTUM_GATEWAY}
           ip_range: 10.100.${QUANTUM_VLAN_ID}.56/29 # range: 56-63 usable: 57-62
 
+  omada_network:
+    driver: macvlan
+    driver_opts:
+      parent: ${NETWORK_DEVICE}
+      name: macvlan_omada
+    ipam:
+      config:
+        - subnet: 10.100.0.0/24
+          gateway: 10.100.0.1
+          ip_range: 10.100.0.56/29 # range: 56-63 usable: 57-62
+
   traefik_proxy:
     driver: bridge
     internal: true
@@ -206,7 +217,8 @@ services:
         soft: 4096
         hard: 8192
     stop_grace_period: 60s
-    network_mode: host
+    networks:
+      omada_network:
     environment:
       - PUID=508
       - PGID=508
