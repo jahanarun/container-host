@@ -1,11 +1,8 @@
 networks:
 
-  networks_vlan_80:
-    external: true
   networks_vlan_30:
     external: true
-  networks_traefik_proxy:
-    external: true
+
 services:
   tailscale-quantum:
     container_name: tailscale-quantum
