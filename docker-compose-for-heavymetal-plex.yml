@@ -130,13 +130,13 @@ services:
       homepage.href: https://music.${DOMAIN}/
       homepage.description: for music
       homepage.widget.type: plex
-      homepage.widget.url: http://${PLEXMUSIC_IP_ADDRESS}:32400
+      homepage.widget.url: http://${PLEX_MUSIC_IP_ADDRESS}:32400
       homepage.widget.key: ${PLEX_MUSIC_TOKEN}
       autoheal: true
     networks:
       networks_traefik_proxy:
       networks_vlan_80:
-        ipv4_address: ${PLEXMUSIC_IP_ADDRESS}
+        ipv4_address: ${PLEX_MUSIC_IP_ADDRESS}
     dns:
       - ${METAL_DNS_IP_ADDRESS}
     environment:
