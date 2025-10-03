@@ -8,6 +8,8 @@ networks:
     external: true
   networks_traefik_proxy:
     external: true
+  networks_internet:
+    external: true
   network_gogs:
     internal: true
   network_gitea:
@@ -219,9 +221,7 @@ services:
     image: netdata/netdata:edge
     container_name: netdata-heavymetal
     hostname: netdata-heavymetal
-    pid: host
     restart: unless-stopped
-    network_mode: host
     cap_add:
       - SYS_PTRACE
       - SYS_ADMIN
@@ -257,6 +257,10 @@ services:
       - traefik.http.routers.netdatahm.tls.certresolver=certificato
       - traefik.http.routers.netdatahm.entrypoints=web,web-secure
       - traefik.http.services.netdatahm.loadbalancer.server.port=19999
+      - traefik.docker.network=networks_traefik_proxy
+    networks:
+      networks_internet:
+      networks_traefik_proxy:
 
   autoheal:
     image: jhnrn/docker-autoheal:latest
