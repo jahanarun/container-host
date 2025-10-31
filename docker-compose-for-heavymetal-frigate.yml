@@ -48,6 +48,8 @@ services:
           size: 536870912 # 512mb
     networks:
       networks_traefik_proxy:
+        aliases:
+          - recorder
       networks_vlan_20:
         ipv4_address: ${FRIGATE_THINGS_IP_ADDRESS}
     # ports:

@@ -65,7 +65,7 @@ services:
   #     networks_vlan_20:
   #       ipv4_address: ${THINGS_DNS_IP_ADDRESS}
   #   dns:
-  #     - 127.0.0.1        
+  #     - 127.0.0.1
   #   restart: unless-stopped
   #   depends_on:
   #     dns-upstream-things:
@@ -103,8 +103,6 @@ services:
       networks_traefik_proxy:
       networks_vlan_20:
         ipv4_address: ${HOMEASSISTANT_IP_ADDRESS}
-    dns:
-      - ${THINGS_DNS_IP_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.homeassistant.rule=Host(`home.${DOMAIN}`)
@@ -125,10 +123,8 @@ services:
       CAMERA_RTSP_PASSWORD: ${CAMERA_RTSP_PASSWORD}
       CAMERA_RTSP_USER: ${CAMERA_RTSP_USER}
     networks:
-      networks_vlan_20:
       networks_traefik_proxy:
-    dns:
-      - ${THINGS_DNS_IP_ADDRESS}
+      networks_vlan_20:
     devices:
       - /dev/dri # If using Intel QuickSync or VAAPI, direct rendering interface (DRI) devices for each GPU. <node> is a number for each card in the system starting from 128.
     volumes:
@@ -143,5 +139,5 @@ services:
       - traefik.tcp.routers.go2rtc-tcp.rule=HostSNI(`*`)
       - traefik.tcp.routers.go2rtc-tcp.entrypoints=rtsp
       - traefik.tcp.routers.go2rtc-tcp.service=go2rtc-tcp
-      - traefik.tcp.services.go2rtc-tcp.loadbalancer.server.port=8554  
+      - traefik.tcp.services.go2rtc-tcp.loadbalancer.server.port=8554
       - traefik.docker.network=networks_traefik_proxy
