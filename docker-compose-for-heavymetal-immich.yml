@@ -10,9 +10,6 @@ networks:
     driver: bridge
     internal: true
 
-  networks_vlan_80:
-    external: true
-
 services:
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -38,8 +35,6 @@ services:
     networks:
       immich-family-network:
       immich-private-network:
-      networks_vlan_80:
-        ipv4_address: ${IMMICH_MACHINE_LEARNING_IP_ADDRESS}
     labels:
       - dev.dozzle.group=immich-family
 
@@ -90,8 +85,6 @@ services:
     networks:
       immich-family-network:
       networks_traefik_proxy:
-      networks_vlan_80:
-        ipv4_address: ${IMMICH_FAMILY_SERVER_IP_ADDRESS}
     labels:
       - dev.dozzle.group=immich-family
       - traefik.enable=true
@@ -242,8 +235,6 @@ services:
     networks:
       immich-private-network:
       networks_traefik_proxy:
-      networks_vlan_80:
-        ipv4_address: ${IMMICH_PRIVATE_SERVER_IP_ADDRESS}
     labels:
       - dev.dozzle.group=immich-private
       - traefik.enable=true

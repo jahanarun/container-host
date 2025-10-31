@@ -261,8 +261,6 @@ services:
     networks:
       networks_internet:
       networks_traefik_proxy:
-      networks_vlan_80:
-        ipv4_address: ${NETDATA_IP_ADDRESS}
 
   autoheal:
     image: jhnrn/docker-autoheal:latest
@@ -285,7 +283,6 @@ services:
       - ${APPDATA}/mosquitto/log:/mosquitto/log
     networks:
       networks_traefik_proxy:
-      networks_vlan_80:
     # expose:
     #   - 1883:1883
     #   - 9001:9001
@@ -307,14 +304,14 @@ services:
     image: amir20/dozzle:latest
     restart: unless-stopped
     environment:
-      DOZZLE_HOSTNAME: heavymetal
+      DOZZLE_HOSTNAME: dozzle-heavymetal
       # DOZZLE_REMOTE_HOST: tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375|metalbox,tcp://${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}:2375|heavymetal
       # DOZZLE_REMOTE_HOST: tcp://${METAL_DOCKERPROXY_IP_ADDRESS}:2375|metalbox
-      DOZZLE_REMOTE_AGENT: ${METALBOX_DOZZLE_AGENT_IP_ADDRESS}:7007
+      # DOZZLE_REMOTE_AGENT: ${METALBOX_DOZZLE_AGENT_IP_ADDRESS}:7007
     networks:
-      # Need the transit network to talk to other docker host(s)
-      networks_vlan_80:
-        ipv4_address: ${HEAVYMETAL_DOZZLE_IP_ADDRESS}
+      # # Need the transit network to talk to other docker host(s)
+      # networks_vlan_80:
+      #   ipv4_address: ${HEAVYMETAL_DOZZLE_IP_ADDRESS}
       networks_traefik_proxy:
     dns:
       - ${METAL_DNS_IP_ADDRESS}
@@ -473,8 +470,6 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     networks:
       networks_traefik_proxy:
-      networks_vlan_80:
-        ipv4_address: ${METAL_HOMEPAGE_DASHBOARD_IP_ADDRESS}
     dns:
       - ${METAL_DNS_IP_ADDRESS}
     restart: unless-stopped
