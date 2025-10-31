@@ -1,6 +1,7 @@
 name: nextcloud-linux - Build linux docker image for Nextcloud
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "15 4 * * 6"   # At 04:15 on Saturday.
 
