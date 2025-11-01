@@ -25,7 +25,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     networks:
-      - networks_metrics  
+      - networks_metrics
 
   elasticsearch:
     container_name: elasticsearch
@@ -59,7 +59,7 @@ services:
       # CHANGE ME (must be at least 16 characters)! This is not your password, this is meant for salting the password below.
       - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET}
       # Username is "admin"
-      # Password is "admin", change this to your own hashed password. 'echo -n "password" | sha256sum' 
+      # Password is "admin", change this to your own hashed password. 'echo -n "password" | sha256sum'
       - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
       - GRAYLOG_HTTP_EXTERNAL_URI=https://graylog.${DOMAIN}/
       - GRAYLOG_HTTP_BIND_ADDRESS=0.0.0.0:9000
@@ -73,9 +73,9 @@ services:
       - traefik.docker.network=networks_traefik_proxy
     networks:
       networks_metrics:
-      networks_internet:
-      networks_vlan_80:
-        ipv4_address: ${GRAYLOG_IP_ADDRESS}
+      # networks_internet:
+      # networks_vlan_80:
+      #   ipv4_address: ${GRAYLOG_IP_ADDRESS}
       networks_traefik_proxy:
     depends_on:
       - mongodb
@@ -142,7 +142,7 @@ services:
     restart: "unless-stopped"
     networks:
       - networks_metrics
-      - networks_internet
+      # - networks_internet
       - networks_traefik_proxy
     labels:
       - traefik.enable=true

@@ -85,8 +85,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
       traefik_proxy:
-      vlan_80:
-        ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
+      # vlan_80:
+      #   ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
     healthcheck:
       test: wget --spider http://localhost:2375/version || exit 1
@@ -192,6 +192,8 @@ services:
       - ${APPDATA}/traefik/logs:/logs
       - ${APPDATA}/traefik/certs:/letsencrypt
       - ${APPDATA}/traefik/dynamic:/FileProvider
+    security_opt:
+      - no-new-privileges:true
     restart: always
     depends_on:
       - dockerproxy
