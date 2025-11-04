@@ -155,6 +155,16 @@ services:
       traefik_proxy:
         aliases:
           - id.${DOMAIN}
+          - plex-movies.${DOMAIN}
+          - plex-tvshows.${DOMAIN}
+          - plex-music.${DOMAIN}
+          - recorder.${DOMAIN}
+          - movies.${DOMAIN}
+          - tvshows.${DOMAIN}
+          - prowlarr.${DOMAIN}
+          - torrent.${DOMAIN}
+          - flaresolverr.${DOMAIN}
+          - fetch.${DOMAIN}
       metrics:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
