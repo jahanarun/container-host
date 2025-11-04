@@ -153,6 +153,8 @@ services:
       # - "--experimental.plugins.traefik-oidc-auth.version=v0.12.0"
     networks:
       traefik_proxy:
+        aliases:
+          - id.${DOMAIN}
       metrics:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
