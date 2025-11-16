@@ -256,3 +256,21 @@ services:
     volumes:
       - ${APPDATA}/omada/data:/opt/tplink/EAPController/data
       - ${APPDATA}/omada/logs:/opt/tplink/EAPController/logs
+
+  iperf3:
+    image: jhnrn/iperf3:latest
+    container_name: "iperf3"
+    restart: always
+    networks:
+      vlan_80:
+    labels:
+      - "traefik.enable=true"
+
+      # TCP router -> forward to iperf3 TCP server (port 5201)
+      - "traefik.tcp.routers.iperf3.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.iperf3.entrypoints=iperf3"
+      - "traefik.tcp.services.iperf3.loadbalancer.server.port=5201"
+
+      # UDP router -> forward to iperf3 UDP server (port 5201)
+      - "traefik.udp.routers.iperf3-udp.entrypoints=iperf3-udp"
+      - "traefik.udp.services.iperf3-udp.loadbalancer.server.port=5201"
