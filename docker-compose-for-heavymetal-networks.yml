@@ -130,6 +130,8 @@ services:
       - "--entrypoints.webrtc.address=:8555"
       - "--entrypoints.mqtt.address=:1883"
       - "--entrypoints.websocket.address=:9001"
+      - --entrypoints.iperf3.address=:5201/tcp
+      - --entrypoints.iperf3-udp.address=:5201/udp
       - "--serverstransport.insecureskipverify=true"
       # Set up LetsEncrypt
       - "--certificatesresolvers.certificato.acme.dnschallenge=true"
