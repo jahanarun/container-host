@@ -15,7 +15,7 @@ services:
     image: ghcr.io/blakeblackshear/frigate:${FRIGATE_IMAGE_TAG:-stable}
     # image: ghcr.io/harakas/frigate:latest-rocm
     # privileged: true
-    shm_size: "530mb" # update for your cameras based on calculation above
+    shm_size: "600mb" # update for your cameras based on calculation above
     deploy:
       resources:
         limits:
@@ -78,7 +78,7 @@ services:
       traefik.http.routers.frigate.rule: Host(`recorder.${DOMAIN}`)
       traefik.http.routers.frigate.tls.certresolver: certificato
       traefik.http.routers.frigate.entrypoints: web,web-secure
-      traefik.http.services.frigate.loadbalancer.server.port: 5000
+      traefik.http.services.frigate.loadbalancer.server.port: 8971
       traefik.http.routers.frigate.service: frigate
       traefik.tcp.routers.frigate-tcp.rule: HostSNI(`*`)
       traefik.tcp.routers.frigate-tcp.entrypoints: rtsp
