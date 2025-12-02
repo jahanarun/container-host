@@ -78,7 +78,10 @@ services:
       traefik.http.routers.frigate.rule: Host(`recorder.${DOMAIN}`)
       traefik.http.routers.frigate.tls.certresolver: certificato
       traefik.http.routers.frigate.entrypoints: web,web-secure
+      # traefik.http.services.frigate.loadbalancer.server.port: 5000
       traefik.http.services.frigate.loadbalancer.server.port: 8971
+      traefik.http.services.frigate.loadbalancer.server.scheme: https
+      traefik.http.services.frigate.loadbalancer.server.insecureskipverify: true
       traefik.http.routers.frigate.service: frigate
       traefik.tcp.routers.frigate-tcp.rule: HostSNI(`*`)
       traefik.tcp.routers.frigate-tcp.entrypoints: rtsp
