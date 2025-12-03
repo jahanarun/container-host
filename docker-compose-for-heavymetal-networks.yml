@@ -167,6 +167,7 @@ services:
           - torrent.${DOMAIN}
           - flaresolverr.${DOMAIN}
           - fetch.${DOMAIN}
+          - iperf3.${DOMAIN}
       metrics:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
@@ -264,7 +265,7 @@ services:
     container_name: "iperf3"
     restart: always
     networks:
-      vlan_80:
+      traefik_proxy:
     labels:
       - "traefik.enable=true"
 
