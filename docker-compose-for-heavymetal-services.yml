@@ -384,23 +384,6 @@ services:
       - "traefik.http.services.librespeed.loadbalancer.server.port=80"
       - traefik.docker.network=networks_traefik_proxy
 
-  # speedtest_tracker-db:
-  #   image: postgres:15
-  #   container_name: speedtest_tracker-db
-  #   restart: always
-  #   user: $PUID:$PGID
-  #   environment:
-  #     - POSTGRES_DB=speedtest_tracker
-  #     - POSTGRES_USER=${SPEEDTEST_TRACKER_POSTGRES_USER}
-  #     - POSTGRES_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
-  #     - TZ=UTC
-  #   volumes:
-  #     - ${APPDATA}/speedtest-tracker-alexjustesen/db:/var/lib/postgresql/data
-  #   networks:
-  #     speedtest_tracker:
-  #   labels:
-  #     - dev.dozzle.group=speedtest_tracker
-
   speedtest_tracker:
     image: lscr.io/linuxserver/speedtest-tracker:latest
     hostname: speedtest-tracker
@@ -409,13 +392,6 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - DB_CONNECTION=sqlite
-      # - DB_CONNECTION=pgsql
-      # - DB_HOST=speedtest_tracker-db
-      # - DB_PORT=5432
-      # - DB_DATABASE=speedtest_tracker
-      # - DB_USERNAME=${SPEEDTEST_TRACKER_POSTGRES_USER}
-      # - DB_PASSWORD=${SPEEDTEST_TRACKER_POSTGRES_PASSWORD}
-      # - TZ=UTC
       - TZ=${TZ}
       - APP_DEBUG=${SPEEDTEST_TRACKER_APP_DEBUG:-false}
       - APP_TIMEZONE=${TZ}
@@ -428,17 +404,15 @@ services:
       - ${APPDATA}/speedtest-tracker/config:/config
       # - ${APPDATA}/speedtest-tracker/web:/etc/ssl/web
     # depends_on:
-    #   - speedtest_tracker-db
     networks:
-      # speedtest_tracker:
       networks_traefik_proxy:
-      networks_vlan_80:
-        ipv4_address: ${METAL_SPEEDTRACKER_IP_ADDRESS}
+      networks_internet:
+      # networks_vlan_80:
+      #   ipv4_address: ${METAL_SPEEDTRACKER_IP_ADDRESS}
     dns:
       - ${METAL_DNS_IP_ADDRESS}
     restart: unless-stopped
     labels:
-      # - dev.dozzle.group=speedtest_tracker
       - "traefik.enable=true"
       - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
