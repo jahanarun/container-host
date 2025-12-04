@@ -166,7 +166,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - JELLYFIN_PublishedServerUrl=https:/jellyfin.${DOMAIN}
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.${DOMAIN}
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/kfd:/dev/kfd # Remove this device if you don't use the OpenCL tone-mapping
