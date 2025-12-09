@@ -108,8 +108,6 @@ services:
     networks:
       networks_traefik_proxy:
       nextcloud:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - dev.dozzle.group=nextcloud
       - ofelia.enabled=true
@@ -225,8 +223,6 @@ services:
     networks:
       networks_traefik_proxy:
       nextcloud-private:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
     labels:
       - dev.dozzle.group=nextcloud-private
       - ofelia.enabled=true
