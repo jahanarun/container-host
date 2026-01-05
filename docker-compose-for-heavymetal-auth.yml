@@ -13,9 +13,9 @@ services:
     #   - traefik
     networks:
       networks_traefik_proxy:
-      networks_vlan_30:
-    dns:
-      - ${QUANTUM_DNS_IP_ADDRESS}
+      # networks_vlan_30:
+    # dns:
+    #   - ${QUANTUM_DNS_IP_ADDRESS}
     environment:
       - DEFAULT_PROVIDER=oidc
       - PROVIDERS_OIDC_ISSUER_URL=${PROVIDERS_OIDC_ISSUER_URL}
@@ -28,14 +28,14 @@ services:
       traefik.enable: true
       traefik.docker.network: networks_traefik_proxy
       # Configure service and router
-      traefik.http.routers.traefik-forward-auth.rule: "Host(`auth.${DOMAIN}`)"
-      traefik.http.routers.traefik-forward-auth.tls.domains[0].main: ${DOMAIN}
-      traefik.http.routers.traefik-forward-auth.tls.domains[0].sans: "*.${DOMAIN}"
-      traefik.http.routers.traefik-forward-auth.entrypoints: web,web-secure
-      traefik.http.routers.traefik-forward-auth.tls.certresolver: certificato
-      traefik.http.routers.traefik-forward-auth.service: traefik-forward-auth
-      traefik.http.services.traefik-forward-auth.loadbalancer.server.port: 4181
-      traefik.http.middlewares.traefik-forward-auth.forwardauth.address: http://traefik-forward-auth:4181 #https://auth.${DOMAIN}
+      # traefik.http.routers.traefik-forward-auth.rule: "Host(`auth.${DOMAIN}`)"
+      # traefik.http.routers.traefik-forward-auth.tls.domains[0].main: ${DOMAIN}
+      # traefik.http.routers.traefik-forward-auth.tls.domains[0].sans: "*.${DOMAIN}"
+      # traefik.http.routers.traefik-forward-auth.entrypoints: web,web-secure
+      # traefik.http.routers.traefik-forward-auth.tls.certresolver: certificato
+      # traefik.http.routers.traefik-forward-auth.service: traefik-forward-auth
+      # traefik.http.services.traefik-forward-auth.loadbalancer.server.port: 4181
+      traefik.http.middlewares.traefik-forward-auth.forwardauth.address: http://traefik-forward-auth:4181
       traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders: X-Forwarded-User
       traefik.http.middlewares.traefik-forward-auth.forwardauth.trustForwardHeader: true
     restart: unless-stopped
