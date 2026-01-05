@@ -13,9 +13,9 @@ services:
     #   - traefik
     networks:
       networks_traefik_proxy:
-      # networks_vlan_30:
-    # dns:
-    #   - ${QUANTUM_DNS_IP_ADDRESS}
+      networks_vlan_30:
+    dns:
+      - ${QUANTUM_DNS_IP_ADDRESS}
     environment:
       - DEFAULT_PROVIDER=oidc
       - PROVIDERS_OIDC_ISSUER_URL=${PROVIDERS_OIDC_ISSUER_URL}
