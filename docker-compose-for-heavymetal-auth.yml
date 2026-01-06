@@ -28,13 +28,13 @@ services:
       traefik.enable: true
       traefik.docker.network: networks_traefik_proxy
       # Configure service and router
-      traefik.http.routers.traefik-forward-auth.rule: "Host(`auth.${DOMAIN}`)"
-      traefik.http.routers.traefik-forward-auth.tls.domains[0].main: ${DOMAIN}
-      traefik.http.routers.traefik-forward-auth.tls.domains[0].sans: "*.${DOMAIN}"
-      traefik.http.routers.traefik-forward-auth.entrypoints: web,web-secure
-      traefik.http.routers.traefik-forward-auth.tls.certresolver: certificato
-      traefik.http.routers.traefik-forward-auth.service: traefik-forward-auth
-      traefik.http.services.traefik-forward-auth.loadbalancer.server.port: 4181
+      # traefik.http.routers.traefik-forward-auth.rule: "Host(`auth.${DOMAIN}`)"
+      # traefik.http.routers.traefik-forward-auth.tls.domains[0].main: ${DOMAIN}
+      # traefik.http.routers.traefik-forward-auth.tls.domains[0].sans: "*.${DOMAIN}"
+      # traefik.http.routers.traefik-forward-auth.entrypoints: web,web-secure
+      # traefik.http.routers.traefik-forward-auth.tls.certresolver: certificato
+      # traefik.http.routers.traefik-forward-auth.service: traefik-forward-auth
+      # traefik.http.services.traefik-forward-auth.loadbalancer.server.port: 4181
       traefik.http.middlewares.traefik-forward-auth.forwardauth.address: http://traefik-forward-auth:4181
       traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders: X-Forwarded-User
       traefik.http.middlewares.traefik-forward-auth.forwardauth.trustForwardHeader: true
@@ -67,6 +67,7 @@ services:
       - MAXMIND_LICENSE_KEY=
       - PUID=${PUID}
       - PGID=${PGID}
+      - ENCRYPTION_KEY=${POCKET_ID_ENCRYPTION_KEY}
     labels:
       traefik.enable: true
       traefik.docker.network: networks_traefik_proxy
