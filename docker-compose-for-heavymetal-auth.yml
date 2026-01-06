@@ -34,7 +34,7 @@ services:
       # traefik.http.routers.traefik-forward-auth.entrypoints: web,web-secure
       # traefik.http.routers.traefik-forward-auth.tls.certresolver: certificato
       # traefik.http.routers.traefik-forward-auth.service: traefik-forward-auth
-      # traefik.http.services.traefik-forward-auth.loadbalancer.server.port: 4181
+      traefik.http.services.traefik-forward-auth.loadbalancer.server.port: 4181
       traefik.http.middlewares.traefik-forward-auth.forwardauth.address: http://traefik-forward-auth:4181
       traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders: X-Forwarded-User
       traefik.http.middlewares.traefik-forward-auth.forwardauth.trustForwardHeader: true
