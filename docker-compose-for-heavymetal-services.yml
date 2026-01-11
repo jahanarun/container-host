@@ -516,3 +516,34 @@ services:
       SAMBA_HOSTS_ALLOW: 0.0.0.0/0
       SAMBA_HOSTS_DENY:
     restart: unless-stopped
+
+
+  copyparty:
+    image: copyparty/ac:latest
+    container_name: copyparty
+    user: "33:33"  # should match the user/group of your fileshare volumes
+    volumes:
+      - ${APPDATA}/copyparty/:/cfg  # the copyparty config folder
+      # - /srv/pub:/w:z  # this is where we declare that "/srv/pub" is the filesystem-path on the server that shall be shared online
+      - ${TORRENTS}:/w/torrents
+      - ${FRIGATE_RECORDINGS}:/w/frigate
+    networks:
+      networks_traefik_proxy:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.copyparty.rule=Host(`copyparty.${DOMAIN}`)
+      - traefik.http.routers.copyparty.tls=true
+      - traefik.http.routers.copyparty.tls.certresolver=certificato
+      - traefik.http.routers.copyparty.entrypoints=web,web-secure
+      - traefik.http.routers.copyparty.middlewares=quantum-ipallowlist,traefik-forward-auth
+      - traefik.http.services.copyparty.loadbalancer.server.port=3923
+      - traefik.docker.network=networks_traefik_proxy
+    # expose:
+    #   - 3923
+    stop_grace_period: 15s  # thumbnailer is allowed to continue finishing up for 10s after the shutdown signal
+    environment:
+      # enable mimalloc by replacing "NOPE" with "2" for a nice speed-boost (will use twice as much ram)
+      # LD_PRELOAD: /usr/lib/libmimalloc-secure.so.NOPE
+      LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
+      PYTHONUNBUFFERED: 1
+      # ensures log-messages are not delayed (but can reduce speed a tiny bit)
