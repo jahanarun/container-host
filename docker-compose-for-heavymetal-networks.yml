@@ -168,6 +168,7 @@ services:
           - flaresolverr.${DOMAIN}
           - fetch.${DOMAIN}
           - iperf3.${DOMAIN}
+          - go2rtc.${DOMAIN}
       metrics:
       vlan_80:
         ipv4_address: ${TRAEFIK_IP_ADDRESS_2}
