@@ -26,9 +26,19 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 RUN install-php-extensions \
     sysvsem \
     igbinary \
-    redis
+    redis \
+    memcached
 
 RUN rm -rf /var/lib/apt/lists/*
 # RUN apt-get install -y  php-sysvsem
 # RUN php -v
 #  && rm -rf /var/lib/apt/lists/*
+
+# (Optional) If you still see loading order warnings in specific environments,
+# you can force the alphabetical loading order manually:
+RUN mv /usr/local/etc/php/conf.d/docker-php-ext-igbinary.ini /usr/local/etc/php/conf.d/01-igbinary.ini && \
+    mv /usr/local/etc/php/conf.d/docker-php-ext-redis.ini /usr/local/etc/php/conf.d/02-redis.ini && \
+    mv /usr/local/etc/php/conf.d/docker-php-ext-memcached.ini /usr/local/etc/php/conf.d/02-memcached.ini
+
+# Reset working directory as per official image
+WORKDIR /var/www/html
