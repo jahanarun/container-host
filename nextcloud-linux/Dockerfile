@@ -1,6 +1,8 @@
 FROM nextcloud
 
-# 2. Add dependencies for the packages you need
+USER root
+
+# Add dependencies for the packages you need
 RUN apt-get update && \
     apt-get install -y \
         procps \
@@ -11,7 +13,7 @@ RUN apt-get update && \
         mesa-va-drivers && \
     rm -rf /var/lib/apt/lists/*
 
-# 3. Use the installer to REINSTALL redis and memcached WITH igbinary support
+# Use the installer to REINSTALL redis and memcached WITH igbinary support
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 # This command re-compiles them to ensure they use igbinary correctly
