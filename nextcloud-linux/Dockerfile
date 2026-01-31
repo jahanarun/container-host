@@ -46,6 +46,9 @@ RUN echo "session.save_handler = redis" > /usr/local/etc/php/conf.d/redis-sessio
     echo "redis.session.lock_retries = -1" >> /usr/local/etc/php/conf.d/redis-session.ini && \
     echo "redis.session.lock_wait_time = 10000" >> /usr/local/etc/php/conf.d/redis-session.ini
 
+# FIX: Grant write access to the config folder for your non-root user
+RUN chmod 777 /usr/local/etc/php/conf.d/
+
 # Add your custom apache config
 RUN echo "LimitRequestBody 0" > /etc/apache2/conf-enabled/z_fix-restrictions.conf
 
