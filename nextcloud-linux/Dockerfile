@@ -1,5 +1,4 @@
-# 1. FIX: Pin to 32.0.5 to match your data version
-FROM nextcloud:32.0.5-apache
+FROM nextcloud
 
 # 2. Add dependencies for the packages you need
 RUN apt-get update && \
@@ -22,12 +21,21 @@ RUN install-php-extensions \
     redis \
     memcached
 
-# 4. FIX: Force the loading order
-# Even if they are installed, PHP loads them alphabetically.
-# We move them to numbered files to guarantee igbinary (01) is first.
-RUN mv /usr/local/etc/php/conf.d/docker-php-ext-igbinary.ini /usr/local/etc/php/conf.d/01-igbinary.ini || true && \
-    mv /usr/local/etc/php/conf.d/docker-php-ext-redis.ini /usr/local/etc/php/conf.d/02-redis.ini || true && \
-    mv /usr/local/etc/php/conf.d/docker-php-ext-memcached.ini /usr/local/etc/php/conf.d/02-memcached.ini || true
+# # Create a custom PHP setting file for Nextcloud
+# RUN echo "memory_limit=8G" > /usr/local/etc/php/conf.d/z-custom-nextcloud.ini && \
+#     echo "upload_max_filesize=16G" >> /usr/local/etc/php/conf.d/z-custom-nextcloud.ini && \
+#     echo "post_max_size=16G" >> /usr/local/etc/php/conf.d/z-custom-nextcloud.ini && \
+#     echo "output_buffering=0" >> /usr/local/etc/php/conf.d/z-custom-nextcloud.ini
+
+# Create a second file for OPcache or other settings
+RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/z-opcache.ini && \
+    echo "opcache.interned_strings_buffer=16" >> /usr/local/etc/php/conf.d/z-opcache.ini && \
+    echo "opcache.max_accelerated_files=10000" >> /usr/local/etc/php/conf.d/z-opcache.ini && \
+    echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/z-opcache.ini && \
+    echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/z-opcache.ini && \
+    echo "opcache.revalidate_freq=60" >> /usr/local/etc/php/conf.d/z-opcache.ini && \
+    echo "opcache.jit=1255" >> /usr/local/etc/php/conf.d/z-opcache.ini && \
+    echo "opcache.jit_buffer_size=128M" >> /usr/local/etc/php/conf.d/z-opcache.ini
 
 # Add your custom apache config
 RUN echo "LimitRequestBody 0" > /etc/apache2/conf-enabled/z_fix-restrictions.conf
