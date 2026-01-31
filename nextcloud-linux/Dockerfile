@@ -1,7 +1,7 @@
-FROM nextcloud
+# 1. FIX: Pin to 32.0.5 to match your data version
+FROM nextcloud:32.0.5-apache
 
-RUN echo "LimitRequestBody 0" > /etc/apache2/conf-enabled/z_fix-restrictions.conf
-
+# 2. Add dependencies for the packages you need
 RUN apt-get update && \
     apt-get install -y \
         procps \
@@ -12,33 +12,24 @@ RUN apt-get update && \
         mesa-va-drivers && \
     rm -rf /var/lib/apt/lists/*
 
-# RUN dpkg -i install php-sysvsem
-# RUN pkg install php80-sysvsem
-# RUN docker-php-ext-install -j "$(nproc)" \
-#         sysvsem \
-#     ;
-
-# Copy the installer from its official image
+# 3. Use the installer to REINSTALL redis and memcached WITH igbinary support
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Combine installations into a single RUN layer to reduce image size
-# This automatically handles the igbinary dependency for redis.
+# This command re-compiles them to ensure they use igbinary correctly
 RUN install-php-extensions \
     sysvsem \
     igbinary \
     redis \
     memcached
 
-RUN rm -rf /var/lib/apt/lists/*
-# RUN apt-get install -y  php-sysvsem
-# RUN php -v
-#  && rm -rf /var/lib/apt/lists/*
+# 4. FIX: Force the loading order
+# Even if they are installed, PHP loads them alphabetically.
+# We move them to numbered files to guarantee igbinary (01) is first.
+RUN mv /usr/local/etc/php/conf.d/docker-php-ext-igbinary.ini /usr/local/etc/php/conf.d/01-igbinary.ini || true && \
+    mv /usr/local/etc/php/conf.d/docker-php-ext-redis.ini /usr/local/etc/php/conf.d/02-redis.ini || true && \
+    mv /usr/local/etc/php/conf.d/docker-php-ext-memcached.ini /usr/local/etc/php/conf.d/02-memcached.ini || true
 
-# (Optional) If you still see loading order warnings in specific environments,
-# you can force the alphabetical loading order manually:
-RUN mv /usr/local/etc/php/conf.d/docker-php-ext-igbinary.ini /usr/local/etc/php/conf.d/01-igbinary.ini && \
-    mv /usr/local/etc/php/conf.d/docker-php-ext-redis.ini /usr/local/etc/php/conf.d/02-redis.ini && \
-    mv /usr/local/etc/php/conf.d/docker-php-ext-memcached.ini /usr/local/etc/php/conf.d/02-memcached.ini
+# Add your custom apache config
+RUN echo "LimitRequestBody 0" > /etc/apache2/conf-enabled/z_fix-restrictions.conf
 
-# Reset working directory as per official image
 WORKDIR /var/www/html
