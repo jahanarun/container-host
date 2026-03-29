@@ -521,6 +521,7 @@ services:
   copyparty:
     image: copyparty/ac:latest
     container_name: copyparty
+    restart: unless-stopped
     user: "33:33"  # should match the user/group of your fileshare volumes
     volumes:
       - ${APPDATA}/copyparty/:/cfg  # the copyparty config folder
