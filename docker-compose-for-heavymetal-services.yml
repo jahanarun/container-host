@@ -530,6 +530,7 @@ services:
       - ${TORRENTS}:/w/torrents
       - ${FRIGATE_RECORDINGS}:/w/frigate
       - ${ROCKET10_DATA}:/w/rocket10/data
+      - ${MERGED_MEDIA}:/w/merged_media
     networks:
       networks_traefik_proxy:
     labels:
