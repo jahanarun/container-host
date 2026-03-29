@@ -524,7 +524,8 @@ services:
     restart: unless-stopped
     user: "33:33"  # should match the user/group of your fileshare volumes
     volumes:
-      - ${APPDATA}/copyparty/:/cfg  # the copyparty config folder
+      - ${APPDATA}/copyparty/cfg/:/cfg  # the copyparty config folder
+      - ${APPDATA}/copyparty/.hist:/w/.hist/  # the copyparty hist folder
       # - /srv/pub:/w:z  # this is where we declare that "/srv/pub" is the filesystem-path on the server that shall be shared online
       - ${TORRENTS}:/w/torrents
       - ${FRIGATE_RECORDINGS}:/w/frigate
