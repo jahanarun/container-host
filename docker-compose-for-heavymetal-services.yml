@@ -528,6 +528,7 @@ services:
       # - /srv/pub:/w:z  # this is where we declare that "/srv/pub" is the filesystem-path on the server that shall be shared online
       - ${TORRENTS}:/w/torrents
       - ${FRIGATE_RECORDINGS}:/w/frigate
+      - ${ROCKET10_DATA}:/w/rocket10/data
     networks:
       networks_traefik_proxy:
     labels:
