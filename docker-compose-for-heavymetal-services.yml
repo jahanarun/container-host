@@ -630,7 +630,7 @@ configs:
         "fragment_retries": 10,
 
         "postprocessor_args": {
-          "ffmpeg": ["-hwaccel", "vaapi", "-hwaccel_device", "/dev/dri/renderD128"]
+          "ffmpeg_i": ["-hwaccel", "vaapi", "-hwaccel_device", "/dev/dri/renderD128"]
         },
 
         "outtmpl": "%(upload_date>%Y-%m-%d)s %(title)s [%(id)s].%(ext)s"
