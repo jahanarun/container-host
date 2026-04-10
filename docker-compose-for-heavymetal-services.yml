@@ -581,9 +581,10 @@ services:
     image: ghcr.io/alexta69/metube
     container_name: metube
     restart: unless-stopped
+    devices:
+      - /dev/dri:/dev/dri
     environment:
       - YTDL_OPTIONS_FILE=/config/ytdl-options.json
-      - OUTPUT_TEMPLATE=${METUBE_OUTPUT_TEMPLATE}
     configs:
       - source: metube-config
         target: /config/ytdl-options.json
@@ -607,7 +608,30 @@ configs:
     content: |
       {
         "writesubtitles": true,
-        "subtitleslangs": ["en", "de"],
+        "subtitleslangs": ["en"],
         "updatetime": false,
-        "embed_thumbnail": true
+        "embed_thumbnail": true,
+
+        "writeautomaticsub": true,
+        "embedsubtitles": true,
+        "subtitlesformat": "srt",
+
+        "addmetadata": true,
+        "embedchapters": true,
+
+        "merge_output_format": "mp4",
+        "format": "bestvideo+bestaudio/best",
+
+        "sponsorblock_remove": ["sponsor", "intro", "outro", "selfpromo"],
+
+        "concurrent_fragment_downloads": 4,
+
+        "retries": 10,
+        "fragment_retries": 10,
+
+        "postprocessor_args": {
+          "ffmpeg": ["-hwaccel", "vaapi", "-hwaccel_device", "/dev/dri/renderD128"]
+        },
+
+        "outtmpl": "%(upload_date>%Y-%m-%d)s %(title)s [%(id)s].%(ext)s"
       }
