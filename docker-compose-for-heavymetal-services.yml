@@ -551,3 +551,63 @@ services:
       LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
       PYTHONUNBUFFERED: 1
       # ensures log-messages are not delayed (but can reduce speed a tiny bit)
+
+  picard:
+    image: mikenye/picard
+    container_name: picard
+    environment:
+      - USER_ID=33
+      - GROUP_ID=33
+      - TZ=${TZ}
+      - CLEAN_TMP_DIR=0
+    volumes:
+      - ${APPDATA}/picard/:/config:rw
+      - ${MUSIC}:/storage:rw
+    networks:
+      networks_traefik_proxy:
+      networks_internet:
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.picard.rule=Host(`picard.${DOMAIN}`)
+      - traefik.http.routers.picard.tls=true
+      - traefik.http.routers.picard.tls.certresolver=certificato
+      - traefik.http.routers.picard.entrypoints=web,web-secure
+      - traefik.http.routers.picard.middlewares=quantum-ipallowlist
+      - traefik.http.services.picard.loadbalancer.server.port=5800
+      - traefik.docker.network=networks_traefik_proxy
+
+  metube:
+    image: ghcr.io/alexta69/metube
+    container_name: metube
+    restart: unless-stopped
+    environment:
+      - YTDL_OPTIONS_FILE=/config/ytdl-options.json
+      - OUTPUT_TEMPLATE=${METUBE_OUTPUT_TEMPLATE}
+    configs:
+      - source: metube-config
+        target: /config/ytdl-options.json
+    volumes:
+      - ${METUBE_DOWNLOADS}:/downloads
+    networks:
+      networks_traefik_proxy:
+      networks_internet:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.metube.rule=Host(`metube.${DOMAIN}`)
+      - traefik.http.routers.metube.tls=true
+      - traefik.http.routers.metube.tls.certresolver=certificato
+      - traefik.http.routers.metube.entrypoints=web,web-secure
+      - traefik.http.routers.metube.middlewares=quantum-ipallowlist
+      - traefik.http.services.metube.loadbalancer.server.port=8081
+      - traefik.docker.network=networks_traefik_proxy
+
+configs:
+  metube-config:
+    content: |
+      {
+        "writesubtitles": true,
+        "subtitleslangs": ["en", "de"],
+        "updatetime": false,
+        "embed_thumbnail": true
+      }
