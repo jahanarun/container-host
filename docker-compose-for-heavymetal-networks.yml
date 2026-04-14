@@ -185,6 +185,7 @@ services:
       - "traefik.http.routers.api.entrypoints=web-secure"
       - "traefik.http.routers.api.tls.certresolver=certificato"
       - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
+      - "traefik.http.routers.api.tls.domains[0].sans=*.heavymetal.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - "traefik.http.middlewares.private-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${PRIVATE_IPS_COMMA_SEPARATED},${METAL_NETWORK}"
