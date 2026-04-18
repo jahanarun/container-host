@@ -603,6 +603,24 @@ services:
       - traefik.http.services.metube.loadbalancer.server.port=8081
       - traefik.docker.network=networks_traefik_proxy
 
+  mini-qr:
+    image: ghcr.io/lyqht/mini-qr:latest
+    container_name: mini-qr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    networks:
+      networks_traefik_proxy:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qr.rule=Host(`qr.${DOMAIN}`)
+      - traefik.http.routers.qr.tls=true
+      - traefik.http.routers.qr.tls.certresolver=certificato
+      - traefik.http.routers.qr.entrypoints=web,web-secure
+      - traefik.http.routers.qr.middlewares=quantum-ipallowlist
+      - traefik.http.services.qr.loadbalancer.server.port=8080
+      - traefik.docker.network=networks_traefik_proxy
+
 configs:
   metube-config:
     content: |
@@ -635,21 +653,3 @@ configs:
 
         "outtmpl": "%(upload_date>%Y-%m-%d)s %(title)s [%(id)s].%(ext)s"
       }
-
-  mini-qr:
-    image: ghcr.io/lyqht/mini-qr:latest
-    container_name: mini-qr
-    restart: unless-stopped
-    environment:
-      - TZ=${TZ}
-    networks:
-      networks_traefik_proxy:
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.qr.rule=Host(`qr.${DOMAIN}`)
-      - traefik.http.routers.qr.tls=true
-      - traefik.http.routers.qr.tls.certresolver=certificato
-      - traefik.http.routers.qr.entrypoints=web,web-secure
-      - traefik.http.routers.qr.middlewares=quantum-ipallowlist
-      - traefik.http.services.qr.loadbalancer.server.port=8080
-      - traefik.docker.network=networks_traefik_proxy
