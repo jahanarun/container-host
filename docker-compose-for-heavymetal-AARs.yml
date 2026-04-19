@@ -1,17 +1,84 @@
 name: heavymetal-AARs
 networks:
-  networks_vlan_80:
-    external: true
   networks_traefik_proxy:
+    external: true
+  networks_internet:
     external: true
 
 services:
 
+  gluetun:
+    container_name: gluetun
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    restart: unless-stopped
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      - FIREWALL_VPN_INPUT_PORTS=${QBITTORRENT_TORRENTING_PORT}
+    networks:
+      networks_internet:
+      networks_traefik_proxy:
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=networks_traefik_proxy
+      # gluetun control server
+      - traefik.http.routers.gluetun.rule=Host(`gluetun.${DOMAIN}`)
+      - traefik.http.routers.gluetun.tls.certresolver=certificato
+      - traefik.http.routers.gluetun.entrypoints=web,web-secure
+      - traefik.http.routers.gluetun.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.gluetun.loadbalancer.server.port=8000
+      # sonarr
+      - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
+      - traefik.http.routers.sonarr.tls.certresolver=certificato
+      - traefik.http.routers.sonarr.entrypoints=web,web-secure
+      - traefik.http.routers.sonarr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+      # radarr
+      - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
+      - traefik.http.routers.radarr.tls.certresolver=certificato
+      - traefik.http.routers.radarr.entrypoints=web,web-secure
+      - traefik.http.routers.radarr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+      # flaresolverr
+      - traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)
+      - traefik.http.routers.flaresolverr.tls.certresolver=certificato
+      - traefik.http.routers.flaresolverr.entrypoints=web,web-secure
+      - traefik.http.routers.flaresolverr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
+      # prowlarr
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr.tls.certresolver=certificato
+      - traefik.http.routers.prowlarr.entrypoints=web,web-secure
+      - traefik.http.routers.prowlarr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+      # qbittorrent
+      - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.tls.certresolver=certificato
+      - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
+      - traefik.http.routers.qbittorrent.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
+      # overseerr
+      - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
+      - traefik.http.routers.overseerr.tls.certresolver=certificato
+      - traefik.http.routers.overseerr.entrypoints=web,web-secure
+      - traefik.http.routers.overseerr.middlewares=quantum_metal-ipallowlist
+      - traefik.http.services.overseerr.loadbalancer.server.port=5055
+
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
-    hostname: sonarr
     restart: unless-stopped
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -20,19 +87,7 @@ services:
       - ${APPDATA}/sonarr:/config
       - ${TVSHOWS}:/media/Series #optional
       - ${TORRENTS}:/downloads #optional
-    networks:
-      networks_vlan_80:
-      networks_traefik_proxy:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
-      - traefik.http.routers.sonarr.tls.certresolver=certificato
-      - traefik.http.routers.sonarr.entrypoints=web,web-secure
-      - traefik.http.routers.sonarr.middlewares=quantum_metal-ipallowlist
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
-      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.weight=6000
       - homepage.name=Sonarr
@@ -47,8 +102,10 @@ services:
   radarr:
     image: lscr.io/linuxserver/radarr:nightly
     container_name: radarr
-    hostname: radarr
     restart: unless-stopped
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -57,20 +114,8 @@ services:
       - ${APPDATA}/radarr:/config
       - ${MOVIES}:/media/Movies
       - ${TORRENTS}:/downloads #optional
-    networks:
-      networks_traefik_proxy:
-      networks_vlan_80:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
-      - traefik.http.routers.radarr.tls.certresolver=certificato
-      - traefik.http.routers.radarr.entrypoints=web,web-secure
-      - traefik.http.routers.radarr.middlewares=quantum_metal-ipallowlist
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
       - homepage.group=HeavyMetal
-      - traefik.docker.network=networks_traefik_proxy
       - homepage.name=Radarr
       - homepage.weight=7000
       - homepage.description=for movies
@@ -85,32 +130,24 @@ services:
     image: flaresolverr/flaresolverr:latest
     # image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
-    hostname: flaresolverr
     restart: unless-stopped
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
       - TZ=${TZ}
-    networks:
-      networks_vlan_80:
-      networks_traefik_proxy:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
-      - "traefik.http.routers.flaresolverr.tls.certresolver=certificato"
-      - "traefik.http.routers.flaresolverr.entrypoints=web,web-secure"
-      - traefik.http.routers.flaresolverr.middlewares=quantum_metal-ipallowlist
-      - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
-      - traefik.docker.network=networks_traefik_proxy
 
   prowlarr:
     image: linuxserver/prowlarr:develop
     container_name: prowlarr
-    hostname: prowlarr
     restart: unless-stopped
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+      - flaresolverr
     environment:
       - PUID=1000
       - PGID=1000
@@ -119,19 +156,7 @@ services:
       # - RUN_OPTS=<run options here> #optional
     volumes:
       - ${APPDATA}/prowlarr:/config
-    networks:
-      networks_vlan_80:
-      networks_traefik_proxy:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr.tls.certresolver=certificato
-      - traefik.http.routers.prowlarr.entrypoints=web,web-secure
-      - traefik.http.routers.prowlarr.middlewares=quantum_metal-ipallowlist
-      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
-      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=HeavyMetal
       - homepage.weight=5000
       - homepage.name=Prowlarr
@@ -142,15 +167,15 @@ services:
       - homepage.widget.key=${PROWLARR_API_KEY}
       - homepage.widget.url=https://prowlarr.${DOMAIN}
       # - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
-    depends_on:
-      - flaresolverr
 
   qbittorrent:
     image: ${QBITTORRENT_IMAGE}
     # image: ghcr.io/hotio/qbittorrent
     # image: lscr.io/linuxserver/qbittorrent:latest
-    hostname: qbittorrent
     container_name: qbittorrent
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
     deploy:
       resources:
         limits:
@@ -170,12 +195,6 @@ services:
       - ${QBITTORRENT_CONFIG_DATA_STORAGE}/forwarded_port.dat:/forwarded_port.dat
       - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.log:/healthcheck.log
       - ${TORRENTS}:/downloads #optional
-    networks:
-      networks_vlan_80:
-        ipv4_address: ${QBITTORRENT_IP_ADDRESS}
-      networks_traefik_proxy:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
     # healthcheck:
     #   test: ["CMD", "/healthcheck.sh"]
     #   interval: 20s
@@ -183,13 +202,6 @@ services:
     #   start_period: 30s
     restart: unless-stopped
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
-      - traefik.http.routers.qbittorrent.tls.certresolver=certificato
-      - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
-      - traefik.http.routers.qbittorrent.middlewares=quantum_metal-ipallowlist
-      - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
-      - traefik.docker.network=networks_traefik_proxy
       - autoheal=true
       - homepage.group=Metal
       - homepage.name=Qbittorrent
@@ -205,9 +217,11 @@ services:
 
   overseerr:
     image: sctx/overseerr:latest
-    hostname: overseerr
     container_name: overseerr
     user: $PUID:$PGID
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
     environment:
       - LOG_LEVEL=debug
       - TZ=${TZ}
@@ -215,19 +229,7 @@ services:
     volumes:
       - ${APPDATA}/overseerr:/app/config
     restart: unless-stopped
-    networks:
-      networks_traefik_proxy:
-      networks_vlan_80:
-    dns:
-      - ${METAL_DNS_IP_ADDRESS}
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
-      - traefik.http.routers.overseerr.tls.certresolver=certificato
-      - traefik.http.routers.overseerr.entrypoints=web,web-secure
-      - traefik.http.routers.overseerr.middlewares=quantum_metal-ipallowlist
-      - traefik.http.services.overseerr.loadbalancer.server.port=5055
-      - traefik.docker.network=networks_traefik_proxy
       - homepage.group=Metal
       - homepage.weight=3000
       - homepage.name=Overseerr
