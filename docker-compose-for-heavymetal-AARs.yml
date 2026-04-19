@@ -79,6 +79,19 @@ services:
       - traefik.http.routers.overseerr.service=overseerr
       - traefik.http.services.overseerr.loadbalancer.server.port=5055
 
+  netshoot:
+    image: nicolaka/netshoot
+    container_name: netshoot
+    network_mode: "service:gluetun"
+    # Runs a plain HTTP server on the VPN forwarded port so you can verify
+    # from outside that the port-forward is working (e.g. curl http://<vpn-ip>:<port>)
+    # All other netshoot tools (curl, nslookup, dig, nmap, etc.) are available via:
+    #   docker exec -it netshoot bash
+    command: python3 -m http.server ${NETSHOOT_LISTENNING_PORT}
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
