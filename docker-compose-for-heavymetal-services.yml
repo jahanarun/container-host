@@ -261,6 +261,8 @@ services:
     networks:
       networks_internet:
       networks_traefik_proxy:
+    extra_hosts:
+      host.docker.internal: host-gateway
 
   autoheal:
     image: jhnrn/docker-autoheal:latest
