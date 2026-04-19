@@ -92,171 +92,171 @@ services:
     depends_on:
       - gluetun
 
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr
-    restart: unless-stopped
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${APPDATA}/sonarr:/config
-      - ${TVSHOWS}:/media/Series #optional
-      - ${TORRENTS}:/downloads #optional
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.weight=6000
-      - homepage.name=Sonarr
-      - homepage.description=for tvshows
-      - homepage.icon=sonarr.png
-      - homepage.href=https://tvshows.${DOMAIN}/
-      - homepage.widget.type=sonarr
-      - homepage.widget.url=https://tvshows.${DOMAIN}
-      - homepage.widget.key=${SONARR_API_KEY}
-      # - homepage.widget.fields=["wanted", "queued", "series"]
+  # sonarr:
+  #   image: lscr.io/linuxserver/sonarr:latest
+  #   container_name: sonarr
+  #   restart: unless-stopped
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${APPDATA}/sonarr:/config
+  #     - ${TVSHOWS}:/media/Series #optional
+  #     - ${TORRENTS}:/downloads #optional
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.weight=6000
+  #     - homepage.name=Sonarr
+  #     - homepage.description=for tvshows
+  #     - homepage.icon=sonarr.png
+  #     - homepage.href=https://tvshows.${DOMAIN}/
+  #     - homepage.widget.type=sonarr
+  #     - homepage.widget.url=https://tvshows.${DOMAIN}
+  #     - homepage.widget.key=${SONARR_API_KEY}
+  #     # - homepage.widget.fields=["wanted", "queued", "series"]
 
-  radarr:
-    image: lscr.io/linuxserver/radarr:nightly
-    container_name: radarr
-    restart: unless-stopped
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${APPDATA}/radarr:/config
-      - ${MOVIES}:/media/Movies
-      - ${TORRENTS}:/downloads #optional
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.name=Radarr
-      - homepage.weight=7000
-      - homepage.description=for movies
-      - homepage.icon=radarr.png
-      - homepage.href=https://movies.${DOMAIN}/
-      - homepage.widget.type=radarr
-      - homepage.widget.url=https://movies.${DOMAIN}
-      - homepage.widget.key=${RADARR_API_KEY}
-      # - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
+  # radarr:
+  #   image: lscr.io/linuxserver/radarr:nightly
+  #   container_name: radarr
+  #   restart: unless-stopped
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${APPDATA}/radarr:/config
+  #     - ${MOVIES}:/media/Movies
+  #     - ${TORRENTS}:/downloads #optional
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.name=Radarr
+  #     - homepage.weight=7000
+  #     - homepage.description=for movies
+  #     - homepage.icon=radarr.png
+  #     - homepage.href=https://movies.${DOMAIN}/
+  #     - homepage.widget.type=radarr
+  #     - homepage.widget.url=https://movies.${DOMAIN}
+  #     - homepage.widget.key=${RADARR_API_KEY}
+  #     # - homepage.widget.fields=["wanted", "missing", "queued", "movies"]
 
-  flaresolverr:
-    image: flaresolverr/flaresolverr:latest
-    # image: ghcr.io/flaresolverr/flaresolverr:latest
-    container_name: flaresolverr
-    restart: unless-stopped
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
-    environment:
-      - LOG_LEVEL=${LOG_LEVEL:-info}
-      - LOG_HTML=${LOG_HTML:-false}
-      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-      - TZ=${TZ}
+  # flaresolverr:
+  #   image: flaresolverr/flaresolverr:latest
+  #   # image: ghcr.io/flaresolverr/flaresolverr:latest
+  #   container_name: flaresolverr
+  #   restart: unless-stopped
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
+  #   environment:
+  #     - LOG_LEVEL=${LOG_LEVEL:-info}
+  #     - LOG_HTML=${LOG_HTML:-false}
+  #     - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+  #     - TZ=${TZ}
 
-  prowlarr:
-    image: linuxserver/prowlarr:develop
-    container_name: prowlarr
-    restart: unless-stopped
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
-      - flaresolverr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - AUTO_UPDATE=true #optional
-      # - RUN_OPTS=<run options here> #optional
-    volumes:
-      - ${APPDATA}/prowlarr:/config
-    labels:
-      - homepage.group=HeavyMetal
-      - homepage.weight=5000
-      - homepage.name=Prowlarr
-      - homepage.icon=prowlarr.png
-      - homepage.href=https://prowlarr.${DOMAIN}/
-      - homepage.description=Prowlarr
-      - homepage.widget.type=prowlarr
-      - homepage.widget.key=${PROWLARR_API_KEY}
-      - homepage.widget.url=https://prowlarr.${DOMAIN}
-      # - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
+  # prowlarr:
+  #   image: linuxserver/prowlarr:develop
+  #   container_name: prowlarr
+  #   restart: unless-stopped
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
+  #     - flaresolverr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #     - AUTO_UPDATE=true #optional
+  #     # - RUN_OPTS=<run options here> #optional
+  #   volumes:
+  #     - ${APPDATA}/prowlarr:/config
+  #   labels:
+  #     - homepage.group=HeavyMetal
+  #     - homepage.weight=5000
+  #     - homepage.name=Prowlarr
+  #     - homepage.icon=prowlarr.png
+  #     - homepage.href=https://prowlarr.${DOMAIN}/
+  #     - homepage.description=Prowlarr
+  #     - homepage.widget.type=prowlarr
+  #     - homepage.widget.key=${PROWLARR_API_KEY}
+  #     - homepage.widget.url=https://prowlarr.${DOMAIN}
+  #     # - homepage.widget.fields=["enableIndexers", "numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
 
-  qbittorrent:
-    image: ${QBITTORRENT_IMAGE}
-    # image: ghcr.io/hotio/qbittorrent
-    # image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
-    deploy:
-      resources:
-        limits:
-          memory: ${QBITTORRENT_MEMORY_LIMIT:-2G}
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - UMASK=002
-      - TZ=${TZ}
-      - WEBUI_PORT=${QBITTORRENT_PORT}
-      - WEBUI_PORTS=${QBITTORRENT_PORTS}
-      - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
-      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
-    volumes:
-      - ${QBITTORRENT_CONFIG_DATA_STORAGE}:/config
-      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.sh:/healthcheck.sh
-      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/forwarded_port.dat:/forwarded_port.dat
-      - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.log:/healthcheck.log
-      - ${TORRENTS}:/downloads #optional
-    # healthcheck:
-    #   test: ["CMD", "/healthcheck.sh"]
-    #   interval: 20s
-    #   timeout: 10s
-    #   start_period: 30s
-    restart: unless-stopped
-    labels:
-      - autoheal=true
-      - homepage.group=Metal
-      - homepage.name=Qbittorrent
-      - homepage.weight=4000
-      - homepage.icon=qbittorrent.png
-      - homepage.href=https://torrent.${DOMAIN}/
-      - homepage.description=Qbittorrent
-      - homepage.widget.type=qbittorrent
-      - homepage.widget.username=admin
-      - homepage.widget.password=${QBITTORRENT_PASSWORD}
-      - homepage.widget.url=https://torrent.${DOMAIN}
-      # - homepage.widget.fields=["leech","download", "seed", "upload"]
+  # qbittorrent:
+  #   image: ${QBITTORRENT_IMAGE}
+  #   # image: ghcr.io/hotio/qbittorrent
+  #   # image: lscr.io/linuxserver/qbittorrent:latest
+  #   container_name: qbittorrent
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: ${QBITTORRENT_MEMORY_LIMIT:-2G}
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - UMASK=002
+  #     - TZ=${TZ}
+  #     - WEBUI_PORT=${QBITTORRENT_PORT}
+  #     - WEBUI_PORTS=${QBITTORRENT_PORTS}
+  #     - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT}
+  #     - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
+  #   volumes:
+  #     - ${QBITTORRENT_CONFIG_DATA_STORAGE}:/config
+  #     - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.sh:/healthcheck.sh
+  #     - ${QBITTORRENT_CONFIG_DATA_STORAGE}/forwarded_port.dat:/forwarded_port.dat
+  #     - ${QBITTORRENT_CONFIG_DATA_STORAGE}/healthcheck.log:/healthcheck.log
+  #     - ${TORRENTS}:/downloads #optional
+  #   # healthcheck:
+  #   #   test: ["CMD", "/healthcheck.sh"]
+  #   #   interval: 20s
+  #   #   timeout: 10s
+  #   #   start_period: 30s
+  #   restart: unless-stopped
+  #   labels:
+  #     - autoheal=true
+  #     - homepage.group=Metal
+  #     - homepage.name=Qbittorrent
+  #     - homepage.weight=4000
+  #     - homepage.icon=qbittorrent.png
+  #     - homepage.href=https://torrent.${DOMAIN}/
+  #     - homepage.description=Qbittorrent
+  #     - homepage.widget.type=qbittorrent
+  #     - homepage.widget.username=admin
+  #     - homepage.widget.password=${QBITTORRENT_PASSWORD}
+  #     - homepage.widget.url=https://torrent.${DOMAIN}
+  #     # - homepage.widget.fields=["leech","download", "seed", "upload"]
 
-  overseerr:
-    image: sctx/overseerr:latest
-    container_name: overseerr
-    user: $PUID:$PGID
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
-    environment:
-      - LOG_LEVEL=debug
-      - TZ=${TZ}
-      - PORT=5055 #optional
-    volumes:
-      - ${APPDATA}/overseerr:/app/config
-    restart: unless-stopped
-    labels:
-      - homepage.group=Metal
-      - homepage.weight=3000
-      - homepage.name=Overseerr
-      - homepage.icon=overseerr.png
-      - homepage.href=https://fetch.${DOMAIN}/
-      - homepage.description=Overseerr
-      - homepage.widget.type=overseerr
-      - homepage.widget.key=${OVERSEERR_API_KEY}
-      - homepage.widget.url=https://fetch.${DOMAIN}
-      # - homepage.widget.fields=["pending", "approved", "available", "processing"]
+  # overseerr:
+  #   image: sctx/overseerr:latest
+  #   container_name: overseerr
+  #   user: $PUID:$PGID
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
+  #   environment:
+  #     - LOG_LEVEL=debug
+  #     - TZ=${TZ}
+  #     - PORT=5055 #optional
+  #   volumes:
+  #     - ${APPDATA}/overseerr:/app/config
+  #   restart: unless-stopped
+  #   labels:
+  #     - homepage.group=Metal
+  #     - homepage.weight=3000
+  #     - homepage.name=Overseerr
+  #     - homepage.icon=overseerr.png
+  #     - homepage.href=https://fetch.${DOMAIN}/
+  #     - homepage.description=Overseerr
+  #     - homepage.widget.type=overseerr
+  #     - homepage.widget.key=${OVERSEERR_API_KEY}
+  #     - homepage.widget.url=https://fetch.${DOMAIN}
+  #     # - homepage.widget.fields=["pending", "approved", "available", "processing"]
