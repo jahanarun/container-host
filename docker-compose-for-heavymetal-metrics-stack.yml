@@ -5,8 +5,6 @@ networks:
     external: true
   networks_internet:
     external: true
-  networks_vlan_80:
-    external: true
   networks_traefik_proxy:
     external: true
 
@@ -74,8 +72,6 @@ services:
     networks:
       networks_metrics:
       # networks_internet:
-      # networks_vlan_80:
-      #   ipv4_address: ${GRAYLOG_IP_ADDRESS}
       networks_traefik_proxy:
     depends_on:
       - mongodb
