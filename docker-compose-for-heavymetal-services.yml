@@ -503,7 +503,7 @@ services:
       - traefik.http.routers.metube.tls=true
       - traefik.http.routers.metube.tls.certresolver=certificato
       - traefik.http.routers.metube.entrypoints=web,web-secure
-      - traefik.http.routers.metube.middlewares=quantum-ipallowlist
+      - traefik.http.routers.metube.middlewares=quantum-ipallowlist,traefik-forward-auth
       - traefik.http.services.metube.loadbalancer.server.port=8081
       - traefik.docker.network=networks_traefik_proxy
 
