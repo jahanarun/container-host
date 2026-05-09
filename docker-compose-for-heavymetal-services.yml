@@ -25,6 +25,10 @@ services:
     container_name: ofelia
     network_mode: none
     command: daemon --docker
+    labels:
+      - ofelia.enabled=true
+      - ofelia.job-local.scheduler_keepalive.schedule=@every 24h
+      - ofelia.job-local.scheduler_keepalive.command=/bin/echo ofelia scheduler keepalive
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
