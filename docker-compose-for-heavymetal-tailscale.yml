@@ -19,6 +19,7 @@ services:
       TS_ROUTES: ${TAILSCALE_ROUTES}
       TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
+      TS_DEBUG_FIREWALL_MODE: nftables
       # TS_ACCEPT_DNS: ${TS_ACCEPT_DNS}
     networks:
       networks_vlan_30:
@@ -60,6 +61,7 @@ services:
       TS_EXTRA_ARGS: --advertise-exit-node --advertise-tags=tag:exitnode
       TS_USERSPACE: false
       TS_STATE_DIR: /var/lib/tailscale
+      TS_DEBUG_FIREWALL_MODE: nftables
     networks:
       networks_vlan_30:
         ipv4_address: ${TAILSCALE_QUANTUM_VPN_IP_ADDRESS}
