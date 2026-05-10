@@ -106,7 +106,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.homeassistant.rule=Host(`home.${DOMAIN}`)
-      - traefik.http.routers.homeassistant.tls.certresolver=certificato
       - traefik.http.routers.homeassistant.entrypoints=web,web-secure
       - traefik.http.routers.homeassistant.middlewares=quantum_metal-ipallowlist
       - traefik.http.services.homeassistant.loadbalancer.server.port=8123

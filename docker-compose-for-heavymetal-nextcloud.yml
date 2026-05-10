@@ -119,7 +119,6 @@ services:
       - ofelia.job-exec.nextcloud_cron.command=php -f /var/www/html/cron.php
       - traefik.enable=true
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
-      - traefik.http.routers.nextcloud.tls.certresolver=certificato
       - traefik.http.routers.nextcloud.entrypoints=web,web-secure
       - traefik.http.routers.nextcloud.middlewares=quantum_metal-ipallowlist,nextcloud-hsts,nextcloud-redirectregex1,nextcloud-redirectregex2,nextcloud-redirectregex3,nextcloud-redirectregex4
       - traefik.http.services.nextcloud.loadbalancer.server.port=80
@@ -234,7 +233,6 @@ services:
       - ofelia.job-exec.nextcloud_private_cron.command=php -f /var/www/html/cron.php
       - traefik.enable=true
       - traefik.http.routers.nextcloud-private.rule=Host(`private.${DOMAIN}`)
-      - traefik.http.routers.nextcloud-private.tls.certresolver=certificato
       - traefik.http.routers.nextcloud-private.entrypoints=web,web-secure
       - traefik.http.routers.nextcloud-private.middlewares=quantum-ipallowlist,nextcloud-private-hsts,nextcloud-private-redirectregex1,nextcloud-private-redirectregex2,nextcloud-private-redirectregex3,nextcloud-private-redirectregex4
       - traefik.http.services.nextcloud-private.loadbalancer.server.port=80

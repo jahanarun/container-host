@@ -91,7 +91,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.immich.rule=Host(`photos.${DOMAIN}`)
       - traefik.http.routers.immich.middlewares=quantum_metal-ipallowlist
-      - traefik.http.routers.immich.tls.certresolver=certificato
       - traefik.http.routers.immich.entrypoints=web,web-secure
       - traefik.http.services.immich.loadbalancer.server.port=2283
       - "traefik.docker.network=networks_traefik_proxy"
@@ -240,7 +239,6 @@ services:
       - dev.dozzle.group=immich-private
       - traefik.enable=true
       - traefik.http.routers.immich-private.rule=Host(`private-viewer.${DOMAIN}`)
-      - traefik.http.routers.immich-private.tls.certresolver=certificato
       - traefik.http.routers.immich-private.entrypoints=web,web-secure
       # - traefik.http.routers.immich-private.middlewares=private-ipallowlist
       # - traefik.http.routers.immich-private.middlewares=traefik-forward-auth

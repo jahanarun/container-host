@@ -46,7 +46,6 @@ services:
       traefik.enable: true
       traefik.docker.network: networks_traefik_proxy
       traefik.http.routers.gogs-web.rule: "Host(`git.${DOMAIN}`) || Host(`gogs.${DOMAIN}`)"
-      traefik.http.routers.gogs-web.tls.certresolver: "certificato"
       traefik.http.routers.gogs-web.entrypoints: "web,web-secure"
       traefik.http.routers.gogs-web.service: gogs-web
       traefik.http.services.gogs-web.loadbalancer.server.port: 3000
@@ -113,7 +112,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.glances.rule=Host(`glanceshm.${DOMAIN}`)
-      - traefik.http.routers.glances.tls.certresolver=certificato
       - traefik.http.routers.glances.entrypoints=web,web-secure
       - traefik.http.services.glances.loadbalancer.server.port=61208
       - traefik.docker.network=networks_traefik_proxy
@@ -155,7 +153,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.netdatahm.rule=Host(`netdatahm.${DOMAIN}`)
-      - traefik.http.routers.netdatahm.tls.certresolver=certificato
       - traefik.http.routers.netdatahm.entrypoints=web,web-secure
       - traefik.http.services.netdatahm.loadbalancer.server.port=19999
       - traefik.docker.network=networks_traefik_proxy
@@ -228,7 +225,6 @@ services:
       - homepage.href=https://dockerlogs.${DOMAIN}
       - traefik.enable=true
       - traefik.http.routers.dozzle.rule=Host(`dockerlogs.${DOMAIN}`)
-      - traefik.http.routers.dozzle.tls.certresolver=certificato
       - traefik.http.routers.dozzle.entrypoints=web,web-secure
       - traefik.http.routers.dozzle.middlewares=quantum-ipallowlist
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
@@ -282,7 +278,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.${DOMAIN}`)"
-      - "traefik.http.routers.librespeed.tls.certresolver=certificato"
       - traefik.http.routers.librespeed.entrypoints=web,web-secure
       - "traefik.http.services.librespeed.loadbalancer.server.port=80"
       - traefik.docker.network=networks_traefik_proxy
@@ -314,7 +309,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtracker.${DOMAIN}`)"
-      - "traefik.http.routers.speedtest-tracker.tls.certresolver=certificato"
       - "traefik.http.services.speedtest-tracker.loadbalancer.server.port=80"
       - traefik.http.routers.speedtest-tracker.entrypoints=web,web-secure
       - traefik.docker.network=networks_traefik_proxy
@@ -349,7 +343,6 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.homepage.rule: "Host(`www.${DOMAIN}`)"
-      traefik.http.routers.homepage.tls.certresolver: "certificato"
       traefik.http.routers.homepage.middlewares: quantum-ipallowlist
       traefik.http.services.homepage.loadbalancer.server.port: 3000
       traefik.http.routers.homepage.entrypoints: web,web-secure
@@ -373,7 +366,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.pdf.rule=Host(`pdf.${DOMAIN}`)
-      - traefik.http.routers.pdf.tls.certresolver=certificato
       - traefik.http.routers.pdf.entrypoints=web,web-secure
       - traefik.http.routers.pdf.middlewares=quantum-ipallowlist
       - traefik.http.services.pdf.loadbalancer.server.port=8080
@@ -438,7 +430,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.copyparty.rule=Host(`copyparty.${DOMAIN}`)
       - traefik.http.routers.copyparty.tls=true
-      - traefik.http.routers.copyparty.tls.certresolver=certificato
       - traefik.http.routers.copyparty.entrypoints=web,web-secure
       - traefik.http.routers.copyparty.middlewares=quantum-ipallowlist,traefik-forward-auth
       - traefik.http.services.copyparty.loadbalancer.server.port=3923
@@ -472,7 +463,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.picard.rule=Host(`picard.${DOMAIN}`)
       - traefik.http.routers.picard.tls=true
-      - traefik.http.routers.picard.tls.certresolver=certificato
       - traefik.http.routers.picard.entrypoints=web,web-secure
       - traefik.http.routers.picard.middlewares=quantum-ipallowlist
       - traefik.http.services.picard.loadbalancer.server.port=5800
@@ -498,7 +488,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.metube.rule=Host(`metube.${DOMAIN}`)
       - traefik.http.routers.metube.tls=true
-      - traefik.http.routers.metube.tls.certresolver=certificato
       - traefik.http.routers.metube.entrypoints=web,web-secure
       - traefik.http.routers.metube.middlewares=quantum-ipallowlist,traefik-forward-auth
       - traefik.http.services.metube.loadbalancer.server.port=8081
@@ -516,7 +505,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.qr.rule=Host(`qr.${DOMAIN}`)
       - traefik.http.routers.qr.tls=true
-      - traefik.http.routers.qr.tls.certresolver=certificato
       - traefik.http.routers.qr.entrypoints=web,web-secure
       - traefik.http.routers.qr.middlewares=quantum-ipallowlist
       - traefik.http.services.qr.loadbalancer.server.port=8080

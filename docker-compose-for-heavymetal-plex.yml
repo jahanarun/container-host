@@ -42,9 +42,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.plex-movies.rule=Host(`plex-movies.${DOMAIN}`)
-      - traefik.http.routers.plex-movies.tls.domains[0].main=dexome.com
-      - traefik.http.routers.plex-movies.tls.domains[0].sans=*.dexome.com
-      - traefik.http.routers.plex-movies.tls.certresolver=certificato
       - traefik.http.routers.plex-movies.entrypoints=web,web-secure
       - traefik.http.services.plex-movies.loadbalancer.server.port=32400
       - traefik.docker.network=networks_traefik_proxy
@@ -95,9 +92,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.plex-tvshows.rule=Host(`plex-tvshows.${DOMAIN}`)
-      - traefik.http.routers.plex-tvshows.tls.domains[0].main=dexome.com
-      - traefik.http.routers.plex-tvshows.tls.domains[0].sans=*.dexome.com
-      - traefik.http.routers.plex-tvshows.tls.certresolver=certificato
       - traefik.http.routers.plex-tvshows.entrypoints=web,web-secure
       - traefik.http.services.plex-tvshows.loadbalancer.server.port=32400
       - traefik.docker.network=networks_traefik_proxy
@@ -120,7 +114,6 @@ services:
       traefik.enable: true
       traefik.http.routers.plex-music.rule: "Host(`music.${DOMAIN}`) || Host(`plex-music.${DOMAIN}`)"
       traefik.http.routers.plex-music.entrypoints: web,web-secure
-      traefik.http.routers.plex-music.tls.certresolver: "certificato"
       traefik.http.services.plex-music.loadbalancer.server.port: 32400
       traefik.docker.network: networks_traefik_proxy
       homepage.group: Metal
@@ -185,9 +178,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN}`)
-      - traefik.http.routers.jellyfin.tls.domains[0].main=dexome.com
-      - traefik.http.routers.jellyfin.tls.domains[0].sans=*.dexome.com
-      - traefik.http.routers.jellyfin.tls.certresolver=certificato
       - traefik.http.routers.jellyfin.entrypoints=web,web-secure
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
       - traefik.docker.network=networks_traefik_proxy

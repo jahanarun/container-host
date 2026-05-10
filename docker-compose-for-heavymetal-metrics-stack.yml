@@ -65,7 +65,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.graylog.rule=Host(`graylog.${DOMAIN}`)
-      - traefik.http.routers.graylog.tls.certresolver=certificato
       - traefik.http.routers.graylog.entrypoints=web,web-secure
       - traefik.http.services.graylog.loadbalancer.server.port=9000
       - traefik.docker.network=networks_traefik_proxy
@@ -110,7 +109,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.influxdb.rule=Host(`influxdb.${DOMAIN}`)
-      - traefik.http.routers.influxdb.tls.certresolver=certificato
       - traefik.http.routers.influxdb.entrypoints=web,web-secure
       - traefik.http.services.influxdb.loadbalancer.server.port=8086
       - traefik.docker.network=networks_traefik_proxy
@@ -143,7 +141,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
-      - traefik.http.routers.grafana.tls.certresolver=certificato
       - traefik.http.routers.grafana.entrypoints=web,web-secure
       - traefik.http.services.grafana.loadbalancer.server.port=3000
       - traefik.docker.network=networks_traefik_proxy

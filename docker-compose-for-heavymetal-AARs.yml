@@ -33,49 +33,42 @@ services:
       - traefik.docker.network=networks_traefik_proxy
       # gluetun control server
       - traefik.http.routers.gluetun.rule=Host(`gluetun.${DOMAIN}`)
-      - traefik.http.routers.gluetun.tls.certresolver=certificato
       - traefik.http.routers.gluetun.entrypoints=web,web-secure
       - traefik.http.routers.gluetun.middlewares=quantum_metal-ipallowlist
       - traefik.http.routers.gluetun.service=gluetun
       - traefik.http.services.gluetun.loadbalancer.server.port=8000
         # sonarr
       - traefik.http.routers.sonarr.rule=Host(`tvshows.${DOMAIN}`)
-      - traefik.http.routers.sonarr.tls.certresolver=certificato
       - traefik.http.routers.sonarr.entrypoints=web,web-secure
       - traefik.http.routers.sonarr.middlewares=quantum_metal-ipallowlist
       - traefik.http.routers.sonarr.service=sonarr
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
       # radarr
       - traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)
-      - traefik.http.routers.radarr.tls.certresolver=certificato
       - traefik.http.routers.radarr.entrypoints=web,web-secure
       - traefik.http.routers.radarr.middlewares=quantum_metal-ipallowlist
       - traefik.http.routers.radarr.service=radarr
       - traefik.http.services.radarr.loadbalancer.server.port=7878
       # flaresolverr
       - traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)
-      - traefik.http.routers.flaresolverr.tls.certresolver=certificato
       - traefik.http.routers.flaresolverr.entrypoints=web,web-secure
       - traefik.http.routers.flaresolverr.middlewares=quantum_metal-ipallowlist
       - traefik.http.routers.flaresolverr.service=flaresolverr
       - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
       # prowlarr
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr.tls.certresolver=certificato
       - traefik.http.routers.prowlarr.entrypoints=web,web-secure
       - traefik.http.routers.prowlarr.middlewares=quantum_metal-ipallowlist
       - traefik.http.routers.prowlarr.service=prowlarr
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
       # qbittorrent
       - traefik.http.routers.qbittorrent.rule=Host(`torrent.${DOMAIN}`)
-      - traefik.http.routers.qbittorrent.tls.certresolver=certificato
       - traefik.http.routers.qbittorrent.entrypoints=web,web-secure
       - traefik.http.routers.qbittorrent.middlewares=quantum_metal-ipallowlist
       - traefik.http.routers.qbittorrent.service=qbittorrent
       - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT_PORT}
       # overseerr
       - traefik.http.routers.overseerr.rule=Host(`fetch.${DOMAIN}`)
-      - traefik.http.routers.overseerr.tls.certresolver=certificato
       - traefik.http.routers.overseerr.entrypoints=web,web-secure
       - traefik.http.routers.overseerr.middlewares=quantum_metal-ipallowlist
       - traefik.http.routers.overseerr.service=overseerr
