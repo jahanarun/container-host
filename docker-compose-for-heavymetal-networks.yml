@@ -128,6 +128,13 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web-secure.address=:443"
       - "--entrypoints.web-secure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
+      # Centralized TLS for all routers on web-secure: a single wildcard cert is
+      # issued via the certificato resolver and served as the default for every
+      # router on this entrypoint. Per-router tls.* labels are no longer needed.
+      - "--entrypoints.web-secure.http.tls=true"
+      - "--entrypoints.web-secure.http.tls.certResolver=certificato"
+      - "--entrypoints.web-secure.http.tls.domains[0].main=${DOMAIN}"
+      - "--entrypoints.web-secure.http.tls.domains[0].sans=*.${DOMAIN},*.heavymetal.${DOMAIN}"
       - "--entrypoints.gogs-ssh.address=:22"
       - "--entrypoints.gitea-ssh.address=:2222"
       - "--entrypoints.rtsp.address=:8554"
@@ -187,9 +194,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`traefik.heavymetal.${DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=web-secure"
-      - "traefik.http.routers.api.tls.certresolver=certificato"
-      - "traefik.http.routers.api.tls.domains[0].main=*.${DOMAIN}"
-      - "traefik.http.routers.api.tls.domains[0].sans=*.heavymetal.${DOMAIN}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api@internal.loadbalancer.server.port=80"
       - "traefik.http.middlewares.private-ipallowlist.ipallowlist.sourcerange=127.0.0.1/32,${PRIVATE_IPS_COMMA_SEPARATED},${METAL_NETWORK}"

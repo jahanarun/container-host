@@ -77,7 +77,6 @@ services:
       traefik.enable: true
       traefik.docker.network: networks_traefik_proxy
       traefik.http.routers.frigate.rule: Host(`recorder.${DOMAIN}`)
-      traefik.http.routers.frigate.tls.certresolver: certificato
       traefik.http.routers.frigate.entrypoints: web,web-secure
       # traefik.http.services.frigate.loadbalancer.server.port: 5000
       traefik.http.services.frigate.loadbalancer.server.port: 8971
@@ -93,7 +92,6 @@ services:
       traefik.tcp.routers.frigate-webrtc.service: frigate-webrtc
       traefik.tcp.services.frigate-webrtc.loadbalancer.server.port: 8555
       traefik.http.routers.frigate-go2rtc.rule: Host(`go2rtc.${DOMAIN}`)
-      traefik.http.routers.frigate-go2rtc.tls.certresolver: certificato
       traefik.http.routers.frigate-go2rtc.entrypoints: web,web-secure
       traefik.http.routers.frigate-go2rtc.service: frigate-go2rtc
       traefik.http.services.frigate-go2rtc.loadbalancer.server.port: 1984
