@@ -22,7 +22,7 @@ services:
           memory: 7G
         reservations:
           memory: 6G
-    user: "1100:1100" # Change this to match your "frigate" host user and group id (id frigate)
+    # user: ${UID}:${GID}
     group_add:
       - "${RENDER_GROUP_ID}" # Change this to match your "render" host group id (getent group render)
       - "${VIDEO_GROUP_ID}" # Change this to match your "video" host group id (getent group video)
