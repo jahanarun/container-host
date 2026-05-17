@@ -16,28 +16,28 @@ networks:
           #   reserved: 10.100.${METAL_VLAN_ID}.1
           #   dns: 10.100.${METAL_VLAN_ID}.3
 
-  vlan_20:
-    driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
-    driver_opts:
-      parent: ${NETWORK_DEVICE}.${THINGS_VLAN_ID}
-      name: macvlan${THINGS_VLAN_ID}
-    ipam:
-      config:
-        - subnet: 10.100.${THINGS_VLAN_ID}.0/24
-          gateway: 10.100.${THINGS_VLAN_ID}.1
-          ip_range: 10.100.${THINGS_VLAN_ID}.12/30  # 12 - 15
+  # vlan_20:
+  #   driver: macvlan # Otherwise PiHole container cannot resolve DNS internally due to NAT issue within Docker
+  #   driver_opts:
+  #     parent: ${NETWORK_DEVICE}.${THINGS_VLAN_ID}
+  #     name: macvlan${THINGS_VLAN_ID}
+  #   ipam:
+  #     config:
+  #       - subnet: 10.100.${THINGS_VLAN_ID}.0/24
+  #         gateway: 10.100.${THINGS_VLAN_ID}.1
+  #         ip_range: 10.100.${THINGS_VLAN_ID}.12/30  # 12 - 15
 
-  vlan_30:
-    driver: macvlan
-    driver_opts:
-      # parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
-      parent: ${VLAN30_NETWORK_DEVICE}
-      name: macvlan${QUANTUM_VLAN_ID}
-    ipam:
-      config:
-        - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
-          gateway: 10.100.${QUANTUM_VLAN_ID}.1
-          ip_range: 10.100.${QUANTUM_VLAN_ID}.56/29 # range: 56-63 usable: 57-62
+  # vlan_30:
+  #   driver: macvlan
+  #   driver_opts:
+  #     # parent: ${NETWORK_DEVICE}.${QUANTUM_VLAN_ID}
+  #     parent: ${VLAN30_NETWORK_DEVICE}
+  #     name: macvlan${QUANTUM_VLAN_ID}
+  #   ipam:
+  #     config:
+  #       - subnet: 10.100.${QUANTUM_VLAN_ID}.0/24
+  #         gateway: 10.100.${QUANTUM_VLAN_ID}.1
+  #         ip_range: 10.100.${QUANTUM_VLAN_ID}.56/29 # range: 56-63 usable: 57-62
 
   omada_network:
     driver: macvlan
@@ -50,17 +50,18 @@ networks:
           gateway: 10.100.0.1
           ip_range: 10.100.0.56/29 # range: 56-63 usable: 57-62
 
-  traefik_proxy:
-    driver: bridge
-    internal: true
+  networks_traefik_proxy:
+    external: true
+  #   driver: bridge
+  #   internal: true
 
-  internet:
-    driver: bridge
-    enable_ipv6: true
-    ipam:
-      config:
-        - subnet: 172.28.0.0/16
-        - subnet: fd00:dead:beef::/48  # any ULA prefix
+  # internet:
+  #   driver: bridge
+  #   enable_ipv6: true
+  #   ipam:
+  #     config:
+  #       - subnet: 172.28.0.0/16
+  #       - subnet: fd00:dead:beef::/48  # any ULA prefix
 
   metrics:
     driver: bridge
@@ -72,11 +73,7 @@ services:
     container_name: do-nothing
     restart: unless-stopped
     networks:
-      vlan_20:
-      vlan_30:
       vlan_80:
-      traefik_proxy:
-      internet:
 
   dockerproxy:
     image: ghcr.io/tecnativa/docker-socket-proxy:latest
@@ -89,7 +86,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
     networks:
-      traefik_proxy:
+      networks_traefik_proxy:
       # vlan_80:
       #   ipv4_address: ${HEAVYMETAL_DOCKERPROXY_IP_ADDRESS}
     restart: unless-stopped
@@ -165,7 +162,7 @@ services:
       # - "--experimental.plugins.traefik-oidc-auth.modulename=github.com/sevensolutions/traefik-oidc-auth"
       # - "--experimental.plugins.traefik-oidc-auth.version=v0.12.0"
     networks:
-      traefik_proxy:
+      networks_traefik_proxy:
         aliases:
           - id.${DOMAIN}
           - plex-movies.${DOMAIN}
@@ -276,7 +273,7 @@ services:
     container_name: "iperf3"
     restart: always
     networks:
-      traefik_proxy:
+      networks_traefik_proxy:
     labels:
       - "traefik.enable=true"
 
